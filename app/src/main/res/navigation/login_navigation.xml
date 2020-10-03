@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/login_navigation"
+    app:startDestination="@id/loginFragment2">
+
+    <fragment
+        android:id="@+id/loginFragment2"
+        android:name="com.example.yilaoapp.ui.mine.LoginFragment"
+        android:label="LoginFragment" >
+        <action
+            android:id="@+id/action_loginFragment2_to_missFragment2"
+            app:destination="@id/missFragment2" />
+        <action
+            android:id="@+id/action_loginFragment2_to_signinFragment2"
+            app:destination="@id/signinFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/missFragment2"
+        android:name="com.example.yilaoapp.ui.mine.MissFragment"
+        android:label="MissFragment" >
+        <action
+            android:id="@+id/action_missFragment2_to_loginFragment2"
+            app:destination="@id/loginFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/signinFragment2"
+        android:name="com.example.yilaoapp.ui.mine.SigninFragment"
+        android:label="SigninFragment" >
+        <action
+            android:id="@+id/action_signinFragment2_to_userFragment2"
+            app:destination="@id/userFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/userFragment2"
+        android:name="com.example.yilaoapp.ui.mine.UserFragment"
+        android:label="UserFragment" >
+        <action
+            android:id="@+id/action_userFragment2_to_signinSuccessFragment2"
+            app:destination="@id/signinSuccessFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/signinSuccessFragment2"
+        android:name="com.example.yilaoapp.ui.mine.SigninSuccessFragment"
+        android:label="SigninSuccessFragment" />
+</navigation>

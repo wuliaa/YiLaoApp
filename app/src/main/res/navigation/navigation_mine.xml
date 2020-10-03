@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_mine"
+    app:startDestination="@id/errandsFragment">
+
+    <fragment
+        android:id="@+id/myInformationFragment"
+        android:name="com.example.yilaoapp.ui.mine.MyInformationFragment"
+        android:label="fragment_my_information"
+        tools:layout="@layout/fragment_my_information" >
+        <action
+            android:id="@+id/action_myInformationFragment_to_changeNickFragment"
+            app:destination="@id/changeNickFragment" />
+        <action
+            android:id="@+id/action_myInformationFragment_to_addressFragment"
+            app:destination="@id/addressFragment" />
+        <action
+            android:id="@+id/action_myInformationFragment_to_errandsFragment"
+            app:destination="@id/errandsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/myMessageFragment"
+        android:name="com.example.yilaoapp.ui.mine.MyMessageFragment"
+        android:label="fragment_my_message"
+        tools:layout="@layout/fragment_my_message" />
+    <fragment
+        android:id="@+id/myTaskFragment"
+        android:name="com.example.yilaoapp.ui.mine.MyTaskFragment"
+        android:label="fragment_my_task"
+        tools:layout="@layout/fragment_my_task" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.yilaoapp.ui.mine.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_settingFragment_to_changePsdFragment"
+            app:destination="@id/changePsdFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/errandsFragment"
+        android:name="com.example.yilaoapp.ui.errands.ErrandsFragment"
+        android:label="fragment_errands"
+        tools:layout="@layout/fragment_errands" >
+        <action
+            android:id="@+id/action_errandsFragment_to_errandsMessageFragment"
+            app:destination="@id/errandsMessageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/purchaseFragment"
+        android:name="com.example.yilaoapp.ui.purchase.PurchaseFragment"
+        android:label="fragment_purchase"
+        tools:layout="@layout/fragment_purchase" />
+    <fragment
+        android:id="@+id/idleFragment"
+        android:name="com.example.yilaoapp.ui.idle.IdleFragment"
+        android:label="fragment_idle"
+        tools:layout="@layout/fragment_idle" />
+    <fragment
+        android:id="@+id/bullentinFragment"
+        android:name="com.example.yilaoapp.ui.bulletin.BullentinFragment"
+        android:label="fragment_bullentin"
+        tools:layout="@layout/fragment_bullentin" />
+    <fragment
+        android:id="@+id/errandsMessageFragment"
+        android:name="com.example.yilaoapp.ui.errands.ErrandsMessageFragment"
+        android:label="fragment_errands_message"
+        tools:layout="@layout/fragment_errands_message" >
+        <action
+            android:id="@+id/action_errandsMessageFragment_to_errandsFragment"
+            app:destination="@id/errandsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/purchaseMessageFragment"
+        android:name="com.example.yilaoapp.ui.purchase.PurchaseMessageFragment"
+        android:label="fragment_purchase_message"
+        tools:layout="@layout/fragment_purchase_message" />
+    <fragment
+        android:id="@+id/idleMessageFragment"
+        android:name="com.example.yilaoapp.ui.idle.IdleMessageFragment"
+        android:label="fragment_idle_message"
+        tools:layout="@layout/fragment_idle_message" />
+    <fragment
+        android:id="@+id/bullentinMessageFragment"
+        android:name="com.example.yilaoapp.ui.bulletin.BullentinMessageFragment"
+        android:label="fragment_bullentin_message"
+        tools:layout="@layout/fragment_bullentin_message" />
+    <fragment
+        android:id="@+id/changeNickFragment"
+        android:name="com.example.yilaoapp.ui.mine.ChangeNickFragment"
+        android:label="fragment_change_nick"
+        tools:layout="@layout/fragment_change_nick" />
+    <fragment
+        android:id="@+id/changePsdFragment"
+        android:name="com.example.yilaoapp.ui.mine.ChangePsdFragment"
+        android:label="fragment_change_psd"
+        tools:layout="@layout/fragment_change_psd" />
+    <fragment
+        android:id="@+id/addressFragment"
+        android:name="com.example.yilaoapp.ui.mine.AddressFragment"
+        android:label="fragment_address"
+        tools:layout="@layout/fragment_address" />
+</navigation>

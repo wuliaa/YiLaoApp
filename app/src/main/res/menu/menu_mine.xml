@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/myInformationFragment"
+            android:icon="@drawable/myinfor"
+            android:title="@string/Personal_Information" />
+    </group>
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/myMessageFragment"
+            android:icon="@drawable/message"
+            android:title="@string/MyMessage" />
+        <item
+            android:id="@+id/myTaskFragment"
+            android:icon="@drawable/mytask"
+            android:title="@string/mytask" />
+    </group>
+    <group
+        android:id="@+id/group3"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/settingFragment"
+            android:icon="@drawable/setting"
+            android:title="@string/setting" />
+    </group>
+</menu>

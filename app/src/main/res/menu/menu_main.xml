@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/errandsMessageFragment"
+        android:title="@string/release_errands" />
+    <item
+        android:id="@+id/purchaseMessageFragment"
+        android:title="@string/release_purchase" />
+    <item
+        android:id="@+id/idleMessageFragment"
+        android:title="@string/release_idle" />
+    <item
+        android:id="@+id/bullentinMessageFragment"
+        android:title="@string/release_bullentin" />
+</menu>

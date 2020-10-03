@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/errandsFragment"
+        android:icon="@drawable/ic_baseline_directions_bike_24"
+        android:title="@string/Errands" />
+    <item
+        android:id="@+id/purchaseFragment"
+        android:icon="@drawable/ic_baseline_shopping_basket_24"
+        android:title="@string/Purchase" />
+    <item
+        android:id="@+id/idleFragment"
+        android:icon="@drawable/ic_baseline_photo_filter_24"
+        android:title="@string/Idle" />
+    <item
+        android:id="@+id/bullentinFragment"
+        android:icon="@drawable/ic_baseline_dns_24"
+        android:title="@string/Bulletin" />
+</menu>
