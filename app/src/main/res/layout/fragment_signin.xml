@@ -192,7 +192,7 @@
                 app:layout_constraintStart_toStartOf="@+id/signin_3"
                 app:layout_constraintTop_toTopOf="@+id/signin_14"
                 app:outer_color="#FFCA28"
-                app:slider_height="72dp"
+                app:slider_height="40dp"
                 app:slider_locked="false"
                 app:text="@string/yzm"
                 app:text_size="14sp" />

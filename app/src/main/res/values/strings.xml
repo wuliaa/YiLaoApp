@@ -110,6 +110,7 @@
     <string name="pen">笔</string>
     <string name="find">寻物启事</string>
     <string name="lost">失物招领</string>
+    <string name="shareTools">共享工具</string>
     <string name="study">组队学习</string>
     <string name="east">其他</string>
     <string name="TopUpSuccess">充值成功</string>
@@ -202,4 +203,35 @@
     <string name="release_purchase">发布代购</string>
     <string name="release_idle">发布闲置</string>
     <string name="basic">Basic</string>
+    <string name="chattime">上午 10:00</string>
+    <string name="object">物品</string>
+    <string name="detail">详情</string>
+    <string name="save_picture">保存图片</string>
+    <string name="teamStudy">组队学习</string>
+    <string name="activityname">活动名称</string>
+    <string name="hello">你好</string>
+    <string name="Tip">提示</string>
+    <string name="applypermission">请申请权限</string>
+    <string name="cancel">取消</string>
+
+
+    <string name="makeup">化妆品</string>
+    <string name="bag">包包</string>
+    <string name="shoes">鞋子</string>
+    <string name="special_edition">专辑</string>
+    <string name="book">书籍</string>
+    <string name="other">其他</string>
+
+    <string name="purchase">代购</string>
+    <string name="find_purchase">找代购</string>
+    <string name="contact">联系对方</string>
+    <string name="addtask">加入任务</string>
+    <string name="myPublishTask">发布的任务</string>
+    <string name="myAcceptTask">接受的任务</string>
+    <string name="bulletinContent">请您填写您的公告详细信息内容,包括商议地点、时间或方式</string>
+    <string name="bulletinType">公告类型</string>
+    <string name="bulletinTime">丢失时间</string>
+    <string name="bulletinTimeHint">如果不是失物招领则不用填</string>
+    <string name="lostAddress">丢失地点</string>
+    <string name="lostAddressHint">请填写丢失地点</string>
 </resources>

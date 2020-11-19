@@ -10,10 +10,6 @@
         android:icon="@drawable/ic_baseline_shopping_basket_24"
         android:title="@string/Purchase" />
     <item
-        android:id="@+id/idleFragment"
-        android:icon="@drawable/ic_baseline_photo_filter_24"
-        android:title="@string/Idle" />
-    <item
         android:id="@+id/bullentinFragment"
         android:icon="@drawable/ic_baseline_dns_24"
         android:title="@string/Bulletin" />

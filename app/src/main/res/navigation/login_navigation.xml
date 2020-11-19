@@ -33,13 +33,5 @@
     <fragment
         android:id="@+id/userFragment2"
         android:name="com.example.yilaoapp.ui.mine.UserFragment"
-        android:label="UserFragment" >
-        <action
-            android:id="@+id/action_userFragment2_to_signinSuccessFragment2"
-            app:destination="@id/signinSuccessFragment2" />
-    </fragment>
-    <fragment
-        android:id="@+id/signinSuccessFragment2"
-        android:name="com.example.yilaoapp.ui.mine.SigninSuccessFragment"
-        android:label="SigninSuccessFragment" />
+        android:label="UserFragment" />
 </navigation>

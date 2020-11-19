@@ -8,9 +8,6 @@
         android:id="@+id/purchaseMessageFragment"
         android:title="@string/release_purchase" />
     <item
-        android:id="@+id/idleMessageFragment"
-        android:title="@string/release_idle" />
-    <item
         android:id="@+id/bullentinMessageFragment"
         android:title="@string/release_bullentin" />
 </menu>

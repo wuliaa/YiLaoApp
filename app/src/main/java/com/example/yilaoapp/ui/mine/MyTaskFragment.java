@@ -15,49 +15,22 @@ import android.widget.TextView;
 
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentMyTaskBinding;
+import com.example.yilaoapp.ui.bulletin.LostFoundFragment;
+import com.example.yilaoapp.ui.errands.ErrandsFragment;
+import com.example.yilaoapp.ui.purchase.PurchaseListFragment;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link MyTaskFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class MyTaskFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    public MyTaskFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MyTaskFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MyTaskFragment newInstance(String param1, String param2) {
-        MyTaskFragment fragment = new MyTaskFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    public MyTaskFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            // TODO: Rename and change types of parameters
-            String mParam1 = getArguments().getString(ARG_PARAM1);
-            String mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
     FragmentMyTaskBinding binding;
     @Override
@@ -75,6 +48,15 @@ public class MyTaskFragment extends Fragment {
                 controller.popBackStack();
             }
         });
+        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
+                getChildFragmentManager(), FragmentPagerItems.with(getContext())
+                .add(R.string.Errands, MyErrandsFragment.class)
+                .add(R.string.Purchase, MyPurchaseFragment.class)
+                .add(R.string.Bulletin, MyBulletinFragment.class)
+                .create());
+        binding.viewpager.setAdapter(adapter);
+        binding.viewpagertab.setViewPager(binding.viewpager);
+
         return binding.getRoot();
         //return inflater.inflate(R.layout.fragment_my_task, container, false);
     }

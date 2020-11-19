@@ -14,19 +14,11 @@
         android:layout_height="match_parent"
         tools:context=".ui.errands.ErrandsMessageFragment">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <View
-                android:id="@+id/view"
-                android:layout_width="wrap_content"
-                android:layout_height="2dp"
-                android:background="@color/div_white"
-                app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -34,416 +26,170 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-
-            </androidx.appcompat.widget.Toolbar>
-
-            <TextView
-                android:id="@+id/biaoti"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/message"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/toolbar" />
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:title="@string/release_errands"
+                app:titleTextAppearance="@style/toolbarTitle" />
 
             <ScrollView
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
-
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_1"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:orientation="vertical"
-                        app:layout_constraintGuide_percent="0.11" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_2"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:orientation="vertical"
-                        app:layout_constraintGuide_percent="0.2" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_constraintGuide_percent="0.32" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_constraintGuide_percent="0.29" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_constraintGuide_percent="0.7" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_constraintGuide_percent="0.98" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_7"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_constraintGuide_percent="0.02" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_8"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_constraintGuide_percent="0.45" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_9"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintGuide_percent="0.08" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_10"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintGuide_percent="0.04" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_11"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintGuide_percent="0.24" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_12"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintGuide_percent="0.25" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_13"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintGuide_percent="0.39" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_14"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintGuide_percent="0.4" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_15"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintGuide_percent="0.48" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_16"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintGuide_percent="0.56" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_17"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintGuide_percent="0.64" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_18"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintGuide_percent="0.72" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_19"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintGuide_percent="0.8" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_20"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintGuide_percent="0.88" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/errandsmessage_21"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintGuide_percent="0.98" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <EditText
-                        android:id="@+id/errandsmessage_edit"
-                        android:layout_width="393dp"
-                        android:layout_height="117dp"
-                        android:background="@null"
-                        android:gravity="top"
+                        android:id="@+id/editTextTextMultiLine"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_weight="0.8"
+                        android:ems="10"
+                        android:gravity="start|top"
                         android:hint="@string/need"
-                        android:padding="5dp"
-                        android:textColor="@color/text_color"
-                        android:textCursorDrawable="@drawable/color_cursor"
-                        android:textSize="20sp"
-                        app:layout_constraintBottom_toTopOf="@+id/errandsmessage_11"
-                        app:layout_constraintEnd_toStartOf="@+id/errandsmessage_6"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="@+id/errandsmessage_7"
-                        app:layout_constraintTop_toTopOf="@+id/errandsmessage_10" />
+                        android:inputType="textMultiLine" />
 
                     <View
-                        android:id="@+id/view8"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/view6"
+                        android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:background="@color/div_white"
-                        app:layout_constraintBottom_toBottomOf="@+id/errandsmessage_11"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/errandsmessage_11" />
-
-                    <ImageView
-                        android:id="@+id/errandsmessage_photo"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        app:layout_constraintBottom_toTopOf="@+id/errandsmessage_13"
-                        app:layout_constraintEnd_toStartOf="@+id/errandsmessage_4"
-                        app:layout_constraintHorizontal_bias="0.512"
-                        app:layout_constraintStart_toStartOf="@+id/errandsmessage_7"
-                        app:layout_constraintTop_toTopOf="@+id/errandsmessage_12"
-                        app:srcCompat="@drawable/add" />
+                        android:background="@color/div_white" />
 
                     <View
-                        android:id="@+id/view9"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/view7"
+                        android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:background="@color/div_white"
-                        app:layout_constraintBottom_toTopOf="@+id/errandsmessage_14"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/errandsmessage_14"
-                        app:layout_constraintVertical_bias="0.0" />
+                        android:background="@color/div_white" />
 
-                    <EditText
-                        android:id="@+id/errandsmessage_address"
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/saddress"
-                        android:inputType="textPersonName"
-                        android:textColor="@color/text_color"
-                        android:textCursorDrawable="@drawable/color_cursor"
-                        android:textSize="20sp"
-                        android:theme="@style/MyEditText"
-                        app:layout_constraintBottom_toTopOf="@+id/errandsmessage_15"
-                        app:layout_constraintEnd_toStartOf="@+id/errandsmessage_5"
-                        app:layout_constraintStart_toStartOf="@+id/errandsmessage_7"
-                        app:layout_constraintTop_toTopOf="@+id/errandsmessage_13" />
+                        android:layout_weight="1.5"
+                        android:orientation="horizontal">
 
-                    <RadioButton
-                        android:id="@+id/radioButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:buttonTint="@color/themecolor"
-                        android:text="@string/bcoaddress"
-                        android:textColor="@color/text_color"
-                        android:textSize="20sp"
-                        app:layout_constraintBottom_toTopOf="@+id/errandsmessage_16"
-                        app:layout_constraintEnd_toStartOf="@+id/errandsmessage_8"
-                        app:layout_constraintStart_toStartOf="@+id/errandsmessage_7"
-                        app:layout_constraintTop_toTopOf="@+id/errandsmessage_15" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/errandsmessage_usually"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/oaddress"
-                        android:textColor="@color/text_color"
-                        android:textSize="20sp"
-                        app:layout_constraintBottom_toTopOf="@+id/errandsmessage_15"
-                        app:layout_constraintEnd_toStartOf="@+id/errandsmessage_6"
-                        app:layout_constraintStart_toStartOf="@+id/errandsmessage_5"
-                        app:layout_constraintTop_toTopOf="@+id/errandsmessage_13" />
+                            <TextView
+                                android:id="@+id/address"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginBottom="15dp"
+                                android:text="@string/address1"
+                                android:textAlignment="viewStart"
+                                android:textSize="18sp" />
 
-                    <RadioGroup
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:orientation="horizontal"
-                        app:layout_constraintBottom_toTopOf="@+id/errandsmessage_17"
-                        app:layout_constraintEnd_toStartOf="@+id/errandsmessage_6"
-                        app:layout_constraintStart_toStartOf="@+id/errandsmessage_7"
-                        app:layout_constraintTop_toTopOf="@+id/errandsmessage_16">
+                            <TextView
+                                android:id="@+id/money"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginBottom="15dp"
+                                android:text="@string/money"
+                                android:textSize="18sp" />
 
-                        <RadioButton
-                            android:id="@+id/errandsmessage_radioButton1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:buttonTint="@color/themecolor"
-                            android:checked="true"
-                            android:text="@string/bx"
-                            android:textColor="@color/text_color"
-                            android:textSize="20sp" />
+                            <TextView
+                                android:id="@+id/limit_time"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginBottom="15dp"
+                                android:text="@string/ltime"
+                                android:textSize="18sp" />
 
-                        <RadioButton
-                            android:id="@+id/errandsmessage_radioButton2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:buttonTint="@color/themecolor"
-                            android:text="@string/xboy"
-                            android:textColor="@color/text_color"
-                            android:textSize="20sp" />
+                            <TextView
+                                android:id="@+id/telephone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginBottom="15dp"
+                                android:text="@string/phonenumber"
+                                android:textSize="18sp" />
+                        </LinearLayout>
 
-                        <RadioButton
-                            android:id="@+id/errandsmessage_radioButton3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:buttonTint="@color/themecolor"
-                            android:text="@string/xgirl"
-                            android:textColor="@color/text_color"
-                            android:textSize="20sp" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:layout_weight="3"
+                            android:orientation="vertical">
 
-                    </RadioGroup>
+                            <com.rengwuxian.materialedittext.MaterialEditText
+                                android:id="@+id/address_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="45dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:autofillHints=""
+                                android:ems="10"
+                                android:hint="@string/saddress"
+                                android:inputType="textMultiLine"
+                                android:textColor="@color/text_color"
+                                tools:targetApi="o" />
 
-                    <TextView
-                        android:id="@+id/errandsmessage_textView1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/money"
-                        android:textColor="@color/text_color"
-                        android:textSize="20sp"
-                        app:layout_constraintBottom_toTopOf="@+id/errandsmessage_18"
-                        app:layout_constraintEnd_toStartOf="@+id/errandsmessage_2"
-                        app:layout_constraintStart_toStartOf="@+id/errandsmessage_7"
-                        app:layout_constraintTop_toTopOf="@+id/errandsmessage_17" />
+                            <com.rengwuxian.materialedittext.MaterialEditText
+                                android:id="@+id/money_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="45dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:autofillHints=""
+                                android:ems="10"
+                                android:hint="@string/lrmb"
+                                android:inputType="textMultiLine"
+                                android:textColor="@color/text_color"
+                                tools:targetApi="o" />
 
-                    <EditText
-                        android:id="@+id/errandsmessage_money"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/lrmb"
-                        android:inputType="textPersonName"
-                        android:textColor="@color/text_color"
-                        android:textCursorDrawable="@drawable/color_cursor"
-                        android:textSize="20sp"
-                        android:theme="@style/MyEditText"
-                        app:layout_constraintBottom_toTopOf="@+id/errandsmessage_18"
-                        app:layout_constraintStart_toStartOf="@+id/errandsmessage_2"
-                        app:layout_constraintTop_toTopOf="@+id/errandsmessage_17" />
+                            <com.rengwuxian.materialedittext.MaterialEditText
+                                android:id="@+id/limit_time_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="45dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:autofillHints=""
+                                android:ems="10"
+                                android:hint="@string/ntime"
+                                android:inputType="textMultiLine"
+                                android:textColor="@color/text_color"
+                                tools:targetApi="o" />
 
-                    <TextView
-                        android:id="@+id/errandsmessage_t"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/ltime"
-                        android:textColor="@color/text_color"
-                        android:textSize="20sp"
-                        app:layout_constraintBottom_toTopOf="@+id/errandsmessage_19"
-                        app:layout_constraintEnd_toStartOf="@+id/errandsmessage_4"
-                        app:layout_constraintStart_toStartOf="@+id/errandsmessage_7"
-                        app:layout_constraintTop_toTopOf="@+id/errandsmessage_18" />
-
-                    <EditText
-                        android:id="@+id/errandsmessage_time"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/ntime"
-                        android:inputType="textPersonName"
-                        android:textColor="@color/text_color"
-                        android:textCursorDrawable="@drawable/color_cursor"
-                        android:textSize="20sp"
-                        android:theme="@style/MyEditText"
-                        app:layout_constraintBottom_toTopOf="@+id/errandsmessage_19"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/errandsmessage_4"
-                        app:layout_constraintTop_toTopOf="@+id/errandsmessage_18" />
-
-                    <TextView
-                        android:id="@+id/errandsmessage_n"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/phonenumber"
-                        android:textColor="@color/text_color"
-                        android:textSize="20sp"
-                        app:layout_constraintBottom_toTopOf="@+id/errandsmessage_20"
-                        app:layout_constraintEnd_toStartOf="@+id/errandsmessage_4"
-                        app:layout_constraintStart_toStartOf="@+id/errandsmessage_7"
-                        app:layout_constraintTop_toTopOf="@+id/errandsmessage_19" />
-
-                    <EditText
-                        android:id="@+id/errandsmessage_phone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:inputType="phone"
-                        android:textColor="@color/text_color"
-                        android:textCursorDrawable="@drawable/color_cursor"
-                        android:textSize="20sp"
-                        android:theme="@style/MyEditText"
-                        app:layout_constraintBottom_toTopOf="@+id/errandsmessage_20"
-                        app:layout_constraintStart_toStartOf="@+id/errandsmessage_4"
-                        app:layout_constraintTop_toTopOf="@+id/errandsmessage_19" />
+                            <com.rengwuxian.materialedittext.MaterialEditText
+                                android:id="@+id/telephone_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="45dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:autofillHints=""
+                                android:ems="10"
+                                android:hint="@string/phone"
+                                android:inputType="textMultiLine"
+                                android:textColor="@color/text_color"
+                                tools:targetApi="o" />
+                        </LinearLayout>
+                    </LinearLayout>
 
                     <Button
-                        android:id="@+id/errandsmessage_ok"
+                        android:id="@+id/button2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="80dp"
                         android:background="@drawable/button_deepen"
-                        android:text="@string/ok"
-                        android:textColor="#FFFFFF"
-                        android:textSize="20sp"
-                        app:layout_constraintBottom_toTopOf="@+id/errandsmessage_21"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/errandsmessage_20" />
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
+                        android:text="@string/Determine"
+                        android:textColor="@color/colorTitle"
+                        android:textSize="16sp" />
+                </LinearLayout>
             </ScrollView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+        </LinearLayout>
     </FrameLayout>
 </layout>

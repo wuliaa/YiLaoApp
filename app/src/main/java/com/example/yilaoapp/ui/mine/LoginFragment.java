@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,41 +19,23 @@ import com.example.yilaoapp.LoginActivity;
 import com.example.yilaoapp.MainActivity;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentLoginBinding;
+import com.example.yilaoapp.user.RetrofitUser;
+import com.example.yilaoapp.user.User;
+import com.example.yilaoapp.user.UserService;
 
 import java.util.Objects;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link LoginFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class LoginFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
     public LoginFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment LoginFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static LoginFragment newInstance(String param1, String param2) {
-        LoginFragment fragment = new LoginFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     public static LoginFragment newInstance() {
@@ -62,13 +45,10 @@ public class LoginFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            // TODO: Rename and change types of parameters
-            String mParam1 = getArguments().getString(ARG_PARAM1);
-            String mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
     FragmentLoginBinding binding;
+    private User user;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,6 +77,23 @@ public class LoginFragment extends Fragment {
                 controller.navigate(R.id.action_loginFragment2_to_signinFragment2);
             }
         });
+
+//        UserService service = new RetrofitUser().getService();
+//        Call<User> callback = service.login(binding.loginEdittext2.getText().toString(),
+//                binding.loginEdittext3.getText().toString());
+//        callback.enqueue(new Callback<User>() {
+//            @Override
+//            public void onResponse(Call<User> call, Response<User> response) {
+//                Log.i("isSuccess","true");
+//                user = response.body();
+//                System.out.println("成功");
+//            }
+//            @Override
+//            public void onFailure (Call < User > call, Throwable t){
+//                System.out.println("失败");
+//            }
+//        });
+
         return binding.getRoot();
         //return inflater.inflate(R.layout.fragment_login, container, false);
     }

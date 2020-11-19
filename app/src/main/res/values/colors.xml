@@ -37,4 +37,13 @@
     <color name="fbutton_color_silver">#bdc3c7</color>
     <color name="fbutton_color_concrete">#95a5a6</color>
     <color name="fbutton_color_asbestos">#7f8c8d</color>
+
+    <color name="clear">#00000000</color>
+    <color name="block">#60000000</color>
+
+    <color name="red">#e94f4f</color>
+    <color name="gray_transparent">#a6efefef</color>
+    <color name="color_fa">#fafafa</color>
+    <color name="bar_grey_90">#F3F3F3</color>
+
 </resources>

@@ -5,10 +5,14 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     defaultConfig {
         applicationId "com.example.yilaoapp"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         dataBinding.enabled = true
@@ -24,25 +28,56 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.navigation:navigation-fragment:2.3.0'
-    implementation 'androidx.navigation:navigation-ui:2.3.0'
-    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.0-alpha07"
+    implementation 'androidx.navigation:navigation-fragment:2.3.1'
+    implementation 'androidx.navigation:navigation-ui:2.3.1'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.0-beta01"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    //多种形状的图片
     implementation 'com.github.siyamed:android-shape-imageview:0.9.3@aar'
+    //状态栏透明
     implementation 'com.jaeger.statusbarutil:library:1.4.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
+    //iphone样式switchbutton
     implementation 'com.kyleduo.switchbutton:library:2.0.2'
+    //material样式edittext
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.google.android.material:material:1.2.1'
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation "com.ncorti:slidetoact:0.9.0"
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    // Retrofit库
+    implementation 'com.squareup.okhttp3:okhttp:3.14.9'
+    // Okhttp库
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.github.mancj:MaterialSearchBar:0.8.5'
+    //tablayout
+    implementation 'com.ogaclejapan.smarttablayout:library:2.0.0@aar'
+    //Optional: see how to use the utility.
+    implementation 'com.ogaclejapan.smarttablayout:utils-v4:2.0.0@aar'
+    //可展开文本
+    implementation 'com.lcodecorex:extextview:1.0.2'
+    //activity、fragment传值
+    implementation 'org.greenrobot:eventbus:3.2.0'
+    //标签
+    implementation 'com.robertlevonyan.view:MaterialChipView:2.0.4'
+    //对话框
+    implementation 'com.kongzue.dialog_v3:dialog:3.2.4'
+    //聊天
+    //v2.2.3与glide版本不匹配会闪退
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
+    implementation 'com.nbsp:library:1.8'
+    implementation 'com.jakewharton:butterknife:10.0.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
+
 }
