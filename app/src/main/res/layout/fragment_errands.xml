@@ -38,7 +38,7 @@
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toTopOf="@+id/errandRecyclerview"
+                        app:layout_constraintBottom_toTopOf="@+id/swipe_errands"
                         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
                     </androidx.appcompat.widget.Toolbar>
@@ -56,15 +56,26 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/toolbar" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/errandRecyclerview"
-                android:layout_width="0dp"
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipe_errands"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/toolbar"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+                app:layout_constraintStart_toStartOf="parent">
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/errandRecyclerview"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </layout>

@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_myInformationFragment_to_errandsFragment"
             app:destination="@id/errandsFragment" />
+        <action
+            android:id="@+id/action_myInformationFragment_to_changePhoneFragment"
+            app:destination="@id/changePhoneFragment" />
     </fragment>
     <fragment
         android:id="@+id/myMessageFragment"
@@ -60,11 +63,7 @@
         android:id="@+id/errandsFragment"
         android:name="com.example.yilaoapp.ui.errands.ErrandsFragment"
         android:label="fragment_errands"
-        tools:layout="@layout/fragment_errands" >
-        <action
-            android:id="@+id/action_errandsFragment_to_errandsDetailFragment"
-            app:destination="@id/errandsDetailFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_errands" />
     <fragment
         android:id="@+id/purchaseFragment"
         android:name="com.example.yilaoapp.ui.purchase.PurchaseFragment"
@@ -88,15 +87,6 @@
         <action
             android:id="@+id/action_bullentinFragment_to_teamDetailFragment"
             app:destination="@id/teamDetailFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/errandsDetailFragment"
-        android:name="com.example.yilaoapp.ui.errands.ErrandsDetailFragment"
-        android:label="fragment_errands_message"
-        tools:layout="@layout/fragment_errands_detail" >
-        <action
-            android:id="@+id/action_errandsDetailFragment_to_errandsFragment"
-            app:destination="@id/errandsFragment" />
     </fragment>
     <fragment
         android:id="@+id/purchaseMessageFragment"
@@ -179,4 +169,8 @@
         android:id="@+id/myPurchaseDetailFragment"
         android:name="com.example.yilaoapp.ui.mine.MyPurchaseDetailFragment"
         android:label="MyPurchaseDetailFragment" />
+    <fragment
+        android:id="@+id/changePhoneFragment"
+        android:name="com.example.yilaoapp.ui.mine.ChangePhoneFragment"
+        android:label="ChangePhoneFragment" />
 </navigation>

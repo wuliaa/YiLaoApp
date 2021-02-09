@@ -40,7 +40,7 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
         holder.content.setText(errand.getContent());
         holder.time.setText(errand.getTime());
         holder.money.setText(errand.getMoney());
-        holder.nick.setText(errand.getNickName());
+        holder.RemainTime.setText(errand.getRemainTime());
     }
 
     @Override
@@ -50,14 +50,14 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
 
     class ErrandViewHolder extends RecyclerView.ViewHolder{
         ImageView head;
-        TextView objectName,time,nick;
+        TextView objectName,time,RemainTime;
         Chip money;
         ExpandTextView content;
         public ErrandViewHolder(@NonNull View itemView) {
             super(itemView);
             head=itemView.findViewById(R.id.errandPhoto);
             objectName=itemView.findViewById(R.id.errandObject);
-            nick=itemView.findViewById(R.id.errandNick);
+            RemainTime=itemView.findViewById(R.id.errandRtime);
             content= (ExpandTextView)itemView.findViewById(R.id.errandExText);
             time=itemView.findViewById(R.id.errandTime);
             money=itemView.findViewById(R.id.errandchip);

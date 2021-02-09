@@ -1,5 +1,6 @@
 package com.example.yilaoapp.ui.mine;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -9,17 +10,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.baoyachi.stepview.HorizontalStepView;
+import com.baoyachi.stepview.bean.StepBean;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentMyPurchaseDetailBinding;
 import com.github.siyamed.shapeimageview.RoundedImageView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,6 +47,7 @@ public class MyPurchaseDetailFragment extends Fragment {
     }
     FragmentMyPurchaseDetailBinding binding;
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -56,15 +66,28 @@ public class MyPurchaseDetailFragment extends Fragment {
         });
         Point p = new Point();//获取窗口管理器
         WindowManager wm = (WindowManager) container.getContext().getSystemService(Context.WINDOW_SERVICE);
+        assert wm != null;
         wm.getDefaultDisplay().getSize(p);
         int screenWidth = p.x; // 屏幕宽度
         binding.toolbar.setTitleMarginStart(screenWidth/3);
+        AtomicReference<String> label= new AtomicReference<>("");
 
         viewModel.getPurchase().observe(getViewLifecycleOwner(), item -> {
             binding.Mypurchasedcontent.setText(item.getContent());
             binding.Mypurchasedmoney.setText("金额："+item.getMoney());
             binding.Mypurchasedchip.setText(item.getIsPurchase() );
             binding.chip1.setText(item.getIsPublish());
+            //设置完成按钮
+            label.set(item.getIsPublish());
+            if(label.toString().equals("发布的任务"))
+            {
+                //Toast.makeText(getContext(),label.toString(),Toast.LENGTH_SHORT).show();
+                binding.compeleteButton.setVisibility(View.VISIBLE);
+            }
+            else {
+                //Toast.makeText(getContext(),label.toString(),Toast.LENGTH_SHORT).show();
+                binding.compeleteButton.setVisibility(View.GONE);
+            }
             int []imageid=item.getImageId();
             for (int i=0;i<imageid.length;i++) {
                 RoundedImageView view = new RoundedImageView(container.getContext());
@@ -77,6 +100,35 @@ public class MyPurchaseDetailFragment extends Fragment {
                 binding.MyImageGallery.addView(view);
             }
         });
+
+        HorizontalStepView setpview5 =(HorizontalStepView) binding.stepView;
+        List<StepBean> stepsBeanList = new ArrayList<>();
+        StepBean stepBean0 = new StepBean("发布",1);//1是完成，0是正在进行时，-1是还没有进行到
+        StepBean stepBean1 = new StepBean("领取",0);
+        StepBean stepBean2 = new StepBean("完成",-1);
+        stepsBeanList.add(stepBean0);
+        stepsBeanList.add(stepBean1);
+        stepsBeanList.add(stepBean2);
+
+        setpview5
+                .setStepViewTexts(stepsBeanList)//总步骤
+                .setTextSize(12)//set textSize
+                .setStepsViewIndicatorCompletedLineColor(
+                        ContextCompat.getColor(requireActivity(), android.R.color.white))//设置StepsViewIndicator完成线的颜色
+                .setStepsViewIndicatorUnCompletedLineColor(
+                        ContextCompat.getColor(requireActivity(), R.color.uncompleted_text_color))//设置StepsViewIndicator未完成线的颜色
+                .setStepViewComplectedTextColor(
+                        ContextCompat.getColor(requireActivity(), android.R.color.white))//设置StepsView text完成线的颜色
+                .setStepViewUnComplectedTextColor(
+                        ContextCompat.getColor(requireActivity(), R.color.uncompleted_text_color))//设置StepsView text未完成线的颜色
+                .setStepsViewIndicatorCompleteIcon(
+                        ContextCompat.getDrawable(requireActivity(), R.drawable.complted))//设置StepsViewIndicator CompleteIcon
+                .setStepsViewIndicatorDefaultIcon(
+                        ContextCompat.getDrawable(requireActivity(), R.drawable.default_icon))//设置StepsViewIndicator DefaultIcon
+                .setStepsViewIndicatorAttentionIcon(
+                        ContextCompat.getDrawable(requireActivity(), R.drawable.attention));//设置StepsViewIndicator AttentionIcon
+
+
         return binding.getRoot();
         //return inflater.inflate(R.layout.fragment_purchase_detail, container, false);
     }

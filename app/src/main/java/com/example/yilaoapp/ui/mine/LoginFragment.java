@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.yilaoapp.LoginActivity;
 import com.example.yilaoapp.MainActivity;
@@ -25,6 +26,7 @@ import com.example.yilaoapp.user.UserService;
 
 import java.util.Objects;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,8 +61,33 @@ public class LoginFragment extends Fragment {
         binding.loginImageview1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(requireActivity(), MainActivity.class);
-                startActivity(intent);
+                String mobile,password;
+                mobile=binding.loginEdittext.getText().toString();
+                password=binding.loginEdittext1.getText().toString();
+                if(mobile==null)
+                    Toast.makeText(getContext(),"请输入手机号码",Toast.LENGTH_LONG).show();
+                else if(password==null)
+                    Toast.makeText(getContext(),"请输入密码",Toast.LENGTH_LONG).show();
+                else if(mobile==null&&password==null)
+                    Toast.makeText(getContext(),"请输入手机号码和密码",Toast.LENGTH_LONG).show();
+                else{
+                    UserService loginservice=new RetrofitUser().get().create(UserService.class);
+                    Call<String> loginback=loginservice.login_password(mobile,"df3b72a07a0a4fa1854a48b543690eab",password);
+                    loginback.enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            //System.out.println(response.body());
+                            Toast.makeText(getContext(),"登录成功!",Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(requireActivity(), MainActivity.class);
+                            startActivity(intent);
+                            requireActivity().finish();
+                        }
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            Toast.makeText(getContext(),"账号密码错误",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
             }
         });
         binding.loginTextview1.setOnClickListener(new View.OnClickListener() {
@@ -77,22 +104,6 @@ public class LoginFragment extends Fragment {
                 controller.navigate(R.id.action_loginFragment2_to_signinFragment2);
             }
         });
-
-//        UserService service = new RetrofitUser().getService();
-//        Call<User> callback = service.login(binding.loginEdittext2.getText().toString(),
-//                binding.loginEdittext3.getText().toString());
-//        callback.enqueue(new Callback<User>() {
-//            @Override
-//            public void onResponse(Call<User> call, Response<User> response) {
-//                Log.i("isSuccess","true");
-//                user = response.body();
-//                System.out.println("成功");
-//            }
-//            @Override
-//            public void onFailure (Call < User > call, Throwable t){
-//                System.out.println("失败");
-//            }
-//        });
 
         return binding.getRoot();
         //return inflater.inflate(R.layout.fragment_login, container, false);

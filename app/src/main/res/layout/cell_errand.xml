@@ -44,7 +44,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:maxEms="12"
                 android:singleLine="false"
                 android:text="@string/Content"
@@ -55,7 +54,8 @@
                 app:arrowPosition="right"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/errandObject"
-                app:layout_constraintTop_toBottomOf="@+id/errandObject"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.39"
                 app:maxCollapsedLines="1" />
 
             <androidx.constraintlayout.widget.Guideline
@@ -73,20 +73,6 @@
                 app:layout_constraintGuide_percent="0.78" />
 
             <TextView
-                android:id="@+id/errandNick"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/Nick"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toTopOf="@+id/errandObject"
-                app:layout_constraintEnd_toStartOf="@+id/guideline20"
-                app:layout_constraintHorizontal_bias="0.05"
-                app:layout_constraintStart_toStartOf="@+id/guideline19"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
                 android:id="@+id/errandTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -96,17 +82,19 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline20"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.37" />
 
             <TextView
                 android:id="@+id/errandObject"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:text="@string/object"
                 app:layout_constraintBottom_toTopOf="@+id/errandExText"
-                app:layout_constraintStart_toStartOf="@+id/errandNick"
-                app:layout_constraintTop_toBottomOf="@+id/errandNick" />
+                app:layout_constraintEnd_toStartOf="@+id/guideline20"
+                app:layout_constraintHorizontal_bias="0.03"
+                app:layout_constraintStart_toStartOf="@+id/guideline19"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.robertlevonyan.views.chip.Chip
                 android:id="@+id/errandchip"
@@ -123,6 +111,36 @@
                 app:mcv_cornerRadius="360dp"
                 app:mcv_strokeSize="2dp"
                 app:mcv_textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gettask"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline20"
+                app:layout_constraintTop_toBottomOf="@+id/errandTime"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/errandremaintime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ErrandRemainTime"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/errandExText"
+                app:layout_constraintTop_toBottomOf="@+id/errandExText" />
+
+            <TextView
+                android:id="@+id/errandRtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ErrandRtime"
+                app:layout_constraintBottom_toBottomOf="@+id/errandremaintime"
+                app:layout_constraintEnd_toStartOf="@+id/guideline20"
+                app:layout_constraintHorizontal_bias="0.02"
+                app:layout_constraintStart_toEndOf="@+id/errandremaintime" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

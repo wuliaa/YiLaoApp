@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentMyErrandsBinding;
@@ -25,7 +26,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyErrandsFragment extends Fragment {
+public class MyErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     public MyErrandsFragment() {
         // Required empty public constructor
@@ -47,6 +48,7 @@ public class MyErrandsFragment extends Fragment {
         viewModel = ViewModelProviders.of(requireActivity()).get(MineViewModel.class);
         binding.setData(viewModel);
         binding.setLifecycleOwner(requireActivity());
+        binding.swipeMyerrand.setOnRefreshListener(this);
         initContents();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -89,5 +91,15 @@ public class MyErrandsFragment extends Fragment {
                     "￥28/一份", "跑腿","发布的任务",imageid);
             errandsList.add(l3);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        binding.swipeMyerrand.postDelayed(new Runnable() { // 发送延迟消息到消息队列
+            @Override
+            public void run() {
+                binding.swipeMyerrand.setRefreshing(false); // 是否显示刷新进度;false:不显示
+            }
+        },3000);
     }
 }

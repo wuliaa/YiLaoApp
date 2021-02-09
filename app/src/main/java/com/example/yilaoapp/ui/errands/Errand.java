@@ -2,15 +2,15 @@ package com.example.yilaoapp.ui.errands;
 
 public class Errand {
     private int imageId;
-    private String nickName;
+    private String remainTime;
     private String objectName;
     private String content;
     private String time;
     private String money;
 
-    public Errand(int imageId, String nickName, String objectName, String content, String time, String money) {
+    public Errand(int imageId, String remainTime, String objectName, String content, String time, String money) {
         this.imageId = imageId;
-        this.nickName = nickName;
+        this.remainTime = remainTime;
         this.objectName = objectName;
         this.content = content;
         this.time = time;
@@ -25,12 +25,12 @@ public class Errand {
         this.imageId = imageId;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getRemainTime() {
+        return remainTime;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setRemainTime(String remainTime) {
+        this.remainTime = remainTime;
     }
 
     public String getObjectName() {

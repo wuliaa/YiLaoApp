@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentMyBulletinBinding;
@@ -25,7 +26,7 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
 
  */
-public class MyBulletinFragment extends Fragment {
+public class MyBulletinFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
 
 
@@ -50,6 +51,8 @@ public class MyBulletinFragment extends Fragment {
         viewModel = ViewModelProviders.of(requireActivity()).get(MineViewModel.class);
         binding.setData(viewModel);
         binding.setLifecycleOwner(requireActivity());
+
+        binding.swipeMybulletin.setOnRefreshListener(this);
         initContents();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -94,5 +97,15 @@ public class MyBulletinFragment extends Fragment {
                     "可以商讨", "图书馆","组对学习",imageid);
             bulletinList.add(l3);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        binding.swipeMybulletin.postDelayed(new Runnable() { // 发送延迟消息到消息队列
+            @Override
+            public void run() {
+                binding.swipeMybulletin.setRefreshing(false); // 是否显示刷新进度;false:不显示
+            }
+        },3000);
     }
 }

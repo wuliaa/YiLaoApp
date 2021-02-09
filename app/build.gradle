@@ -79,5 +79,8 @@ dependencies {
     implementation 'com.nbsp:library:1.8'
     implementation 'com.jakewharton:butterknife:10.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
-
+    //登录注册
+    implementation 'com.github.florent37:materialtextfield:1.0.7'
+    //stepview
+    implementation 'com.github.baoyachi:StepView:1.9'
 }

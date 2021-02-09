@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentPurchaseListBinding;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PurchaseListFragment extends Fragment {
+public class PurchaseListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     public PurchaseListFragment() {
         // Required empty public constructor
@@ -43,6 +44,7 @@ public class PurchaseListFragment extends Fragment {
         viewModel = ViewModelProviders.of(requireActivity()).get(PurchaseViewModel.class);
         binding.setData(viewModel);
         binding.setLifecycleOwner(requireActivity());
+        binding.swipePurchase.setOnRefreshListener(this);
         initContents();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -83,5 +85,15 @@ public class PurchaseListFragment extends Fragment {
                     "￥2800/50ml", "代购",imageid);
             purchaseList.add(l3);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        binding.swipePurchase.postDelayed(new Runnable() { // 发送延迟消息到消息队列
+            @Override
+            public void run() {
+                binding.swipePurchase.setRefreshing(false); // 是否显示刷新进度;false:不显示
+            }
+        },3000);
     }
 }

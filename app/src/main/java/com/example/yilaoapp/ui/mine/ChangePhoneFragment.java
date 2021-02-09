@@ -1,10 +1,9 @@
-package com.example.yilaoapp.ui.errands;
+package com.example.yilaoapp.ui.mine;
 
 import android.os.Bundle;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -13,27 +12,28 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.yilaoapp.R;
-import com.example.yilaoapp.databinding.FragmentErrandsDetailBinding;
+import com.example.yilaoapp.databinding.FragmentChangePhoneBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class ErrandsDetailFragment extends Fragment {
+public class ChangePhoneFragment extends Fragment {
 
-    public ErrandsDetailFragment() {}
+    FragmentChangePhoneBinding binding;
+    public ChangePhoneFragment() {
+        // Required empty public constructor
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
-    FragmentErrandsDetailBinding binding;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_errands_detail,container,false);
-        ErrandsViewModel viewModel = ViewModelProviders.of(requireActivity()).get(ErrandsViewModel.class);
-        binding.setData(viewModel);
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_change_phone,container,false);
+        //binding.setData(MineViewModel);
         binding.setLifecycleOwner(requireActivity());
         binding.toolbar.setNavigationIcon(R.drawable.ic_baseline_chevron_left_24);
         binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -43,14 +43,7 @@ public class ErrandsDetailFragment extends Fragment {
                 controller.popBackStack();
             }
         });
-        viewModel.getErrand().observe(getViewLifecycleOwner(), item -> {
-            binding.erranddcontent.setText(item.getContent());
-            binding.erranddHead.setImageResource(item.getImageId());
-            binding.erranddtime.setText(item.getTime());
-            binding.erranddchip.setText(item.getMoney());
-            binding.erranddname.setText(item.getNickName());
-            binding.erranddobject.setText(item.getObjectName());
-        });
         return binding.getRoot();
+        //return inflater.inflate(R.layout.fragment_change_phone, container, false);
     }
 }
