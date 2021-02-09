@@ -1,11 +1,13 @@
 package com.example.yilaoapp.ui.purchase;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -62,6 +64,16 @@ public class PurchaseDetailFragment extends Fragment {
                 if(i==0) lp.setMargins(0,0,0,40);
                 else lp.setMargins(0,40,0,40);
                 view.setLayoutParams(lp);
+                view.setOnClickListener(v-> {
+                    new Handler(new Handler.Callback() {
+                        @Override
+                        public boolean handleMessage(@NonNull android.os.Message msg) {
+                            NavController controller = Navigation.findNavController(v);
+                            controller.navigate(R.id.action_purchaseDetailFragment_to_purchasePhotoFragment);
+                            return false;
+                        }
+                    }).sendEmptyMessageDelayed(0, 300);
+                });
                 binding.imageGallery.addView(view);
             }
         });

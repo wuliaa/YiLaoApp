@@ -16,6 +16,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.view.Gravity;
@@ -30,6 +31,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentErrandsBinding;
@@ -47,7 +49,7 @@ import java.util.Objects;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ErrandsFragment extends Fragment {
+public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     private ErrandsViewModel mViewModel;
         public ErrandsFragment() {}
@@ -82,6 +84,7 @@ public class ErrandsFragment extends Fragment {
         });
         setHasOptionsMenu(true);
 
+        binding.swipeErrands.setOnRefreshListener(this);
         initErrands();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -97,8 +100,6 @@ public class ErrandsFragment extends Fragment {
                     @Override
                     public boolean handleMessage(@NonNull android.os.Message msg) {
                         //Toast.makeText(getActivity(),"我是item",Toast.LENGTH_SHORT).show();
-                        NavController controller = Navigation.findNavController(view);
-                        controller.navigate(R.id.action_errandsFragment_to_errandsDetailFragment);
                         mViewModel.setErrand(data);
                         return false;
                     }
@@ -122,16 +123,26 @@ public class ErrandsFragment extends Fragment {
     }
     private void initErrands() {
         for (int i = 0; i < 2; i++) {
-            Errand e1 = new Errand(R.drawable.head1,"Bob","快递","南区" +
+            Errand e1 = new Errand(R.drawable.head1,"快递","南区" +
                     "菜鸟驿站拿两个快递","下午 6:00","2￥");
             errandList.add(e1);
-            Errand e2 = new Errand(R.drawable.head2,"Tom","外卖","西门外" +
+            Errand e2 = new Errand(R.drawable.head2,"外卖","西门外" +
                     "卖可帮忙拿到陶园吗","上午 9:00","1￥");
             errandList.add(e2);
-            Errand e3 = new Errand(R.drawable.head3,"Jack","水果","西门" +
+            Errand e3 = new Errand(R.drawable.head3,"水果","西门" +
                     "水果店代买",
                     "下午14:00", "2￥");
             errandList.add(e3);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        binding.swipeErrands.postDelayed(new Runnable() { // 发送延迟消息到消息队列
+            @Override
+            public void run() {
+                binding.swipeErrands.setRefreshing(false); // 是否显示刷新进度;false:不显示
+            }
+        },3000);
     }
 }

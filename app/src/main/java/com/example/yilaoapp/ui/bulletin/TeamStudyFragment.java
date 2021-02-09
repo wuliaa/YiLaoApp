@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -24,7 +25,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TeamStudyFragment extends Fragment {
+public class TeamStudyFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     public TeamStudyFragment() {}
 
@@ -43,6 +44,8 @@ public class TeamStudyFragment extends Fragment {
         viewModel = ViewModelProviders.of(requireActivity()).get(BullentinViewModel.class);
         binding.setData(viewModel);
         binding.setLifecycleOwner(requireActivity());
+
+        binding.swipeTeam.setOnRefreshListener(this);
         initTeams();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -82,5 +85,15 @@ public class TeamStudyFragment extends Fragment {
                     "下午14:00", R.drawable.head3);
             teamList.add(t3);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        binding.swipeTeam.postDelayed(new Runnable() { // 发送延迟消息到消息队列
+            @Override
+            public void run() {
+                binding.swipeTeam.setRefreshing(false); // 是否显示刷新进度;false:不显示
+            }
+        },3000);
     }
 }

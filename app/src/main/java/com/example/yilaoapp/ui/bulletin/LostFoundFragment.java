@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -25,7 +26,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LostFoundFragment extends Fragment {
+public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     public LostFoundFragment() {}
 
@@ -44,6 +45,8 @@ public class LostFoundFragment extends Fragment {
         viewModel = ViewModelProviders.of(requireActivity()).get(BullentinViewModel.class);
         binding.setData(viewModel);
         binding.setLifecycleOwner(requireActivity());
+
+        binding.swipeLost.setOnRefreshListener(this);
         initLosts();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -81,5 +84,15 @@ public class LostFoundFragment extends Fragment {
                     "下午14:00", "一课北座",R.drawable.lost3);
             lostList.add(l3);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        binding.swipeLost.postDelayed(new Runnable() { // 发送延迟消息到消息队列
+            @Override
+            public void run() {
+                binding.swipeLost.setRefreshing(false); // 是否显示刷新进度;false:不显示
+            }
+        },3000);
     }
 }

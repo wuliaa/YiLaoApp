@@ -10,6 +10,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -32,7 +33,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ShareToolsFragment extends Fragment {
+public class ShareToolsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     public ShareToolsFragment() {}
 
@@ -51,6 +52,7 @@ public class ShareToolsFragment extends Fragment {
         viewModel = ViewModelProviders.of(requireActivity()).get(BullentinViewModel.class);
         binding.setData(viewModel);
         binding.setLifecycleOwner(requireActivity());
+        binding.swipeShare.setOnRefreshListener(this);
         initShares();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -89,5 +91,15 @@ public class ShareToolsFragment extends Fragment {
                     "下午14:00", R.drawable.photo3);
             shareList.add(s3);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        binding.swipeShare.postDelayed(new Runnable() { // 发送延迟消息到消息队列
+            @Override
+            public void run() {
+                binding.swipeShare.setRefreshing(false); // 是否显示刷新进度;false:不显示
+            }
+        },3000);
     }
 }

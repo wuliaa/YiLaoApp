@@ -12,6 +12,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -39,7 +40,7 @@ import io.reactivex.functions.Consumer;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyMessageFragment extends Fragment {
+public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     public MyMessageFragment() {
         // Required empty public constructor
@@ -66,6 +67,7 @@ public class MyMessageFragment extends Fragment {
                 controller.popBackStack();
             }
         });
+        binding.swipeMymessage.setOnRefreshListener(this);
         initMessages();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -73,16 +75,12 @@ public class MyMessageFragment extends Fragment {
         MessageAdapter adapter = new MessageAdapter(messageList);
         binding.messageRecyclerview.setAdapter(adapter);
 
-        //RecyclerView中没有item的监听事件，需要自己在适配器中写一个监听事件的接口。参数根据自定义
         adapter.setOnItemClickListener(new MessageAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(View view, Message data) {
                 new Handler(new Handler.Callback() {
                     @Override
                     public boolean handleMessage(@NonNull android.os.Message msg) {
-                        //Toast.makeText(getActivity(),"我是item",Toast.LENGTH_SHORT).show();
-//                        NavController controller = Navigation.findNavController(view);
-//                        controller.navigate(R.id.action_myMessageFragment_to_chatFragment);
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -124,28 +122,32 @@ public class MyMessageFragment extends Fragment {
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {
                         if (aBoolean) {
-//                            startActivity(new Intent(requireActivity(),ChatActivity.class));
-//                            requireActivity().finish();
                             Intent intent = new Intent(requireActivity(), ChatActivity.class);
                             startActivity(intent);
-
                         } else {
                             SetPermissionDialog mSetPermissionDialog = new SetPermissionDialog(getContext());
                             mSetPermissionDialog.show();
                             mSetPermissionDialog.setConfirmCancelListener(new SetPermissionDialog.OnConfirmCancelClickListener() {
                                 @Override
                                 public void onLeftClick() {
-
                                     //requireActivity().finish();
                                 }
                                 @Override
                                 public void onRightClick() {
-
                                     //requireActivity().finish();
                                 }
                             });
                         }
                     }
                 });
+    }
+    @Override
+    public void onRefresh() {
+        binding.swipeMymessage.postDelayed(new Runnable() { // 发送延迟消息到消息队列
+            @Override
+            public void run() {
+                binding.swipeMymessage.setRefreshing(false); // 是否显示刷新进度;false:不显示
+            }
+        },3000);
     }
 }

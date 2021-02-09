@@ -38,6 +38,7 @@
     <string name="search_content">请输入你要搜索的内容</string>
     <string name="tab_text_1">Tab1</string>
     <string name="tab_text_2">Tab2</string>
+    <string name="gettask">领取任务</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -234,4 +235,10 @@
     <string name="bulletinTimeHint">如果不是失物招领则不用填</string>
     <string name="lostAddress">丢失地点</string>
     <string name="lostAddressHint">请填写丢失地点</string>
+    <string name="getcode">获取验证码</string>
+    <string name="state">任务状态：</string>
+    <string name="compeleteTask">完成任务</string>
+    <string name="ErrandRemainTime">剩余时间：</string>
+    <string name="ErrandRtime">30min</string>
+    <string name="myphone">我的手机</string>
 </resources>

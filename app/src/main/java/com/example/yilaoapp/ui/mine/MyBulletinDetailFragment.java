@@ -1,8 +1,10 @@
 package com.example.yilaoapp.ui.mine;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +12,22 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.baoyachi.stepview.HorizontalStepView;
+import com.baoyachi.stepview.bean.StepBean;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentMyBulletinDetailBinding;
 import com.github.siyamed.shapeimageview.RoundedImageView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,6 +43,7 @@ public class MyBulletinDetailFragment extends Fragment {
     }
     FragmentMyBulletinDetailBinding binding;
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,6 +62,7 @@ public class MyBulletinDetailFragment extends Fragment {
         });
         Point p = new Point();//获取窗口管理器
         WindowManager wm = (WindowManager) container.getContext().getSystemService(Context.WINDOW_SERVICE);
+        assert wm != null;
         wm.getDefaultDisplay().getSize(p);
         int screenWidth = p.x; // 屏幕宽度
         binding.toolbar.setTitleMarginStart(screenWidth / 3);
@@ -70,9 +81,22 @@ public class MyBulletinDetailFragment extends Fragment {
                 if(i==0) lp.setMargins(0,0,0,40);
                 else lp.setMargins(0,40,0,40);
                 view.setLayoutParams(lp);
+                int res = imageid[i];
+                view.setOnClickListener(v-> {
+                    new Handler(new Handler.Callback() {
+                        @Override
+                        public boolean handleMessage(@NonNull android.os.Message msg) {
+                            NavController controller = Navigation.findNavController(v);
+                            viewModel.setMinephotoId(res);
+                            controller.navigate(R.id.action_myBulletinDetailFragment_to_minePhotoFragment);
+                            return false;
+                        }
+                    }).sendEmptyMessageDelayed(0, 300);
+                });
                 binding.BulletinImageGallery.addView(view);
             }
         });
+
         return binding.getRoot();
         //return inflater.inflate(R.layout.fragment_purchase_detail, container, false);
     }

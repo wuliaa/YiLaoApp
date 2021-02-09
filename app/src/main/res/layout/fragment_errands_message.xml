@@ -49,7 +49,8 @@
                         android:ems="10"
                         android:gravity="start|top"
                         android:hint="@string/need"
-                        android:inputType="textMultiLine" />
+                        android:inputType="textMultiLine"
+                        android:textSize="16sp" />
 
                     <View
                         android:id="@+id/view6"
@@ -97,15 +98,6 @@
                                 android:textSize="18sp" />
 
                             <TextView
-                                android:id="@+id/limit_time"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:layout_marginBottom="15dp"
-                                android:text="@string/ltime"
-                                android:textSize="18sp" />
-
-                            <TextView
                                 android:id="@+id/telephone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -133,6 +125,7 @@
                                 android:hint="@string/saddress"
                                 android:inputType="textMultiLine"
                                 android:textColor="@color/text_color"
+                                android:textSize="16sp"
                                 tools:targetApi="o" />
 
                             <com.rengwuxian.materialedittext.MaterialEditText
@@ -146,19 +139,7 @@
                                 android:hint="@string/lrmb"
                                 android:inputType="textMultiLine"
                                 android:textColor="@color/text_color"
-                                tools:targetApi="o" />
-
-                            <com.rengwuxian.materialedittext.MaterialEditText
-                                android:id="@+id/limit_time_text"
-                                android:layout_width="match_parent"
-                                android:layout_height="45dp"
-                                android:layout_marginBottom="5dp"
-                                android:layout_weight="1"
-                                android:autofillHints=""
-                                android:ems="10"
-                                android:hint="@string/ntime"
-                                android:inputType="textMultiLine"
-                                android:textColor="@color/text_color"
+                                android:textSize="16sp"
                                 tools:targetApi="o" />
 
                             <com.rengwuxian.materialedittext.MaterialEditText
@@ -172,6 +153,7 @@
                                 android:hint="@string/phone"
                                 android:inputType="textMultiLine"
                                 android:textColor="@color/text_color"
+                                android:textSize="16sp"
                                 tools:targetApi="o" />
                         </LinearLayout>
                     </LinearLayout>
