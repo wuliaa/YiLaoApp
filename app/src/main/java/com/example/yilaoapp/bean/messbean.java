@@ -1,14 +1,26 @@
-package com.example.yilaoapp.user;
+package com.example.yilaoapp.bean;
+
+import android.graphics.Bitmap;
 
 public class messbean {
+    Bitmap photo;
     String name;
     String sex;
     String school;
 
-    public messbean(String name, String sex, String school) {
+    public messbean(Bitmap photo, String name, String sex, String school) {
+        this.photo = photo;
         this.name = name;
         this.sex = sex;
         this.school = school;
+    }
+
+    public Bitmap getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Bitmap photo) {
+        this.photo = photo;
     }
 
     public String getName() {
