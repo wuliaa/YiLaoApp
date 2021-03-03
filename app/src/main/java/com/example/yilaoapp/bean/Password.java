@@ -1,10 +1,10 @@
-package com.example.yilaoapp.user;
+package com.example.yilaoapp.bean;
 
-public class pd {
+public class Password {
 
     String passwd;
 
-    public pd(String pwd) {
+    public Password(String pwd) {
         this.passwd = pwd;
     }
     public String getPwd() {

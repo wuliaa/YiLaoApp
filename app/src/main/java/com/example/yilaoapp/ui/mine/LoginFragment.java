@@ -17,10 +17,12 @@ import android.widget.Toast;
 
 import com.example.yilaoapp.MainActivity;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.tok;
 import com.example.yilaoapp.databinding.FragmentLoginBinding;
 import com.example.yilaoapp.service.RetrofitUser;
-import com.example.yilaoapp.user.User;
+import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.service.UserService;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 
@@ -75,23 +77,46 @@ public class LoginFragment extends Fragment {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             //System.out.println(response.body());
-                            String token="";
+                            String str="";
                             try {
-                                token=response.body().string();
+                                str=response.body().string();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+                            Gson gson=new Gson();
+                            tok token=gson.fromJson(str,tok.class);
+                            //System.out.println(token.getToken());
                             SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                             SharedPreferences.Editor e=pre.edit();
-                            e.putString("token",token);
+                            e.putString("token",token.getToken());
                             e.putString("mobile",mobile);
                             e.putString("password",password);
                             e.commit();
-                            System.out.println(token);
+                            //System.out.println(str);
                             Toast.makeText(getContext(),"登录成功!",Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(requireActivity(), MainActivity.class);
-                            startActivity(intent);
-                            requireActivity().finish();
+                            UserService get_service=new RetrofitUser().get().create(UserService.class);
+                            Call<ResponseBody> userCall=get_service.get_user(mobile,"df3b72a07a0a4fa1854a48b543690eab",token.getToken());
+                            userCall.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    String u= null;
+                                    try {
+                                        u = response.body().string();
+                                    } catch (IOException ioException) {
+                                        ioException.printStackTrace();
+                                    }
+                                    User user=gson.fromJson(u,User.class);
+                                    System.out.println(u);
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                }
+                            });
+                           // Intent intent = new Intent(requireActivity(), MainActivity.class);
+                            //startActivity(intent);
+                           // requireActivity().finish();
                         }
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {

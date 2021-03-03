@@ -1,8 +1,8 @@
 package com.example.yilaoapp.service;
 
-import com.example.yilaoapp.user.User;
+import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.bean.messbean;
-import com.example.yilaoapp.user.pd;
+import com.example.yilaoapp.bean.Password;
 
 import java.util.Map;
 
@@ -43,7 +43,9 @@ public interface UserService {
 
     //验证注册
     @PUT("users/{mobile}")
-    Call<ResponseBody> sigin(@Path("mobile")String mobile, @Query("appid")String app, @Query("code") String code, @Body pd pp);
-
+    Call<ResponseBody> sigin(@Path("mobile")String mobile, @Query("appid")String app, @Query("code") String code, @Body Password pp);
+    //获取个人信息
+    @GET("users/{mobile}")
+    Call<ResponseBody> get_user(@Path("mobile")String mobile, @Query("appid")String app,@Query("token") String token);
 
 }

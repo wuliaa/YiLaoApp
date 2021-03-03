@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.yilaoapp.user.pd;
+import com.example.yilaoapp.bean.Password;
 import com.example.yilaoapp.service.Verify_service;
 import com.example.yilaoapp.bean.Verify;
 import com.example.yilaoapp.R;
@@ -95,7 +95,7 @@ public class SigninFragment extends Fragment {
                 code=binding.signinInputyzm.getText().toString();
                 phone=binding.signinPhone.getText().toString();
                if(pwd1.equals(pwd2)&&phone.length()==11&&code.length()==4){
-                    pd pass=new pd(pwd1);
+                    Password pass=new Password(pwd1);
                     UserService xybservice=new RetrofitUser().get().create(UserService.class);
                     Call<ResponseBody> xybback=xybservice.sigin(phone,"df3b72a07a0a4fa1854a48b543690eab",code,pass);
                     xybback.enqueue(new Callback<ResponseBody>() {
