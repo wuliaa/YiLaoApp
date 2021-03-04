@@ -17,6 +17,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.Point_address;
 import com.example.yilaoapp.bean.errand_order;
 import com.example.yilaoapp.bean.errand_task;
 import com.example.yilaoapp.databinding.FragmentErrandsMessageBinding;
@@ -65,13 +66,14 @@ public class ErrandsMessageFragment extends Fragment {
         binding.button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String detail=binding.editTextTextMultiLine.toString();
-                BigInteger phone=new BigInteger("13060887368");
-                float money=1;
+                String detail=binding.editTextTextMultiLine.getText().toString();
+                BigInteger phone=new BigInteger(binding.telephone.getText().toString());
+                float money=Float.parseFloat(binding.moneyText.getText().toString());
                 //String phone=binding.telephone.toString();
-                String address=binding.addressText.toString();
+                String address=binding.addressText.getText().toString();;
+                Point_address des=new Point_address(0,0,address);
                 //String money=binding.moneyText.toString();
-                errand_task task=new errand_task("跑腿",detail,address,money);
+                errand_task task=new errand_task("跑腿",detail,des,money);
                 List<errand_task> ltask = new LinkedList<>();
                 ltask.add(task);
                 errand_order order=new errand_order(phone,ltask);
@@ -83,11 +85,7 @@ public class ErrandsMessageFragment extends Fragment {
                 errand_back.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        try {
-                            System.out.println(response.errorBody().string());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+
                         Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
                     }
 

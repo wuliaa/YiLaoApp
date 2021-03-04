@@ -3,10 +3,10 @@ package com.example.yilaoapp.bean;
 public class errand_task {
     String type;
     String detail;
-    String destination;
+    Point_address destination;
     float reward;
 
-    public errand_task(String type, String detail, String destination, float reward) {
+    public errand_task(String type, String detail, Point_address destination, float reward) {
         this.type = type;
         this.detail = detail;
         this.destination = destination;
@@ -29,11 +29,11 @@ public class errand_task {
         this.detail = detail;
     }
 
-    public String getDestination() {
+    public Point_address getDestination() {
         return destination;
     }
 
-    public void setDestination(String destination) {
+    public void setDestination(Point_address destination) {
         this.destination = destination;
     }
 
