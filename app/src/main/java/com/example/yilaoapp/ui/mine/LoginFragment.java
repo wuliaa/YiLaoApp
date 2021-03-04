@@ -1,9 +1,11 @@
 package com.example.yilaoapp.ui.mine;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +26,6 @@ import com.example.yilaoapp.service.UserService;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -44,10 +45,14 @@ public class LoginFragment extends Fragment {
         return new LoginFragment();
     }
 
+    ProgressDialog mProgressDialog;//新建一个ProgressDialog
+    private Handler handler;
+    private Thread mThread;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
     FragmentLoginBinding binding;
     private User user;
 
@@ -69,38 +74,53 @@ public class LoginFragment extends Fragment {
                 else if(password.equals(""))
                     Toast.makeText(getContext(),"请输入密码",Toast.LENGTH_LONG).show();
                 else {
-                    UserService loginservice=new RetrofitUser().get().create(UserService.class);
-                    Call<ResponseBody> loginback=loginservice.login_password(mobile,"df3b72a07a0a4fa1854a48b543690eab",password);
-                    loginback.enqueue(new Callback<ResponseBody>() {
+                    initProgressDialog();
+                    new Thread(){
+                        public void run() {
+                            UserService loginservice=new RetrofitUser().get().create(UserService.class);
+                            Call<ResponseBody> loginback=loginservice.login_password(mobile,"df3b72a07a0a4fa1854a48b543690eab",password);
+                            loginback.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    String str="";
+                                    try {
+                                        str=response.body().string();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    Gson gson=new Gson();
+                                    tok token=gson.fromJson(str,tok.class);
+                                    SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor e=pre.edit();
+                                    e.putString("token",token.getToken());
+                                    e.putString("mobile",mobile);
+                                    e.putString("password",password);
+                                    e.commit();
+                                    Toast.makeText(getContext(),"登录成功!",Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(requireActivity(), MainActivity.class);
+                                    startActivity(intent);
+                                    requireActivity().finish();
+                                }
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    Toast.makeText(getContext(),"账号密码错误",Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            android.os.Message msg = new android.os.Message();
+                            msg.what = 1;
+                            handler.sendMessage(msg); //发送msg消息
+                        }
+                    }.start();
+                    //handler 为处理消息
+                    handler = new  Handler(){
                         @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            //System.out.println(response.body());
-                            String str="";
-                            try {
-                                str=response.body().string();
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                        public void handleMessage(android.os.Message msg) {
+                            super.handleMessage(msg);
+                            if(msg.what == 1){
+                                mProgressDialog.dismiss();
                             }
-                            Gson gson=new Gson();
-                            tok token=gson.fromJson(str,tok.class);
-                            //System.out.println(token.getToken());
-                            SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                            SharedPreferences.Editor e=pre.edit();
-                            e.putString("token",token.getToken());
-                            e.putString("mobile",mobile);
-                            e.putString("password",password);
-                            e.commit();
-                            //System.out.println(str);
-                            Toast.makeText(getContext(),"登录成功!",Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(requireActivity(), MainActivity.class);
-                            startActivity(intent);
-                            requireActivity().finish();
                         }
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            Toast.makeText(getContext(),"账号密码错误",Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    };
                 }
             }
         });
@@ -120,6 +140,20 @@ public class LoginFragment extends Fragment {
         });
 
         return binding.getRoot();
-        //return inflater.inflate(R.layout.fragment_login, container, false);
+
+    }
+
+    public void initProgressDialog(){
+        mProgressDialog = new ProgressDialog(getContext());
+        mProgressDialog.setTitle("Loading...");
+        mProgressDialog.setMessage("Please wait");
+        mProgressDialog.show();
+    }
+
+    @Override
+    public void onDestroy() {
+        //将线程销毁掉
+        handler.removeCallbacksAndMessages(null);
+        super.onDestroy();
     }
 }
