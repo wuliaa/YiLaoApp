@@ -203,7 +203,7 @@
                         app:layout_constraintStart_toStartOf="@+id/signin_4"
                         app:layout_constraintTop_toTopOf="@+id/signin_6" />
 
-                    <EditText
+                    <com.rengwuxian.materialedittext.MaterialEditText
                         android:id="@+id/signin_pass"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -218,7 +218,10 @@
                         app:layout_constraintBottom_toTopOf="@+id/signin_7"
                         app:layout_constraintEnd_toStartOf="@+id/signin_5"
                         app:layout_constraintStart_toStartOf="@+id/signin_3"
-                        app:layout_constraintTop_toTopOf="@+id/signin_11" />
+                        app:layout_constraintTop_toTopOf="@+id/signin_11"
+                        app:met_errorColor="#AAA9A9"
+                        app:met_maxCharacters="16"
+                        app:met_minCharacters="8" />
 
                     <EditText
                         android:id="@+id/signin_passagain"

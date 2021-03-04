@@ -1,6 +1,12 @@
 package com.example.yilaoapp.ui.mine;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -9,18 +15,13 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
-import com.example.yilaoapp.bean.Password;
-import com.example.yilaoapp.service.Verify_service;
-import com.example.yilaoapp.bean.Verify;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.Password;
+import com.example.yilaoapp.bean.Verify;
 import com.example.yilaoapp.databinding.FragmentSigninBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
+import com.example.yilaoapp.service.Verify_service;
 import com.example.yilaoapp.utils.ConfigUtil;
 import com.kongzue.dialog.v3.TipDialog;
 
@@ -28,13 +29,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import android.annotation.SuppressLint;
-import android.os.CountDownTimer;
-
-import java.math.BigInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * A simple {@link Fragment} subclass.
