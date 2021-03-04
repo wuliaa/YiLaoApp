@@ -21,6 +21,7 @@ import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentSigninBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
+import com.example.yilaoapp.utils.ConfigUtil;
 import com.kongzue.dialog.v3.TipDialog;
 
 import okhttp3.ResponseBody;
@@ -30,6 +31,10 @@ import retrofit2.Response;
 
 import android.annotation.SuppressLint;
 import android.os.CountDownTimer;
+
+import java.math.BigInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,7 +69,7 @@ public class SigninFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String phone=binding.signinPhone.getText().toString();
-                if(phone.length()!=11)
+                if(!ConfigUtil.isPhoneNum(phone))
                     Toast.makeText(getContext(),"请输入正确的手机号码",Toast.LENGTH_LONG).show();
                 else{
                     Verify_service yzmservice=new RetrofitUser().get().create(Verify_service.class);
@@ -158,4 +163,5 @@ public class SigninFragment extends Fragment {
             myCountDownTimer.cancel();
         }
     }
+
 }
