@@ -94,7 +94,7 @@ public class LoginFragment extends Fragment {
                             e.commit();
                             //System.out.println(str);
                             Toast.makeText(getContext(),"登录成功!",Toast.LENGTH_LONG).show();
-                           /* UserService get_service=new RetrofitUser().get().create(UserService.class);
+                           UserService get_service=new RetrofitUser().get().create(UserService.class);
                             Call<ResponseBody> userCall=get_service.get_user(mobile,"df3b72a07a0a4fa1854a48b543690eab",token.getToken());
                             userCall.enqueue(new Callback<ResponseBody>() {
                                 @Override
@@ -120,7 +120,7 @@ public class LoginFragment extends Fragment {
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                                     Toast.makeText(getContext(),"网络连接失败",Toast.LENGTH_LONG).show();
                                 }
-                            });*/
+                            });
                            Intent intent = new Intent(requireActivity(), MainActivity.class);
                            startActivity(intent);
                            requireActivity().finish();
@@ -147,7 +147,28 @@ public class LoginFragment extends Fragment {
                 controller.navigate(R.id.action_loginFragment2_to_signinFragment2);
             }
         });
+        /*SharedPreferences pre1=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+        String token1=pre1.getString("token","");
+        if(!token1.equals("")){
+            String mob=pre1.getString("mobile","");
+            String pas=pre1.getString("password","");
+            UserService loginservice=new RetrofitUser().get().create(UserService.class);
+            Call<ResponseBody> loginback=loginservice.login_password(mob,"df3b72a07a0a4fa1854a48b543690eab",pas);
+            loginback.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Toast.makeText(getContext(),"登录成功!",Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(requireActivity(), MainActivity.class);
+                    startActivity(intent);
+                    requireActivity().finish();
+                }
 
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(getContext(),"网络连接失败",Toast.LENGTH_LONG).show();
+                }
+            });
+        }*/
         return binding.getRoot();
         //return inflater.inflate(R.layout.fragment_login, container, false);
     }

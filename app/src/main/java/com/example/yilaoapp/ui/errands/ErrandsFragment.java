@@ -35,16 +35,24 @@ import android.widget.Toast;
 
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentErrandsBinding;
+import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.errand_service;
 import com.example.yilaoapp.ui.bulletin.BullentinViewModel;
 import com.example.yilaoapp.ui.bulletin.Share;
 import com.example.yilaoapp.ui.bulletin.ShareAdapter;
 import com.example.yilaoapp.ui.bulletin.Team;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -138,6 +146,23 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     @Override
     public void onRefresh() {
+        errand_service errand=new RetrofitUser().get().create(errand_service.class);
+        Call<ResponseBody> get_errand=errand.get_orders();
+        get_errand.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    System.out.println(response.body().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
         binding.swipeErrands.postDelayed(new Runnable() { // 发送延迟消息到消息队列
             @Override
             public void run() {

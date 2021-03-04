@@ -17,4 +17,6 @@ import retrofit2.http.Query;
 public interface errand_service {
     @POST("users/{mobile}/orders")
     Call<ResponseBody> new_order(@Path("mobile")String mobile, @Query("token")String token, @Query("appid")String app, @Body errand_order oreder);
+    @GET("public_orders")
+    Call<ResponseBody> get_orders();
 }
