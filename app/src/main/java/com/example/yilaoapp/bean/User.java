@@ -9,30 +9,32 @@ import java.util.Set;
 
 //用户实体类
 public class User {
-    @SerializedName("moblie")
-    private BigInteger mobile;//bigint unsigned primary key,手机号
-    @SerializedName("passwd")
-    private String passwd;    //char(64),密码
+
     private String nickname;  //昵称
-    private String sex;    //enum('male','female')
-    private int portrait;  //头像
     private Point default_location;
-    private String create_at;
-    private String id_name;
+    private int portrait;  //头像
     private String id_school;
-    private String photo;
-    public User(BigInteger mobile, String passwd, String nickname, String sex, int portrait, Point default_location, String create_at, String id_name, String id_school, String photo) {
-        this.mobile = mobile;
-        this.passwd = passwd;
+    private String id_photo;
+    private String create_at;
+    private String mark;
+    private String sex;    //enum('male','female')
+    //@SerializedName("moblie")
+    private BigInteger mobile;//bigint unsigned primary key,手机号
+    private String id_name;
+
+    public User(String nickname, Point default_location, int portrait, String id_school, String id_photo, String create_at, String mark, String sex, BigInteger mobile, String id_name) {
         this.nickname = nickname;
-        this.sex = sex;
-        this.portrait = portrait;
         this.default_location = default_location;
-        this.create_at = create_at;
-        this.id_name = id_name;
+        this.portrait = portrait;
         this.id_school = id_school;
-        this.photo = photo;
+        this.id_photo = id_photo;
+        this.create_at = create_at;
+        this.mark = mark;
+        this.sex = sex;
+        this.mobile = mobile;
+        this.id_name = id_name;
     }
+
 
     public BigInteger getMobile() {
         return mobile;
@@ -40,14 +42,6 @@ public class User {
 
     public void setMobile(BigInteger mobile) {
         this.mobile = mobile;
-    }
-
-    public String getPasswd() {
-        return passwd;
-    }
-
-    public void setPasswd(String passwd) {
-        this.passwd = passwd;
     }
 
     public String getNickname() {
@@ -106,11 +100,19 @@ public class User {
         this.id_school = id_school;
     }
 
-    public String getPhoto() {
-        return photo;
+    public String getId_photo() {
+        return id_photo;
     }
 
-    public void setPhoto(String photo) {
-        this.photo = photo;
+    public void setId_photo(String id_photo) {
+        this.id_photo = id_photo;
+    }
+
+    public String getMark() {
+        return mark;
+    }
+
+    public void setMark(String mark) {
+        this.mark = mark;
     }
 }

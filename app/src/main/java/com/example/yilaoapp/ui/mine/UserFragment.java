@@ -2,7 +2,9 @@ package com.example.yilaoapp.ui.mine;
 
 import android.annotation.TargetApi;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -30,12 +32,18 @@ import android.widget.Toast;
 
 import com.example.yilaoapp.MainActivity;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.messbean;
 import com.example.yilaoapp.databinding.FragmentUserBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
 import com.kongzue.dialog.interfaces.OnMenuItemClickListener;
 import com.kongzue.dialog.v3.BottomMenu;
 import com.kongzue.dialog.v3.TipDialog;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -100,12 +108,29 @@ public class UserFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String name,sex,address;
+                Bitmap photo;
+                photo=binding.userImage2.getDrawingCache();
                 name=binding.userName.getText().toString();
                 sex=binding.userSwitch.getText().toString();
                 address=binding.userSchool.getText().toString();
                 if(name!=null&&sex!=null&&address!=null){
                     UserService messservice=new RetrofitUser().get().create(UserService.class);
+                    messbean mess=new messbean(photo,name,sex,address);
+                    SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                    String mobile=pre.getString("mobile","");
+                    String token=pre.getString("token","");
+                    Call<ResponseBody> update=messservice.update(mobile,"df3b72a07a0a4fa1854a48b543690eab",token,mess);
+                    update.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
+                        }
 
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                        }
+                    });
                 }
                 TipDialog.show((AppCompatActivity) getActivity(), "注册成功", TipDialog.TYPE.SUCCESS);
                 new Handler(new Handler.Callback() {

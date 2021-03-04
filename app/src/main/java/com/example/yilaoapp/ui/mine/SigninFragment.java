@@ -103,7 +103,7 @@ public class SigninFragment extends Fragment {
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             System.out.println(response.body());
 
-
+                            //跳回登录界面
                             NavController controller = Navigation.findNavController(v);
                             controller.navigate(R.id.action_signinFragment2_to_userFragment2);
                         }

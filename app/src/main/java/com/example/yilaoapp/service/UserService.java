@@ -27,7 +27,7 @@ public interface UserService {
 
     //更新
     @PATCH("users/{mobile}")
-    Call<String>  update(@Path("mobile")String mobile,@Query("appid")String app,@Query("token")String token,@Body messbean msee);
+    Call<ResponseBody>  update(@Path("mobile")String mobile,@Query("appid")String app,@Query("token")String token,@Body messbean msee);
 
     //获取
 //    @GET("users/{mobile}")

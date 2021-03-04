@@ -3,32 +3,32 @@ package com.example.yilaoapp.bean;
 import android.graphics.Bitmap;
 
 public class messbean {
-    Bitmap photo;
-    String name;
+    Bitmap id_photo;
+    String id_name;
     String sex;
-    String school;
+    String id_school;
 
-    public messbean(Bitmap photo, String name, String sex, String school) {
-        this.photo = photo;
-        this.name = name;
+    public messbean(Bitmap id_photo, String id_name, String sex, String id_school) {
+        this.id_photo = id_photo;
+        this.id_name = id_name;
         this.sex = sex;
-        this.school = school;
+        this.id_school = id_school;
     }
 
-    public Bitmap getPhoto() {
-        return photo;
+    public Bitmap getId_photo() {
+        return id_photo;
     }
 
-    public void setPhoto(Bitmap photo) {
-        this.photo = photo;
+    public void setId_photo(Bitmap id_photo) {
+        this.id_photo = id_photo;
     }
 
-    public String getName() {
-        return name;
+    public String getId_name() {
+        return id_name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId_name(String id_name) {
+        this.id_name = id_name;
     }
 
     public String getSex() {
@@ -39,11 +39,11 @@ public class messbean {
         this.sex = sex;
     }
 
-    public String getSchool() {
-        return school;
+    public String getId_school() {
+        return id_school;
     }
 
-    public void setSchool(String school) {
-        this.school = school;
+    public void setId_school(String id_school) {
+        this.id_school = id_school;
     }
 }
