@@ -8,26 +8,43 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 
+import android.telecom.CallScreeningService;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.yilaoapp.bean.User;
+import com.example.yilaoapp.bean.messbean;
+import com.example.yilaoapp.bean.tok;
+import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.UserService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.Gson;
 import com.jaeger.library.StatusBarUtil;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MainActivity extends AppCompatActivity {
     private NavController navController;
     private DrawerLayout drawerLayout;
+    private TextView nick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +57,33 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.navigationView);
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationUI.setupWithNavController(navigationView, navController);
+        //抽屉导航栏的用户信息
+        nick=findViewById(R.id.mnickn);
+        UserService service=new RetrofitUser().get().create(UserService.class);
+        SharedPreferences pre=this.getSharedPreferences("login", Context.MODE_PRIVATE);
+        String mobile=pre.getString("mobile","");
+        String token=pre.getString("token","");
+        Call<ResponseBody> get=service.get_user(mobile,"df3b72a07a0a4fa1854a48b543690eab",token);
+        get.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String str="";
+                try {
+                    str=response.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Gson gson=new Gson();
+                User user = gson.fromJson(str,User.class);
+                //Toast.makeText(getApplicationContext(),user.getMobile().toString(),Toast.LENGTH_LONG).show();
+                //nick.setText(user.getNickname());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
 
         //底部导航栏
         final BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);

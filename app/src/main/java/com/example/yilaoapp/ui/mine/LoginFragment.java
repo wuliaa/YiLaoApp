@@ -47,7 +47,7 @@ public class LoginFragment extends Fragment {
 
     ProgressDialog mProgressDialog;//新建一个ProgressDialog
     private Handler handler;
-    private Thread mThread;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
