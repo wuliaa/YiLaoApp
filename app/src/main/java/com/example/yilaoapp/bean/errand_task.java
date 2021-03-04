@@ -4,9 +4,9 @@ public class errand_task {
     String type;
     String detail;
     String destination;
-    String reward;
+    float reward;
 
-    public errand_task(String type, String detail, String destination, String reward) {
+    public errand_task(String type, String detail, String destination, float reward) {
         this.type = type;
         this.detail = detail;
         this.destination = destination;
@@ -37,11 +37,11 @@ public class errand_task {
         this.destination = destination;
     }
 
-    public String getReward() {
+    public float getReward() {
         return reward;
     }
 
-    public void setReward(String reward) {
+    public void setReward(float reward) {
         this.reward = reward;
     }
 }

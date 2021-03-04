@@ -23,12 +23,17 @@ import com.example.yilaoapp.databinding.FragmentErrandsMessageBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.errand_service;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import java.util.LinkedList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,11 +66,15 @@ public class ErrandsMessageFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String detail=binding.editTextTextMultiLine.toString();
-                String phone=binding.telephone.toString();
+                BigInteger phone=new BigInteger("13060887368");
+                float money=1;
+                //String phone=binding.telephone.toString();
                 String address=binding.addressText.toString();
-                String money=binding.moneyText.toString();
+                //String money=binding.moneyText.toString();
                 errand_task task=new errand_task("跑腿",detail,address,money);
-                errand_order order=new errand_order(phone,task);
+                List<errand_task> ltask = new LinkedList<>();
+                ltask.add(task);
+                errand_order order=new errand_order(phone,ltask);
                 SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                 String mobile=pre.getString("mobile","");
                 String token=pre.getString("token","");
@@ -74,6 +83,11 @@ public class ErrandsMessageFragment extends Fragment {
                 errand_back.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        try {
+                            System.out.println(response.errorBody().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
                     }
 
