@@ -94,7 +94,7 @@ public class LoginFragment extends Fragment {
                             e.commit();
                             //System.out.println(str);
                             Toast.makeText(getContext(),"登录成功!",Toast.LENGTH_LONG).show();
-                            UserService get_service=new RetrofitUser().get().create(UserService.class);
+                           /* UserService get_service=new RetrofitUser().get().create(UserService.class);
                             Call<ResponseBody> userCall=get_service.get_user(mobile,"df3b72a07a0a4fa1854a48b543690eab",token.getToken());
                             userCall.enqueue(new Callback<ResponseBody>() {
                                 @Override
@@ -120,10 +120,10 @@ public class LoginFragment extends Fragment {
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                                     Toast.makeText(getContext(),"网络连接失败",Toast.LENGTH_LONG).show();
                                 }
-                            });
-                           // Intent intent = new Intent(requireActivity(), MainActivity.class);
-                            //startActivity(intent);
-                           // requireActivity().finish();
+                            });*/
+                           Intent intent = new Intent(requireActivity(), MainActivity.class);
+                           startActivity(intent);
+                           requireActivity().finish();
                         }
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
