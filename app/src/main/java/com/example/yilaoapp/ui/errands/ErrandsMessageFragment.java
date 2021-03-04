@@ -67,8 +67,8 @@ public class ErrandsMessageFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String detail=binding.editTextTextMultiLine.getText().toString();
-                BigInteger phone=new BigInteger(binding.telephoneText.getText().toString());
-                float money= Float.parseFloat(binding.moneyText.getText().toString());
+                BigInteger phone=new BigInteger(binding.telephone.getText().toString());
+                float money=Float.parseFloat(binding.moneyText.getText().toString());
                 //String phone=binding.telephone.toString();
                 String address=binding.addressText.getText().toString();;
                 Point_address des=new Point_address(0,0,address);
