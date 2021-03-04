@@ -1,17 +1,12 @@
 package com.example.yilaoapp.bean;
 
-import com.example.yilaoapp.bean.Point;
-import com.google.gson.annotations.SerializedName;
-
 import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.util.Set;
 
 //用户实体类
 public class User {
 
     private String nickname;  //昵称
-    private Point default_location;
+    private Point_address default_location;
     private int portrait;  //头像
     private String id_school;
     private String id_photo;
@@ -22,7 +17,7 @@ public class User {
     private BigInteger mobile;//bigint unsigned primary key,手机号
     private String id_name;
 
-    public User(String nickname, Point default_location, int portrait, String id_school, String id_photo, String create_at, String mark, String sex, BigInteger mobile, String id_name) {
+    public User(String nickname, Point_address default_location, int portrait, String id_school, String id_photo, String create_at, String mark, String sex, BigInteger mobile, String id_name) {
         this.nickname = nickname;
         this.default_location = default_location;
         this.portrait = portrait;
@@ -68,11 +63,11 @@ public class User {
         this.portrait = portrait;
     }
 
-    public Point getDefault_location() {
+    public Point_address getDefault_location() {
         return default_location;
     }
 
-    public void setDefault_location(Point default_location) {
+    public void setDefault_location(Point_address default_location) {
         this.default_location = default_location;
     }
 

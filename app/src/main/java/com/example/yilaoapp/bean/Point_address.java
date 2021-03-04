@@ -1,10 +1,10 @@
 package com.example.yilaoapp.bean;
 
-public class Point {
+public class Point_address {
     int longitude;
     int latitude;
     String name;
-    public Point(int longitude, int latitude, String name) {
+    public Point_address(int longitude, int latitude, String name) {
         this.longitude = longitude;
         this.latitude = latitude;
         this.name = name;
