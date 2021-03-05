@@ -59,16 +59,24 @@
                         android:layout_height="2dp"
                         android:background="@color/div_white" />
 
-                    <ImageView
-                        android:id="@+id/addPhoto"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_gravity="start|left"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="15dp"
-                        android:layout_weight="0.5"
-                        app:srcCompat="@drawable/add" />
+                    <cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout
+                        android:id="@+id/mPhotosSnpl"
+                        style="@style/WrapWrap"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:bga_snpl_deleteDrawable="@mipmap/bga_pp_ic_delete"
+                        app:bga_snpl_deleteDrawableOverlapQuarter="false"
+                        app:bga_snpl_editable="true"
+                        app:bga_snpl_itemCornerRadius="0dp"
+                        app:bga_snpl_itemSpanCount="3"
+                        app:bga_snpl_itemWhiteSpacing="4dp"
+                        app:bga_snpl_itemWidth="0dp"
+                        app:bga_snpl_maxItemCount="9"
+                        app:bga_snpl_otherWhiteSpacing="100dp"
+                        app:bga_snpl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
+                        app:bga_snpl_plusDrawable="@mipmap/bga_pp_ic_plus"
+                        app:bga_snpl_plusEnable="true"
+                        app:bga_snpl_sortable="true" />
 
                     <View
                         android:id="@+id/view7"
