@@ -1,7 +1,15 @@
 package com.example.yilaoapp.service;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface chat_service {
-   // @POST()
+   @POST("users/{mobile}/dialogs")
+    Call<ResponseBody> send_message(@Path("mobile")String mobile, @Query("token")String token,@Query("appid")String app);
+   @GET("users/{mobile}/dialogs_with/{another_user}")
+    Call<ResponseBody> get_message(@Path("mobile")String mobile,@Path("another_user")String user, @Query("token")String token,@Query("appid")String app);
 }
