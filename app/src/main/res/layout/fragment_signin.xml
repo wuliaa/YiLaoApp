@@ -220,6 +220,8 @@
                         app:layout_constraintStart_toStartOf="@+id/signin_3"
                         app:layout_constraintTop_toTopOf="@+id/signin_11"
                         app:met_errorColor="#E1E1E1"
+                        app:met_helperText="@string/hint_psd"
+                        app:met_helperTextAlwaysShown="true"
                         app:met_maxCharacters="16"
                         app:met_minCharacters="8" />
 

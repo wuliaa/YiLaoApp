@@ -123,6 +123,7 @@
     <string name="yuanmima">原密码</string>
     <string name="new_psd">新密码</string>
     <string name="check_psd">确认密码</string>
+    <string name="hint_psd">密码至少要8位</string>
 
     <string name="searchcontent">三只松鼠</string>
     <string name="back">返回</string>
