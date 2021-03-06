@@ -224,7 +224,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/button_deepen"
-                        android:text="@string/xyb"
+                        android:text="@string/Finish"
                         android:textColor="#FFFFFF"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toTopOf="@+id/user_11"
