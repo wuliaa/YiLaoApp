@@ -242,4 +242,5 @@
     <string name="ErrandRemainTime">剩余时间：</string>
     <string name="ErrandRtime">30min</string>
     <string name="myphone">我的手机</string>
+    <string name="Finish">完成</string>
 </resources>

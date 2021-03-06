@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -24,8 +25,12 @@ import com.example.yilaoapp.databinding.FragmentLoginBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
 import com.google.gson.Gson;
+import com.kongzue.dialog.interfaces.OnDialogButtonClickListener;
+import com.kongzue.dialog.util.BaseDialog;
+import com.kongzue.dialog.v3.MessageDialog;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -60,89 +65,97 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_login,container,false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false);
         //binding.setData(mineViewModel);
         binding.setLifecycleOwner(requireActivity());
         binding.loginImageview1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String mobile,password;
-                mobile=binding.loginEdittext.getText().toString();
-                password=binding.loginEdittext1.getText().toString();
-                if(mobile.equals(""))
-                    Toast.makeText(getContext(),"请输入手机号码",Toast.LENGTH_LONG).show();
-                else if(password.equals(""))
-                    Toast.makeText(getContext(),"请输入密码",Toast.LENGTH_LONG).show();
+                String mobile, password;
+                mobile = binding.loginEdittext.getText().toString();
+                password = binding.loginEdittext1.getText().toString();
+                if (mobile.equals(""))
+                    Toast.makeText(getContext(), "请输入手机号码", Toast.LENGTH_LONG).show();
+                else if (password.equals(""))
+                    Toast.makeText(getContext(), "请输入密码", Toast.LENGTH_LONG).show();
                 else {
                     initProgressDialog();
-                    new Thread(){
+                    new Thread() {
                         public void run() {
-                            UserService loginservice=new RetrofitUser().get().create(UserService.class);
-                            Call<ResponseBody> loginback=loginservice.login_password(mobile,"df3b72a07a0a4fa1854a48b543690eab",password);
+                            UserService loginservice = new RetrofitUser().get().create(UserService.class);
+                            Call<ResponseBody> loginback = loginservice.login_password(mobile, "df3b72a07a0a4fa1854a48b543690eab", password);
                             loginback.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    String str="";
+                                    String str = "";
                                     try {
-                                        str=response.body().string();
+                                        str = response.body().string();
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
-                                    Gson gson=new Gson();
-                                    tok token=gson.fromJson(str,tok.class);
-                                    SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor e=pre.edit();
-                                    e.putString("token",token.getToken());
-                                    e.putString("mobile",mobile);
-                                    e.putString("password",password);
+                                    Gson gson = new Gson();
+                                    tok token = gson.fromJson(str, tok.class);
+                                    SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor e = pre.edit();
+                                    e.putString("token", token.getToken());
+                                    e.putString("mobile", mobile);
+                                    e.putString("password", password);
                                     e.commit();
-                                    Toast.makeText(getContext(),"登录成功!",Toast.LENGTH_LONG).show();
-                                    UserService get_service=new RetrofitUser().get().create(UserService.class);
-                                    Call<ResponseBody> userCall=get_service.get_user(mobile,"df3b72a07a0a4fa1854a48b543690eab",token.getToken());
+                                    UserService get_service = new RetrofitUser().get().create(UserService.class);
+                                    Call<ResponseBody> userCall = get_service.get_user(mobile, "df3b72a07a0a4fa1854a48b543690eab", token.getToken());
                                     userCall.enqueue(new Callback<ResponseBody>() {
                                         @Override
                                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                            String u= null;
+                                            String u = null;
                                             try {
                                                 u = response.body().string();
                                             } catch (IOException ioException) {
                                                 ioException.printStackTrace();
                                             }
-                                            Gson gson1=new Gson();
-                                            User user=gson1.fromJson(u,User.class);
+                                            Gson gson1 = new Gson();
+                                            User user = gson1.fromJson(u, User.class);
                                             System.out.println(u);
-                                            if(user.getId_name()==null||user.getId_photo()==null||user.getSex()==null||user.getId_school()==null){
-                                                Toast.makeText(getContext(),"该账户还没有进行认证，请前往认证，填写完整信息！",Toast.LENGTH_LONG).show();
-                                                NavController controller = Navigation.findNavController(v);
-                                                //controller.navigate(R.id.action_signinFragment2_to_userFragment2);
+                                            android.os.Message msg = new android.os.Message();
+                                            msg.what = 1;
+                                            handler.sendMessage(msg); //发送msg消息
+                                            if (user.getId_name() == null || user.getId_photo() == null || user.getSex() == null || user.getId_school() == null) {
+                                                Toast.makeText(getContext(), "该账户还没有进行认证，请前往认证，填写完整信息！", Toast.LENGTH_LONG).show();
+                                                requireActivity().runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        NavController controller = Navigation.findNavController(v);
+                                                        controller.navigate(R.id.action_loginFragment2_to_userFragment2);
+                                                    }
+                                                });
+                                            }else{
+                                                Intent intent = new Intent(requireActivity(), MainActivity.class);
+                                                startActivity(intent);
+                                                requireActivity().finish();
                                             }
-                                            //System.out.println(user.getId_name());
                                         }
                                         @Override
                                         public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                            Toast.makeText(getContext(),"网络连接失败",Toast.LENGTH_LONG).show();
+                                            android.os.Message msg = new android.os.Message();
+                                            msg.what = 1;
+                                            handler.sendMessage(msg); //发送msg消息
+                                            Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_LONG).show();
                                         }
                                     });
-                                    Intent intent = new Intent(requireActivity(), MainActivity.class);
-                                    startActivity(intent);
-                                    requireActivity().finish();
                                 }
+
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    Toast.makeText(getContext(),"账号密码错误",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), "账号密码错误", Toast.LENGTH_LONG).show();
                                 }
                             });
-                            android.os.Message msg = new android.os.Message();
-                            msg.what = 1;
-                            handler.sendMessage(msg); //发送msg消息
                         }
                     }.start();
                     //handler 为处理消息
-                    handler = new  Handler(){
+                    handler = new Handler() {
                         @Override
                         public void handleMessage(android.os.Message msg) {
                             super.handleMessage(msg);
-                            if(msg.what == 1){
+                            if (msg.what == 1) {
                                 mProgressDialog.dismiss();
                             }
                         }
@@ -164,38 +177,11 @@ public class LoginFragment extends Fragment {
                 controller.navigate(R.id.action_loginFragment2_to_signinFragment2);
             }
         });
-         /* UserService get_service=new RetrofitUser().get().create(UserService.class);
-                            Call<ResponseBody> userCall=get_service.get_user(mobile,"df3b72a07a0a4fa1854a48b543690eab",token.getToken());
-                            userCall.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    String u= null;
-                                    try {
-                                        u = response.body().string();
-                                    } catch (IOException ioException) {
-                                        ioException.printStackTrace();
-                                    }
-                                    Gson gson1=new Gson();
-                                    User user=gson1.fromJson(u,User.class);
-                                    System.out.println(u);
-                                    if(user.getId_name()==null||user.getId_photo()==null||user.getSex()==null||user.getId_school()==null){
-                                        Toast.makeText(getContext(),"该账户还没有进行认证，请前往认证，填写完整信息！",Toast.LENGTH_LONG).show();
-                                        NavController controller = Navigation.findNavController(v);
-                                        //controller.navigate(R.id.action_signinFragment2_to_userFragment2);
-                                    }
-                                    //System.out.println(user.getId_name());
-                                }
 
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    Toast.makeText(getContext(),"网络连接失败",Toast.LENGTH_LONG).show();
-                                }
-                            });*/
         return binding.getRoot();
-
     }
 
-    public void initProgressDialog(){
+    public void initProgressDialog() {
         mProgressDialog = new ProgressDialog(getContext());
         mProgressDialog.setTitle("Loading...");
         mProgressDialog.setMessage("Please wait");
