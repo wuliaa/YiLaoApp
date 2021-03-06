@@ -167,13 +167,6 @@ public class MyInformationFragment extends Fragment {
                 });
             }
         });
-        binding.informationCardView6.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavController controller = Navigation.findNavController(v);
-                controller.navigate(R.id.action_myInformationFragment_to_changePhoneFragment);
-            }
-        });
         binding.informationCardView7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
