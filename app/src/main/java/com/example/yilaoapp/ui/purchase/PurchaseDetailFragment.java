@@ -64,11 +64,13 @@ public class PurchaseDetailFragment extends Fragment {
                 if(i==0) lp.setMargins(0,0,0,40);
                 else lp.setMargins(0,40,0,40);
                 view.setLayoutParams(lp);
+                int res = imageid[i];
                 view.setOnClickListener(v-> {
                     new Handler(new Handler.Callback() {
                         @Override
                         public boolean handleMessage(@NonNull android.os.Message msg) {
                             NavController controller = Navigation.findNavController(v);
+                            viewModel.setPurchasePhotoId(res);
                             controller.navigate(R.id.action_purchaseDetailFragment_to_purchasePhotoFragment);
                             return false;
                         }
