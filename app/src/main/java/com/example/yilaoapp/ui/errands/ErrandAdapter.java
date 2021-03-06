@@ -3,6 +3,7 @@ package com.example.yilaoapp.ui.errands;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -52,6 +53,7 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
         TextView objectName,time,RemainTime;
         Chip money;
         ExpandTextView content;
+        Button getTask;
         public ErrandViewHolder(@NonNull View itemView) {
             super(itemView);
             head=itemView.findViewById(R.id.errandPhoto);
@@ -59,7 +61,8 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
             content= (ExpandTextView)itemView.findViewById(R.id.errandExText);
             time=itemView.findViewById(R.id.errandTime);
             money=itemView.findViewById(R.id.errandchip);
-            itemView.setOnClickListener(new View.OnClickListener() {
+            getTask=itemView.findViewById(R.id.errandgetTask);
+            getTask.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //此处回传点击监听事件

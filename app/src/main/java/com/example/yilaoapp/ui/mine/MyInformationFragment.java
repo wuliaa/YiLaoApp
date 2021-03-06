@@ -41,12 +41,15 @@ import com.example.yilaoapp.databinding.FragmentMyInformationBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
 import com.example.yilaoapp.utils.SavePhoto;
+import com.example.yilaoapp.utils.ServiceHelp;
 import com.google.gson.Gson;
 import com.kongzue.dialog.interfaces.OnMenuItemClickListener;
 import com.kongzue.dialog.v3.BottomMenu;
 import com.kongzue.dialog.v3.TipDialog;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import okhttp3.ResponseBody;
@@ -83,32 +86,46 @@ public class MyInformationFragment extends Fragment {
                 controller.popBackStack();
             }
         });
+        UserService service = new RetrofitUser().get().create(UserService.class);
+        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+        String mobile = pre.getString("mobile", "");
+        String token = pre.getString("token", "");
         //获取用户信息
-        UserService service=new RetrofitUser().get().create(UserService.class);
-        SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-        String mobile=pre.getString("mobile","");
-        String token=pre.getString("token","");
-        Call<ResponseBody> get=service.get_user(mobile,"df3b72a07a0a4fa1854a48b543690eab",token);
-        get.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                String str="";
-                try {
-                    str=response.body().string();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Gson gson=new Gson();
-                User user = gson.fromJson(str,User.class);
-                binding.informationTextView16.setText(user.getMobile().toString());
-                //binding.informationTextView10.setText(user.getNickname());
+        new Thread(){
+            public void run() {
+                Call<ResponseBody> get = service.get_user(mobile, "df3b72a07a0a4fa1854a48b543690eab", token);
+                get.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        String str = "";
+                        try {
+                            str = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Gson gson = new Gson();
+                        User user = gson.fromJson(str, User.class);
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                binding.informationTextView16.setText(user.getMobile().toString());
+                                if (user.getSex().equals("male"))
+                                    binding.informationTextView13.setText("男");
+                                else binding.informationTextView13.setText("女");
+                                if(user.getId_school()!=null)
+                                    binding.school.setText(user.getId_school());
+                                if(user.getNickname()!=null)
+                                    binding.informationTextView10.setText(user.getNickname());
+                            }
+                        });
+                    }
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
+        }.start();
         binding.informationCardView2.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -146,25 +163,18 @@ public class MyInformationFragment extends Fragment {
                 controller.navigate(R.id.action_myInformationFragment_to_changeNickFragment);
             }
         });
+        binding.recyclerItemSb.setChecked(true);
         binding.recyclerItemSb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(binding.informationTextView13.getText()=="男")
+                if(binding.informationTextView13.getText()=="男"){
                     binding.informationTextView13.setText("女");
-                else binding.informationTextView13.setText("男");
-                String sex=binding.informationTextView13.getText().toString();
-                Call<ResponseBody> updateInfo=service.updateInfo(mobile,"df3b72a07a0a4fa1854a48b543690eab",token,sex);
-                updateInfo.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                    }
-                });
+                    ServiceHelp.UserUpdate(getContext(),"sex","female",false,null);
+                }
+                else {
+                    binding.informationTextView13.setText("男");
+                    ServiceHelp.UserUpdate(getContext(),"sex","male",false,null);
+                }
             }
         });
         binding.informationCardView7.setOnClickListener(new View.OnClickListener() {
@@ -175,7 +185,6 @@ public class MyInformationFragment extends Fragment {
             }
         });
         return binding.getRoot();
-        //return inflater.inflate(R.layout.fragment_my_information, container, false);
     }
 
     @Override

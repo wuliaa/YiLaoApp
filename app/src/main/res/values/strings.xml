@@ -243,4 +243,6 @@
     <string name="ErrandRtime">30min</string>
     <string name="myphone">我的手机</string>
     <string name="Finish">完成</string>
+    <string name="school">学校</string>
+    <string name="nick">昵称</string>
 </resources>

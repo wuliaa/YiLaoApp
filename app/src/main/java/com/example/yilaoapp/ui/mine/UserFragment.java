@@ -54,6 +54,7 @@ public class UserFragment extends Fragment {
 
     public UserFragment() {}
 
+    Bitmap Imagebitmap;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +99,9 @@ public class UserFragment extends Fragment {
                                 Intent intent = new Intent("android.intent.action.GET_CONTENT");
                                 intent.setType("image/*");
                                 startActivityForResult(intent,200);//打开系统相册
+                                if(Imagebitmap!=null){
+
+                                }
                             }
                         }
                     }
@@ -211,6 +215,7 @@ public class UserFragment extends Fragment {
     private void displayImage(String imagePath) {
         if (imagePath != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            Imagebitmap = BitmapFactory.decodeFile(imagePath);
             binding.userImage2.setImageBitmap(bitmap);
             TipDialog.show((AppCompatActivity) getActivity(), "上传成功", TipDialog.TYPE.SUCCESS);
         } else {

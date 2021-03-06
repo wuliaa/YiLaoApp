@@ -20,6 +20,7 @@ import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentAddressBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
+import com.example.yilaoapp.utils.ServiceHelp;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -53,14 +54,9 @@ public class AddressFragment extends Fragment {
             public void onClick(View v) {
                 NavController controller = Navigation.findNavController(v);
                 controller.popBackStack();
-                //controller.navigate(R.id.action_myInformationFragment_to_changeNickFragment);
             }
         });
         //修改用户地址
-        UserService service=new RetrofitUser().get().create(UserService.class);
-        SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-        String mobile=pre.getString("mobile","");
-        String token=pre.getString("token","");
         binding.addressButton5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,24 +65,10 @@ public class AddressFragment extends Fragment {
                     Toast.makeText(getContext(),"输入的地址为空",Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Call<ResponseBody> updateInfo=service.updateInfo(mobile,"df3b72a07a0a4fa1854a48b543690eab",token,address);
-                    updateInfo.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
-                            NavController controller = Navigation.findNavController(v);
-                            controller.popBackStack();
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                        }
-                    });
+                    ServiceHelp.UserUpdate(getContext(),"id_school",address,true,v);
                 }
             }
         });
         return binding.getRoot();
-        //return inflater.inflate(R.layout.fragment_address, container, false);
     }
 }

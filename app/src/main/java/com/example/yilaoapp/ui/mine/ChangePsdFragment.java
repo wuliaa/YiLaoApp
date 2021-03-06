@@ -20,6 +20,7 @@ import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentChangePsdBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
+import com.example.yilaoapp.utils.ServiceHelp;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -54,11 +55,7 @@ public class ChangePsdFragment extends Fragment {
             }
         });
         //修改用户密码
-        //获取用户信息
-        UserService service=new RetrofitUser().get().create(UserService.class);
         SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-        String mobile=pre.getString("mobile","");
-        String token=pre.getString("token","");
         String psd=pre.getString("password","");
         binding.changePsdButton9.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,31 +65,18 @@ public class ChangePsdFragment extends Fragment {
                 binding.changePsdEditText11.getText().toString().equals("")){
                     Toast.makeText(getContext(),"密码输入不能为空",Toast.LENGTH_LONG).show();
                 }
-                else if(binding.editText9.getText().toString()!=psd){
+                else if(!binding.editText9.getText().toString().equals(psd)){
                     Toast.makeText(getContext(),"原始密码输入错误",Toast.LENGTH_SHORT).show();
-                }else if(binding.editText9.getText().toString()
-                        ==binding.changePsdEditText10.getText().toString()&&
-                        binding.changePsdEditText10.getText().toString()
-                                ==binding.changePsdEditText11.getText().toString()){
+                }else if(binding.editText9.getText().toString().equals(psd) &&
+                        binding.changePsdEditText10.getText().toString().equals(binding.changePsdEditText11.getText().toString())){
                     String password=binding.changePsdEditText10.getText().toString();
-                    Call<ResponseBody> updateInfo=service.updateInfo(mobile,"df3b72a07a0a4fa1854a48b543690eab",token,password);
-                    updateInfo.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
-                            NavController controller = Navigation.findNavController(v);
-                            controller.popBackStack();
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                        }
-                    });
+                    ServiceHelp.UserUpdate(getContext(),"passwd",password,true,v);
+                    SharedPreferences.Editor e = pre.edit();
+                    e.putString("password", password);
+                    e.commit();
                 }
             }
         });
         return binding.getRoot();
-        //return inflater.inflate(R.layout.fragment_change_psd, container, false);
     }
 }

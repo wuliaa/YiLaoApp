@@ -15,6 +15,7 @@ import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -31,8 +32,9 @@ public interface UserService {
 
     //更新用户信息
     @PATCH("users/{mobile}")
-    Call<ResponseBody>  updateInfo(@Path("mobile")String mobile,@Query("appid")String app,@Query("token")String token,@Body String info);
-
+    Call<ResponseBody>  updateInfo(@Path("mobile")String mobile,@Query("appid")String app,@Query("token")String token,@Body String map);
+    @PATCH("users/{mobile}")
+    Call<ResponseBody>  updateInfo1(@Path("mobile")String mobile,@Query("appid")String app,@Query("token")String token,@Body Map<String,String> map);
     //获取
 //    @GET("users/{mobile}")
 //    Call<User> get_message(@Path("mobile")String mobile,@Query("appid")String app,@Query("token")String token);

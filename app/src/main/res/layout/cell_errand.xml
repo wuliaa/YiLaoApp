@@ -113,7 +113,7 @@
                 app:mcv_textColor="#FFFFFF" />
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/errandgetTask"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/gettask"
