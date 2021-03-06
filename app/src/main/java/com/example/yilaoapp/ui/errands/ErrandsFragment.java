@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.All_orders;
 import com.example.yilaoapp.databinding.FragmentErrandsBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.errand_service;
@@ -41,8 +42,11 @@ import com.example.yilaoapp.ui.bulletin.BullentinViewModel;
 import com.example.yilaoapp.ui.bulletin.Share;
 import com.example.yilaoapp.ui.bulletin.ShareAdapter;
 import com.example.yilaoapp.ui.bulletin.Team;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -151,8 +155,14 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         get_errand.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String str="";
                 try {
-                    System.out.println(response.body().string());
+                    str=response.body().string();
+                    Gson gson=new Gson();
+                    Type type=new TypeToken<List<All_orders>>(){}.getType();
+                    List<All_orders> all=gson.fromJson(str,type);
+                    System.out.println(all.get(0).getTasks().get(0).getDetail());
+                    //System.out.println(response.body().string());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
