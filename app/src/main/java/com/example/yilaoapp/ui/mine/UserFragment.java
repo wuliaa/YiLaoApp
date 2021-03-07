@@ -170,6 +170,23 @@ public class UserFragment extends Fragment {
                         }
                         Gson gson=new Gson();
                         Uuid u=gson.fromJson(uid,Uuid.class);
+                       /* image_service i=new RetrofitUser().get().create(image_service.class);
+                        Call<ResponseBody> get_photo=i.load_photo(mobile2,u.getUuid(),token2,"df3b72a07a0a4fa1854a48b543690eab");
+                        get_photo.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                try {
+                                    System.out.println(response.body().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                            }
+                        });*/
                         String name,sex,address;
                         String photo="";
                         photo=u.getUuid();
