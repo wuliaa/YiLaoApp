@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -111,16 +112,14 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 new Handler(new Handler.Callback() {
                     @Override
                     public boolean handleMessage(@NonNull android.os.Message msg) {
-                        //Toast.makeText(getActivity(),"我是item",Toast.LENGTH_SHORT).show();
-                        mViewModel.setErrand(data);
+                        Toast.makeText(getActivity(),"我是item",Toast.LENGTH_SHORT).show();
+//                        mViewModel.setErrand(data);
                         return false;
                     }
                 }).sendEmptyMessageDelayed(0, 500);
             }
         });
         return binding.getRoot();
-
-        //return inflater.inflate(R.layout.fragment_errands, container, false);
     }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
