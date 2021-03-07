@@ -178,6 +178,33 @@ public class LoginFragment extends Fragment {
             }
         });
 
+//        UserService get_service=new RetrofitUser().get().create(UserService.class);
+//        Call<ResponseBody> userCall=get_service.get_user(mobile,"df3b72a07a0a4fa1854a48b543690eab",token.getToken());
+//        userCall.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                String u= null;
+//                try {
+//                    u = response.body().string();
+//                } catch (IOException ioException) {
+//                    ioException.printStackTrace();
+//                }
+//                Gson gson1=new Gson();
+//                User user=gson1.fromJson(u,User.class);
+//                System.out.println(u);
+//                if(user.getId_name()==null||user.getId_photo()==null||user.getSex()==null||user.getId_school()==null){
+//                    Toast.makeText(getContext(),"该账户还没有进行认证，请前往认证，填写完整信息！",Toast.LENGTH_LONG).show();
+//                    NavController controller = Navigation.findNavController(v);
+//                    //controller.navigate(R.id.action_signinFragment2_to_userFragment2);
+//                }
+//                //System.out.println(user.getId_name());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                Toast.makeText(getContext(),"网络连接失败",Toast.LENGTH_LONG).show();
+//            }
+//        });
         return binding.getRoot();
     }
 

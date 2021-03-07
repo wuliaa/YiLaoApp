@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import androidx.navigation.Navigation;
 import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,9 +39,12 @@ import com.example.yilaoapp.bean.messbean;
 import com.example.yilaoapp.databinding.FragmentUserBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
+import com.example.yilaoapp.utils.PhotoOperation;
 import com.kongzue.dialog.interfaces.OnMenuItemClickListener;
 import com.kongzue.dialog.v3.BottomMenu;
 import com.kongzue.dialog.v3.TipDialog;
+
+import java.io.FileNotFoundException;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -52,6 +58,7 @@ import static android.app.Activity.RESULT_OK;
  */
 public class UserFragment extends Fragment {
 
+    String mpath=null;
     public UserFragment() {}
 
     Bitmap Imagebitmap;
@@ -146,6 +153,21 @@ public class UserFragment extends Fragment {
                 Intent intent = new Intent(requireActivity(), MainActivity.class);
                 startActivity(intent);
                 requireActivity().finish();
+                if(mpath==null){
+                    Resources res = getResources();
+                    Bitmap bmp = BitmapFactory.decodeResource(res, R.drawable.touxiang);
+                    PhotoOperation Operation=new PhotoOperation();
+                    byte[]  bA=Operation.Bitmap2ByteArray(bmp);
+                }
+                else{
+                    PhotoOperation Operation=new PhotoOperation();
+                    try {
+                        byte[] bA=Operation.Path2ByteArray(mpath);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        Log.d("PhotoFIle", "onClick: 打不开文件");
+                    }
+                }
             }
         });
         return binding.getRoot();
@@ -189,7 +211,8 @@ public class UserFragment extends Fragment {
             imagePath = uri.getPath();
         }
         displayImage(imagePath);//根据图片路径显示图片
-
+        mpath=imagePath;
+        Log.d("123", "handleImageOnKitkat: "+mpath);
     }
 
     private void handleImageBeforeKitkat(Intent data) {
@@ -206,6 +229,7 @@ public class UserFragment extends Fragment {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+                Log.d("PhotoMoment", "getImagePath: "+path);
             }
             cursor.close();
         }
@@ -217,7 +241,9 @@ public class UserFragment extends Fragment {
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
             Imagebitmap = BitmapFactory.decodeFile(imagePath);
             binding.userImage2.setImageBitmap(bitmap);
-            TipDialog.show((AppCompatActivity) getActivity(), "上传成功", TipDialog.TYPE.SUCCESS);
+            TipDialog.show((AppCompatActivity) getActivity(), "上传成功",
+                    TipDialog.TYPE.SUCCESS);
+            Log.d("UserFagment", "displayImage: "+imagePath);
         } else {
             Toast.makeText(getContext(), "failed to get image", Toast.LENGTH_SHORT).show();
         }
