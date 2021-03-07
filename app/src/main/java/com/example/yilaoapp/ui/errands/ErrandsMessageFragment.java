@@ -69,14 +69,9 @@ public class ErrandsMessageFragment extends Fragment {
                 String detail=binding.editTextTextMultiLine.getText().toString();
                 BigInteger phone=new BigInteger(binding.telephoneText.getText().toString());
                 float money= Float.parseFloat(binding.moneyText.getText().toString());
-                //String phone=binding.telephone.toString();
                 String address=binding.addressText.getText().toString();;
                 Point_address des=new Point_address(0,0,address);
-                //String money=binding.moneyText.toString();
-                errand_task task=new errand_task("跑腿",detail,des,money);
-                List<errand_task> ltask = new LinkedList<>();
-                ltask.add(task);
-                errand_order order=new errand_order(phone,ltask);
+                errand_order order=new errand_order(phone,"跑腿",detail,des,money);
                 SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                 String mobile=pre.getString("mobile","");
                 String token=pre.getString("token","");
@@ -92,7 +87,7 @@ public class ErrandsMessageFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                        System.out.println(1111);
                     }
                 });
 

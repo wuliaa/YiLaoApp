@@ -30,22 +30,34 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.ViewGroup;import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.example.yilaoapp.MainActivity;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.Uuid;
 import com.example.yilaoapp.bean.messbean;
+import com.example.yilaoapp.bean.testbyte;
 import com.example.yilaoapp.databinding.FragmentUserBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
+import com.example.yilaoapp.service.image_service;
 import com.example.yilaoapp.utils.PhotoOperation;
+import com.google.gson.Gson;
 import com.kongzue.dialog.interfaces.OnMenuItemClickListener;
 import com.kongzue.dialog.v3.BottomMenu;
 import com.kongzue.dialog.v3.TipDialog;
+import com.kyleduo.switchbutton.SwitchButton;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -118,31 +130,86 @@ public class UserFragment extends Fragment {
         binding.userXyb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name,sex,address;
-                Bitmap photo;
-                photo=binding.userImage2.getDrawingCache();
-                name=binding.userName.getText().toString();
-                sex=binding.userSwitch.getText().toString();
-                address=binding.userSchool.getText().toString();
-                if(name!=null&&sex!=null&&address!=null){
-                    UserService messservice=new RetrofitUser().get().create(UserService.class);
-                    messbean mess=new messbean(photo,name,sex,address);
-                    SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                    String mobile=pre.getString("mobile","");
-                    String token=pre.getString("token","");
-                    Call<ResponseBody> update=messservice.update(mobile,"df3b72a07a0a4fa1854a48b543690eab",token,mess);
-                    update.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                        }
-                    });
+                byte[] ba=null;
+                //photo=binding.userImage2.getDrawingCache();
+                if(mpath==null){
+                    Resources res = getResources();
+                    Bitmap bmp = BitmapFactory.decodeResource(res, R.drawable.touxiang);
+                    PhotoOperation Operation=new PhotoOperation();
+                    ba=Operation.Bitmap2ByteArray(bmp);
                 }
+                else{
+                    PhotoOperation Operation=new PhotoOperation();
+                    try {
+                        ba=Operation.Path2ByteArray(mpath);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        Log.d("PhotoFIle", "onClick: 打不开文件");
+                    }
+                }
+               // System.out.println("path:"+mpath);
+                Map<String, RequestBody> map = new HashMap<>();
+                //File file=new File(mpath);
+                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/from-data"), ba);
+                //注意：file就是与服务器对应的key,后面filename是服务器得到的文件名
+                map.put("file\"; filename=\"" + "1.jpeg", requestFile);
+                SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                String mobile2=pre2.getString("mobile","");
+                String token2=pre2.getString("token","");
+                image_service img=new RetrofitUser().get().create(image_service.class);
+                Call<ResponseBody> image_call=img.send_photo(mobile2,token2,"df3b72a07a0a4fa1854a48b543690eab",map);
+                image_call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                        String uid="";
+                        try {
+                            uid=response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Gson gson=new Gson();
+                        Uuid u=gson.fromJson(uid,Uuid.class);
+                        String name,sex,address;
+                        String photo="";
+                        photo=u.getUuid();
+                        name=binding.userName.getText().toString();
+                        System.out.println("name:"+name);
+
+                        if(binding.userSwitch.getShowText())
+                            sex="male";
+                        else
+                            sex="female";
+                        System.out.println("sex:"+sex);
+                        address=binding.userSchool.getText().toString();
+                        if(name!=null&&sex!=null&&address!=null){
+                            UserService messservice=new RetrofitUser().get().create(UserService.class);
+                            messbean mess=new messbean(photo,name,sex,address);
+                            SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                            String mobile=pre.getString("mobile","");
+                            String token=pre.getString("token","");
+                            Call<ResponseBody> update=messservice.update(mobile,"df3b72a07a0a4fa1854a48b543690eab",token,mess);
+                            update.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                }
+                            });
+                        }
+                        Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+
                 TipDialog.show((AppCompatActivity) getActivity(), "注册成功", TipDialog.TYPE.SUCCESS);
                 new Handler(new Handler.Callback() {
                     @Override
@@ -153,21 +220,6 @@ public class UserFragment extends Fragment {
                 Intent intent = new Intent(requireActivity(), MainActivity.class);
                 startActivity(intent);
                 requireActivity().finish();
-                if(mpath==null){
-                    Resources res = getResources();
-                    Bitmap bmp = BitmapFactory.decodeResource(res, R.drawable.touxiang);
-                    PhotoOperation Operation=new PhotoOperation();
-                    byte[]  bA=Operation.Bitmap2ByteArray(bmp);
-                }
-                else{
-                    PhotoOperation Operation=new PhotoOperation();
-                    try {
-                        byte[] bA=Operation.Path2ByteArray(mpath);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                        Log.d("PhotoFIle", "onClick: 打不开文件");
-                    }
-                }
             }
         });
         return binding.getRoot();

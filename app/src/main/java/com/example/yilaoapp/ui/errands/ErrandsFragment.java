@@ -160,7 +160,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     Gson gson=new Gson();
                     Type type=new TypeToken<List<All_orders>>(){}.getType();
                     List<All_orders> all=gson.fromJson(str,type);
-                    System.out.println(all.get(0).getTasks().get(0).getDetail());
+                    System.out.println(all.get(0).getDetail());
                     //System.out.println(response.body().string());
                 } catch (IOException e) {
                     e.printStackTrace();

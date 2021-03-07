@@ -2,25 +2,25 @@ package com.example.yilaoapp.bean;
 
 import android.graphics.Bitmap;
 
-public class messbean {
-    Bitmap id_photo;
+public class  messbean {
+    String id_photo;
     String id_name;
     String sex;
     String id_school;
 
-    public messbean(Bitmap id_photo, String id_name, String sex, String id_school) {
+    public messbean(String id_photo, String id_name, String sex, String id_school) {
         this.id_photo = id_photo;
         this.id_name = id_name;
         this.sex = sex;
         this.id_school = id_school;
     }
 
-    public Bitmap getId_photo() {
+    public String getPhoto() {
         return id_photo;
     }
 
-    public void setId_photo(Bitmap id_photo) {
-        this.id_photo = id_photo;
+    public void setPhoto(String photo) {
+        this.id_photo = photo;
     }
 
     public String getId_name() {

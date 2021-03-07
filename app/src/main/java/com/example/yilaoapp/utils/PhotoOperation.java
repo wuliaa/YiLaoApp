@@ -22,7 +22,7 @@ public class PhotoOperation {
     public byte[] Bitmap2ByteArray(Bitmap bitmap){
         ByteArrayOutputStream byStream = new ByteArrayOutputStream();
         //将bitmap压缩成png，压缩到图片原本质量80%，最后保存在压缩数据的输出流 byStream
-        bitmap.compress(Bitmap.CompressFormat.PNG, 80, byStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byStream);
         byte[] byteArray = byStream.toByteArray();
         return  byteArray;
     }
