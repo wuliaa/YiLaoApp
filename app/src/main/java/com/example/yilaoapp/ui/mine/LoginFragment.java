@@ -87,60 +87,126 @@ public class LoginFragment extends Fragment {
                             loginback.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    String str = "";
-                                    try {
-                                        str = response.body().string();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                                    if(response.code()/100==4){
+                                        android.os.Message msg = new android.os.Message();
+                                        msg.what = 1;
+                                        handler.sendMessage(msg); //发送msg消息
+                                        Toast.makeText(getContext(),"账号或密码输入错误",Toast.LENGTH_SHORT).show();
+                                    }else if(response.code()/100==5){
+                                        android.os.Message msg = new android.os.Message();
+                                        msg.what = 1;
+                                        handler.sendMessage(msg); //发送msg消息
+                                        Toast.makeText(getContext(),"服务器错误",Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        String str = "";
+                                        try {
+                                            str = response.body().string();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        Gson gson = new Gson();
+                                        tok token = gson.fromJson(str, tok.class);
+                                        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor e = pre.edit();
+                                        e.putString("token", token.getToken());
+                                        e.putString("mobile", mobile);
+                                        e.putString("password", password);
+                                        e.commit();
+                                        UserService get_service = new RetrofitUser().get().create(UserService.class);
+                                        Call<ResponseBody> userCall = get_service.get_user(mobile, "df3b72a07a0a4fa1854a48b543690eab", token.getToken());
+                                        userCall.enqueue(new Callback<ResponseBody>() {
+                                            @Override
+                                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                                String u = null;
+                                                try {
+                                                    u = response.body().string();
+                                                } catch (IOException ioException) {
+                                                    ioException.printStackTrace();
+                                                }
+                                                Gson gson1 = new Gson();
+                                                User user = gson1.fromJson(u, User.class);
+                                                System.out.println(u);
+                                                android.os.Message msg = new android.os.Message();
+                                                msg.what = 1;
+                                                handler.sendMessage(msg); //发送msg消息
+                                                if (user.getId_name() == null || user.getId_photo() == null || user.getSex() == null || user.getId_school() == null) {
+                                                    Toast.makeText(getContext(), "该账户还没有进行认证，请前往认证，填写完整信息！", Toast.LENGTH_LONG).show();
+                                                    requireActivity().runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            NavController controller = Navigation.findNavController(v);
+                                                            controller.navigate(R.id.action_loginFragment2_to_userFragment2);
+                                                        }
+                                                    });
+                                                }else{
+                                                    Intent intent = new Intent(requireActivity(), MainActivity.class);
+                                                    startActivity(intent);
+                                                    requireActivity().finish();
+                                                }
+                                            }
+                                            @Override
+                                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                                android.os.Message msg = new android.os.Message();
+                                                msg.what = 1;
+                                                handler.sendMessage(msg); //发送msg消息
+                                                Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_LONG).show();
+                                            }
+                                        });
                                     }
-                                    Gson gson = new Gson();
-                                    tok token = gson.fromJson(str, tok.class);
-                                    SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor e = pre.edit();
-                                    e.putString("token", token.getToken());
-                                    e.putString("mobile", mobile);
-                                    e.putString("password", password);
-                                    e.commit();
-                                    UserService get_service = new RetrofitUser().get().create(UserService.class);
-                                    Call<ResponseBody> userCall = get_service.get_user(mobile, "df3b72a07a0a4fa1854a48b543690eab", token.getToken());
-                                    userCall.enqueue(new Callback<ResponseBody>() {
-                                        @Override
-                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                            String u = null;
-                                            try {
-                                                u = response.body().string();
-                                            } catch (IOException ioException) {
-                                                ioException.printStackTrace();
-                                            }
-                                            Gson gson1 = new Gson();
-                                            User user = gson1.fromJson(u, User.class);
-                                            System.out.println(u);
-                                            android.os.Message msg = new android.os.Message();
-                                            msg.what = 1;
-                                            handler.sendMessage(msg); //发送msg消息
-                                            if (user.getId_name() == null || user.getId_photo() == null || user.getSex() == null || user.getId_school() == null) {
-                                                Toast.makeText(getContext(), "该账户还没有进行认证，请前往认证，填写完整信息！", Toast.LENGTH_LONG).show();
-                                                requireActivity().runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        NavController controller = Navigation.findNavController(v);
-                                                        controller.navigate(R.id.action_loginFragment2_to_userFragment2);
-                                                    }
-                                                });
-                                            }else{
-                                                Intent intent = new Intent(requireActivity(), MainActivity.class);
-                                                startActivity(intent);
-                                                requireActivity().finish();
-                                            }
-                                        }
-                                        @Override
-                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                            android.os.Message msg = new android.os.Message();
-                                            msg.what = 1;
-                                            handler.sendMessage(msg); //发送msg消息
-                                            Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_LONG).show();
-                                        }
-                                    });
+                                    //                                    String str = "";
+//                                    try {
+//                                        str = response.body().string();
+//                                    } catch (IOException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                    Gson gson = new Gson();
+//                                    tok token = gson.fromJson(str, tok.class);
+//                                    SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+//                                    SharedPreferences.Editor e = pre.edit();
+//                                    e.putString("token", token.getToken());
+//                                    e.putString("mobile", mobile);
+//                                    e.putString("password", password);
+//                                    e.commit();
+//                                    UserService get_service = new RetrofitUser().get().create(UserService.class);
+//                                    Call<ResponseBody> userCall = get_service.get_user(mobile, "df3b72a07a0a4fa1854a48b543690eab", token.getToken());
+//                                    userCall.enqueue(new Callback<ResponseBody>() {
+//                                        @Override
+//                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                                            String u = null;
+//                                            try {
+//                                                u = response.body().string();
+//                                            } catch (IOException ioException) {
+//                                                ioException.printStackTrace();
+//                                            }
+//                                            Gson gson1 = new Gson();
+//                                            User user = gson1.fromJson(u, User.class);
+//                                            System.out.println(u);
+//                                            android.os.Message msg = new android.os.Message();
+//                                            msg.what = 1;
+//                                            handler.sendMessage(msg); //发送msg消息
+//                                            if (user.getId_name() == null || user.getId_photo() == null || user.getSex() == null || user.getId_school() == null) {
+//                                                Toast.makeText(getContext(), "该账户还没有进行认证，请前往认证，填写完整信息！", Toast.LENGTH_LONG).show();
+//                                                requireActivity().runOnUiThread(new Runnable() {
+//                                                    @Override
+//                                                    public void run() {
+//                                                        NavController controller = Navigation.findNavController(v);
+//                                                        controller.navigate(R.id.action_loginFragment2_to_userFragment2);
+//                                                    }
+//                                                });
+//                                            }else{
+//                                                Intent intent = new Intent(requireActivity(), MainActivity.class);
+//                                                startActivity(intent);
+//                                                requireActivity().finish();
+//                                            }
+//                                        }
+//                                        @Override
+//                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                                            android.os.Message msg = new android.os.Message();
+//                                            msg.what = 1;
+//                                            handler.sendMessage(msg); //发送msg消息
+//                                            Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_LONG).show();
+//                                        }
+//                                    });
                                 }
 
                                 @Override

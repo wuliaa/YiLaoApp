@@ -109,9 +109,11 @@ public class MyInformationFragment extends Fragment {
                             @Override
                             public void run() {
                                 binding.informationTextView16.setText(user.getMobile().toString());
-                                if (user.getSex().equals("male"))
-                                    binding.informationTextView13.setText("男");
-                                else binding.informationTextView13.setText("女");
+                                if(user.getSex()!=null){
+                                    if (user.getSex().equals("male"))
+                                        binding.informationTextView13.setText("男");
+                                    else binding.informationTextView13.setText("女");
+                                }
                                 if(user.getId_school()!=null)
                                     binding.school.setText(user.getId_school());
                                 if(user.getNickname()!=null)
