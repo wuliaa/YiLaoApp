@@ -16,7 +16,6 @@ public class User {
     //@SerializedName("moblie")
     private BigInteger mobile;//bigint unsigned primary key,手机号
     private String id_name;
-
     public User(String nickname, Point_address default_location, int portrait, String id_school, String id_photo, String create_at, String mark, String sex, BigInteger mobile, String id_name) {
         this.nickname = nickname;
         this.default_location = default_location;

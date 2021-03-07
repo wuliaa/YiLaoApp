@@ -23,8 +23,9 @@ public class All_orders {
     String protected_info;
     String out_at;
     int count;
+    String id_photo;
 
-    public All_orders(String receive_at, String close_at, BigInteger phone, BigInteger executor, BigInteger from_user, Point_address destination, String emergency_level, String close_state, String create_at, int id, String detail, String type, String category, String photos, String in_at, float reward, String protected_info, String out_at, int count) {
+    public All_orders(String receive_at, String close_at, BigInteger phone, BigInteger executor, BigInteger from_user, Point_address destination, String emergency_level, String close_state, String create_at, int id, String detail, String type, String category, String photos, String in_at, float reward, String protected_info, String out_at, int count,String id_photo) {
         this.receive_at = receive_at;
         this.close_at = close_at;
         this.phone = phone;
@@ -44,6 +45,7 @@ public class All_orders {
         this.protected_info = protected_info;
         this.out_at = out_at;
         this.count = count;
+        this.id_photo=id_photo;
     }
 
     public String getReceive_at() {
@@ -166,6 +168,14 @@ public class All_orders {
         this.in_at = in_at;
     }
 
+    public String getId_photo() {
+        return id_photo;
+    }
+
+    public void setId_photo(String id_photo) {
+        this.id_photo = id_photo;
+    }
+
     public float getReward() {
         return reward;
     }
@@ -197,4 +207,5 @@ public class All_orders {
     public void setCount(int count) {
         this.count = count;
     }
+
 }

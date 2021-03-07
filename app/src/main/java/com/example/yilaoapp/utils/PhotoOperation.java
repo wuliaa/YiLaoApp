@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class PhotoOperation {
 
@@ -61,5 +62,24 @@ public class PhotoOperation {
         //将bitmap压缩成png，压缩到图片原本质量80%，最后保存在压缩数据的输出流 byStream
         bitmap.compress(Bitmap.CompressFormat.PNG, 80, byStream);
         return  byStream;
+    }
+
+    //将inpustream转换为file
+    public static byte[] read(InputStream inputStream) throws IOException {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buffer = null;
+            int num = inputStream.read(buffer);
+            while (num != -1) {
+                baos.write(buffer, 0, num);
+                num = inputStream.read(buffer);
+            }
+            baos.flush();
+            return baos.toByteArray();
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
     }
 }

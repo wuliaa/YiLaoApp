@@ -39,6 +39,7 @@ import com.example.yilaoapp.bean.All_orders;
 import com.example.yilaoapp.databinding.FragmentErrandsBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.errand_service;
+import com.example.yilaoapp.service.image_service;
 import com.example.yilaoapp.ui.bulletin.BullentinViewModel;
 import com.example.yilaoapp.ui.bulletin.Share;
 import com.example.yilaoapp.ui.bulletin.ShareAdapter;
@@ -47,9 +48,12 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -150,7 +154,8 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
     @Override
     public void onRefresh() {
         errand_service errand=new RetrofitUser().get().create(errand_service.class);
-        Call<ResponseBody> get_errand=errand.get_orders();
+        Call<ResponseBody> get_errand=errand.get_orders("跑腿");
+        List<InputStream> photo=new LinkedList<>();
         get_errand.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -160,7 +165,27 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     Gson gson=new Gson();
                     Type type=new TypeToken<List<All_orders>>(){}.getType();
                     List<All_orders> all=gson.fromJson(str,type);
-                    System.out.println(all.get(0).getDetail());
+
+                    for(int i=0;i<all.size();i++){
+                        String uid=all.get(i).getId_photo();
+                        BigInteger mobile=all.get(i).getFrom_user();
+                        image_service load=new RetrofitUser().get().create(image_service.class);
+                        Call<ResponseBody> load_back=load.load_photo(mobile,uid,"df3b72a07a0a4fa1854a48b543690eab");
+                        load_back.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                assert response.body() != null;
+                                photo.add(response.body().byteStream());
+                               // photo.add()
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                    //System.out.println(all.get(0).getDetail());
                     //System.out.println(response.body().string());
                 } catch (IOException e) {
                     e.printStackTrace();
