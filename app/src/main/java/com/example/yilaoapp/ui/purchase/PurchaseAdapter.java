@@ -32,7 +32,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.Purcha
     @Override
     public void onBindViewHolder(@NonNull PurchaseAdapter.PurchaseViewHolder holder, int position) {
         Purchase purchase = mpurchaseList.get(position);
-        holder.photo.setImageResource(purchase.getImageId()[0]);
+        holder.photo.setImageResource(purchase.getImageid());
         holder.objectName.setText(purchase.getObjectName());
         holder.content.setText(purchase.getContent());
         holder.money.setText(purchase.getMoney());

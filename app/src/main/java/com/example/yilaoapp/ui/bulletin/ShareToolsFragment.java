@@ -81,14 +81,21 @@ public class ShareToolsFragment extends Fragment implements SwipeRefreshLayout.O
         //return inflater.inflate(R.layout.fragment_share_tools, container, false);
     }
     private void initShares() {
+        ArrayList<String> photos = new ArrayList<>();
+        for (int i = 0; i <9; i++) {
+            photos.add("http://bgashare.bingoogolapple.cn/refreshlayout/images/staggered2.png");
+//            photos.add("/storage/emulated/0/sina/weibo/storage/photoalbum_save/weibo/img-ebc3581e69b48d8c1bc1365971f12d90.jpg");
+//            photos.add("http://api.yilao.tk:5000/v1.0/users/13060887368/resources/2f5a0fff-5f37-4bb9-8667-2c3beb00dfe8");
+        }
         for (int i = 0; i < 2; i++) {
             Share s1 = new Share("网球拍","若想和朋友打一次或两次网球却不想花钱买网球拍，" +
-                    "这里有闲置的网球拍可共享使用~","下午 6:00", R.drawable.photo1);
+                    "这里有闲置的网球拍可共享使用~","下午 6:00", R.drawable.photo1,photos);
             shareList.add(s1);
-            Share s2 = new Share("针线","若想使用针线手头上却没有，这里提供免费针线使用","上午 12:00", R.drawable.photo2);
+            Share s2 = new Share("针线","若想使用针线手头上却没有，这里提供免费针线使用",
+                    "上午 12:00", R.drawable.photo2,photos);
             shareList.add(s2);
             Share s3 = new Share("雨伞","下雨天忘记带伞了吗，这里提供共享雨伞，用完请记得归还",
-                    "下午14:00", R.drawable.photo3);
+                    "下午14:00", R.drawable.photo3,photos);
             shareList.add(s3);
         }
     }

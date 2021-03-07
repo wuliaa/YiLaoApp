@@ -1,5 +1,6 @@
 package com.example.yilaoapp.ui.mine;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -69,6 +70,7 @@ public class LoginFragment extends Fragment {
         //binding.setData(mineViewModel);
         binding.setLifecycleOwner(requireActivity());
         binding.loginImageview1.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("HandlerLeak")
             @Override
             public void onClick(View v) {
                 String mobile, password;

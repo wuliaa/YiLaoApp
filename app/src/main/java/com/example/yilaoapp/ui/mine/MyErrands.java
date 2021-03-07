@@ -6,16 +6,16 @@ public class MyErrands {
     private String money;
     private String isErrands;
     private String isPublish;
-    private int[] imageId;
+    private int imageid;   //头像
 
     public MyErrands(String objectName, String content, String money, String isErrands,
-                      String isPublish,int []imageId) {
+                      String isPublish,int imageid) {
         this.objectName = objectName;
         this.content = content;
         this.money = money;
         this.isErrands = isErrands;
         this.isPublish=isPublish;
-        this.imageId = imageId;
+        this.imageid=imageid;
     }
 
     public String getObjectName() {
@@ -58,12 +58,11 @@ public class MyErrands {
         this.isPublish = isPublish;
     }
 
-    public int[] getImageId() {
-        return imageId;
+    public int getImageid() {
+        return imageid;
     }
 
-    public void setImageId(int[] imageId) {
-        this.imageId = imageId;
+    public void setImageid(int imageid) {
+        this.imageid = imageid;
     }
-
 }

@@ -82,19 +82,23 @@ public class MyBulletinFragment extends Fragment implements SwipeRefreshLayout.O
         //return inflater.inflate(R.layout.fragment_lost_found, container, false);
     }
     private void initContents() {
-        int []imageid={R.drawable.lost1, R.drawable.photo1, R.drawable.lost3,
-                R.drawable.lost1, R.drawable.photo1, R.drawable.lost3};
+        ArrayList<String> photos = new ArrayList<>();
+        for (int i = 0; i <9; i++) {
+            photos.add("http://bgashare.bingoogolapple.cn/refreshlayout/images/staggered2.png");
+//            photos.add("/storage/emulated/0/sina/weibo/storage/photoalbum_save/weibo/img-ebc3581e69b48d8c1bc1365971f12d90.jpg");
+//            photos.add("http://api.yilao.tk:5000/v1.0/users/13060887368/resources/2f5a0fff-5f37-4bb9-8667-2c3beb00dfe8");
+        }
         for (int i = 0; i < 2; i++) {
             MyBulletin l1 = new MyBulletin("校卡","在北座402捡到一张来自计算机学院18级的一卡通",
-                    "今天下午6:00", "北座402","失物招领",imageid);
+                    "今天下午6:00", "北座402","失物招领",photos,R.drawable.head2);
             bulletinList.add(l1);
             MyBulletin l2 = new MyBulletin("网球拍","若想和朋友打一次或两次网球却不想花钱买网球拍，" +
                     "这里有闲置的网球拍可共享使用~","可以商讨",
-                    "可以商讨","共享工具",imageid);
+                    "可以商讨","共享工具",photos,R.drawable.head2);
             bulletinList.add(l2);
             MyBulletin l3 = new MyBulletin("高数小组学习","我这里有比较好的学习资料，" +
                     "为了考到更好的分数，高数一起学习吧",
-                    "可以商讨", "图书馆","组对学习",imageid);
+                    "可以商讨", "图书馆","组对学习",photos,R.drawable.head2);
             bulletinList.add(l3);
         }
     }

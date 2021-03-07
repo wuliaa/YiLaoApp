@@ -99,7 +99,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.6" />
+                app:layout_constraintGuide_percent="0.65" />
 
             <TextView
                 android:id="@+id/sharedname"
@@ -124,49 +124,38 @@
                 app:layout_constraintStart_toStartOf="@+id/sharedname"
                 app:layout_constraintTop_toBottomOf="@+id/sharedname" />
 
-            <com.github.siyamed.shapeimageview.RoundedImageView
-                android:id="@+id/sharedphoto"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:contentDescription="@string/find_photo"
-                android:background="@drawable/photo3"
-                app:layout_constraintBottom_toTopOf="@+id/guideline26"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                android:clickable="true"
-                app:layout_constraintStart_toStartOf="@+id/sharedcontent"
-                app:layout_constraintTop_toTopOf="@+id/guideline25"
-                android:focusable="true" />
-            <com.github.siyamed.shapeimageview.RoundedImageView
-                android:id="@+id/sharebphoto"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:clickable="true"
-                android:contentDescription="@string/find_photo"
-                android:background="@drawable/img_bg_selector"
-                app:layout_constraintBottom_toTopOf="@+id/guideline26"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/sharedcontent"
-                app:layout_constraintTop_toTopOf="@+id/guideline25"
-                android:focusable="true" />
-
             <TextView
                 android:id="@+id/sharedtime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
                 android:text="@string/chattime"
                 app:layout_constraintBottom_toBottomOf="@+id/sharedbutton"
-                app:layout_constraintStart_toStartOf="@+id/sharedphoto"
+                app:layout_constraintStart_toStartOf="@+id/guideline22"
                 app:layout_constraintTop_toTopOf="@+id/guideline26" />
+
+            <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
+                android:id="@+id/ShareninePhotoLayout"
+                style="@style/MatchWrap"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="30dp"
+                app:bga_npl_itemCornerRadius="0dp"
+                app:bga_npl_itemSpanCount="3"
+                app:bga_npl_itemWhiteSpacing="4dp"
+                app:bga_npl_itemWidth="0dp"
+                app:bga_npl_otherWhiteSpacing="64dp"
+                app:bga_npl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
+                app:bga_npl_showAsLargeWhenOnlyOne="true"
+                app:layout_constraintBottom_toTopOf="@+id/guideline26"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline21"
+                app:layout_constraintTop_toTopOf="@+id/guideline25" />
+
             <Button
                 android:id="@+id/sharedbutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
                 android:background="@drawable/contact_deepen"
                 android:drawableStart="@drawable/chaticon"
                 android:drawablePadding="5dp"

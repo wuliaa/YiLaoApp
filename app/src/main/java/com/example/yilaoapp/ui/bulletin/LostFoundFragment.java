@@ -74,14 +74,21 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
         //return inflater.inflate(R.layout.fragment_lost_found, container, false);
     }
     private void initLosts() {
+        ArrayList<String> photos = new ArrayList<>();
+        for (int i = 0; i <9; i++) {
+            photos.add("http://bgashare.bingoogolapple.cn/refreshlayout/images/staggered2.png");
+//            photos.add("/storage/emulated/0/sina/weibo/storage/photoalbum_save/weibo/img-ebc3581e69b48d8c1bc1365971f12d90.jpg");
+//            photos.add("http://api.yilao.tk:5000/v1.0/users/13060887368/resources/2f5a0fff-5f37-4bb9-8667-2c3beb00dfe8");
+        }
         for (int i = 0; i < 2; i++) {
             Lost l1 = new Lost("校卡","在北座402捡到一张来自计算机学院18级的一卡通",
-                    "下午 6:00", "北座402",R.drawable.lost1);
+                    "下午 6:00", "北座402",R.drawable.lost1,photos);
             lostList.add(l1);
-            Lost l2 = new Lost("钥匙","在陶园捡到一个钥匙","上午 12:00","陶园", R.drawable.lost2);
+            Lost l2 = new Lost("钥匙","在陶园捡到一个钥匙",
+                    "上午 12:00","陶园", R.drawable.lost2,photos);
             lostList.add(l2);
             Lost l3 = new Lost("高数课本","一课北403谁落下了高数辅导书吗",
-                    "下午14:00", "一课北座",R.drawable.lost3);
+                    "下午14:00", "一课北座",R.drawable.lost3,photos);
             lostList.add(l3);
         }
     }

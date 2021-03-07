@@ -1,21 +1,25 @@
 package com.example.yilaoapp.ui.mine;
 
+import java.util.ArrayList;
+
 public class MyPurchase {
     private String objectName;
     private String content;
     private String money;
     private String isPurchase;
     private String isPublish;
-    private int[] imageId;
+    private ArrayList<String> photos;
+    private int imageid;  //头像
 
     public MyPurchase(String objectName, String content, String money, String isPurchase,
-                      String isPublish,int []imageId) {
+                      String isPublish,ArrayList<String> photos,int imageid) {
         this.objectName = objectName;
         this.content = content;
         this.money = money;
         this.isPurchase = isPurchase;
         this.isPublish=isPublish;
-        this.imageId = imageId;
+        this.photos = photos;
+        this.imageid=imageid;
     }
 
     public String getObjectName() {
@@ -58,11 +62,19 @@ public class MyPurchase {
         this.isPublish = isPublish;
     }
 
-    public int[] getImageId() {
-        return imageId;
+    public ArrayList<String> getPhotos() {
+        return photos;
     }
 
-    public void setImageId(int[] imageId) {
-        this.imageId = imageId;
+    public void setPhotos(ArrayList<String> photos) {
+        this.photos = photos;
+    }
+
+    public int getImageid() {
+        return imageid;
+    }
+
+    public void setImageid(int imageid) {
+        this.imageid = imageid;
     }
 }

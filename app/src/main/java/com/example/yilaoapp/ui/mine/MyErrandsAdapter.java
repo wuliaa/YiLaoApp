@@ -32,7 +32,7 @@ public class MyErrandsAdapter extends  RecyclerView.Adapter<MyErrandsAdapter.MyE
     @Override
     public void onBindViewHolder(@NonNull MyErrandsAdapter.MyErrandsviewHolder holder, int position) {
         MyErrands errands = merrandsList.get(position);
-        holder.photo.setImageResource(errands.getImageId()[0]);
+        holder.photo.setImageResource(errands.getImageid());
         holder.objectName.setText(errands.getObjectName());
         holder.content.setText(errands.getContent());
         holder.money.setText(errands.getMoney());

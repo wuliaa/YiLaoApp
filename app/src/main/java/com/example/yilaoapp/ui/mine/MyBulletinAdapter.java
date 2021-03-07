@@ -32,7 +32,7 @@ public class MyBulletinAdapter extends  RecyclerView.Adapter<MyBulletinAdapter.M
     @Override
     public void onBindViewHolder(@NonNull MyBulletinAdapter.MyBulletinviewHolder holder, int position) {
         MyBulletin bulletin = mbulletinList.get(position);
-        holder.photo.setImageResource(bulletin.getImageId()[0]);
+        holder.photo.setImageResource(bulletin.getImageid());
         holder.objectName.setText(bulletin.getObjectName());
         holder.content.setText(bulletin.getContent());
         holder.time.setText(bulletin.getTime());

@@ -2,19 +2,24 @@ package com.example.yilaoapp.ui.purchase;
 
 import com.example.yilaoapp.R;
 
+import java.util.ArrayList;
+
 public class Purchase {
         private String objectName;
         private String content;
         private String money;
         private String isPurchase;
-        private int[] imageId;
+        private ArrayList<String> photos;
+        private int imageid;
 
-        public Purchase(String objectName, String content, String money, String isPurchase, int []imageId) {
+        public Purchase(String objectName, String content, String money, String isPurchase,
+                        ArrayList<String> photos,int imageid) {
             this.objectName = objectName;
             this.content = content;
             this.money = money;
             this.isPurchase = isPurchase;
-            this.imageId = imageId;
+            this.photos = photos;
+            this.imageid=imageid;
         }
 
         public String getObjectName() {
@@ -49,19 +54,19 @@ public class Purchase {
             this.isPurchase = isPurchase;
         }
 
-        public int[] getImageId() {
-            return imageId;
+        public ArrayList<String> getPhotos() {
+            return photos;
         }
 
-        //public void setImageId(int []imageId) {
-            //this.imageId = imageId;
+        public void setPhotos(ArrayList<String> photos) {
+            this.photos = photos;
+        }
 
-       // }
-       public void setImageId()
-       {
-           for(int i=0;i<3;i++)
-           {
-               this.imageId[i]= R.drawable.kouhong;
-           }
-       }
+        public int getImageid() {
+            return imageid;
+        }
+
+        public void setImageid(int imageid) {
+            this.imageid = imageid;
+        }
 }

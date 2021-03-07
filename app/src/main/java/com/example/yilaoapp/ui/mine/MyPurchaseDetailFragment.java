@@ -1,9 +1,11 @@
 package com.example.yilaoapp.ui.mine;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,27 +29,36 @@ import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentMyPurchaseDetailBinding;
 import com.github.siyamed.shapeimageview.RoundedImageView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
+import cn.bingoogolapple.baseadapter.BGAOnRVItemClickListener;
+import cn.bingoogolapple.baseadapter.BGAOnRVItemLongClickListener;
+import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
+import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyPurchaseDetailFragment extends Fragment {
+public class MyPurchaseDetailFragment extends Fragment implements EasyPermissions.PermissionCallbacks, BGANinePhotoLayout.Delegate {
+
+    private static final int PRC_PHOTO_PREVIEW = 1;
+
+    FragmentMyPurchaseDetailBinding binding;
 
     public MyPurchaseDetailFragment() {
         // Required empty public constructor
     }
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-    FragmentMyPurchaseDetailBinding binding;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -90,29 +101,8 @@ public class MyPurchaseDetailFragment extends Fragment {
                 //Toast.makeText(getContext(),label.toString(),Toast.LENGTH_SHORT).show();
                 binding.compeleteButton.setVisibility(View.GONE);
             }
-            int []imageid=item.getImageId();
-            for (int i=0;i<imageid.length;i++) {
-                RoundedImageView view = new RoundedImageView(container.getContext());
-                view.setImageResource(imageid[i]);
-                Log.d("图片", String.valueOf(imageid[i]));
-                LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(600, 600);
-                if(i==0) lp.setMargins(0,0,0,40);
-                else lp.setMargins(0,40,0,40);
-                view.setLayoutParams(lp);
-                int res = imageid[i];
-                view.setOnClickListener(v-> {
-                    new Handler(new Handler.Callback() {
-                        @Override
-                        public boolean handleMessage(@NonNull android.os.Message msg) {
-                            NavController controller = Navigation.findNavController(v);
-                            viewModel.setMinephotoId(res);
-                            controller.navigate(R.id.action_myPurchaseDetailFragment_to_minePhotoFragment);
-                            return false;
-                        }
-                    }).sendEmptyMessageDelayed(0, 300);
-                });
-                binding.MyImageGallery.addView(view);
-            }
+            //添加对图片的代码
+
             HorizontalStepView setpview5 =(HorizontalStepView) binding.stepView;
             List<StepBean> stepsBeanList = new ArrayList<>();
             StepBean stepBean0 = new StepBean("发布",1);//1是完成，0是正在进行时，-1是还没有进行到
@@ -130,6 +120,9 @@ public class MyPurchaseDetailFragment extends Fragment {
                 stepsBeanList.get(2).setState(0);
                 Log.d("MyErrandDetail", "labelMessage: "+label.toString());
             }
+
+            binding.ninePhotoLayout.setDelegate(this);
+            binding.ninePhotoLayout.setData(item.getPhotos());
         });
 
         return binding.getRoot();
@@ -156,4 +149,65 @@ public class MyPurchaseDetailFragment extends Fragment {
                 .setStepsViewIndicatorAttentionIcon(
                         ContextCompat.getDrawable(requireActivity(), R.drawable.attention));//设置StepsViewIndicator AttentionIcon
     }
+
+    /**
+     * 图片预览，兼容6.0动态权限
+     */
+    @AfterPermissionGranted(PRC_PHOTO_PREVIEW)
+    private void photoPreviewWrapper() {
+        if (binding.ninePhotoLayout == null) {
+            Log.d("ninePhotoLayout", "ninePhotoLayout: IsNull");
+            return;
+        }
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(requireContext(), perms)) {
+            File downloadDir = new File(Environment.getExternalStorageDirectory(), "BGAPhotoPickerDownload");
+            BGAPhotoPreviewActivity.IntentBuilder photoPreviewIntentBuilder = new BGAPhotoPreviewActivity.IntentBuilder(requireContext());
+
+            // 保存图片的目录，如果传 null，则没有保存图片功能
+            photoPreviewIntentBuilder.saveImgDir(downloadDir);
+
+            if (binding.ninePhotoLayout.getItemCount() == 1) {
+                // 预览单张图片
+                photoPreviewIntentBuilder.previewPhoto(binding.ninePhotoLayout.getCurrentClickItem());
+            } else if (binding.ninePhotoLayout.getItemCount() > 1) {
+                // 预览多张图片
+                photoPreviewIntentBuilder.previewPhotos(binding.ninePhotoLayout.getData())
+                        .currentPosition(binding.ninePhotoLayout.getCurrentClickItemPosition()); // 当前预览图片的索引
+
+            }
+            startActivity(photoPreviewIntentBuilder.build());
+        } else {
+            EasyPermissions.requestPermissions(this, "图片预览需要以下权限:\n\n1.访问设备上的照片", PRC_PHOTO_PREVIEW, perms);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        if (requestCode == PRC_PHOTO_PREVIEW) {
+            Toast.makeText(requireContext(), "您拒绝了「图片预览」所需要的相关权限!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onClickNinePhotoItem(BGANinePhotoLayout ninePhotoLayout, View view, int position, String model, List<String> models) {
+        photoPreviewWrapper();
+    }
+
+    @Override
+    public void onClickExpand(BGANinePhotoLayout ninePhotoLayout, View view, int position, String model, List<String> models) {
+        ninePhotoLayout.setIsExpand(true);
+        ninePhotoLayout.flushItems();
+    }
+
 }

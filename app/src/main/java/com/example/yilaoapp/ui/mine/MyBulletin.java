@@ -1,21 +1,25 @@
 package com.example.yilaoapp.ui.mine;
 
+import java.util.ArrayList;
+
 public class MyBulletin {
     private String objectName;
     private String content;
     private String time;
     private String address;
     private String whatBulletin;
-    private int[] imageId;
+    private ArrayList<String> photos;
+    private int imageid;
 
     public MyBulletin(String objectName, String content, String time, String address,
-                     String whatBulletin,int []imageId) {
+                     String whatBulletin,ArrayList<String> photos,int imageid) {
         this.objectName = objectName;
         this.content = content;
         this.time = time;
         this.address = address;
         this.whatBulletin=whatBulletin;
-        this.imageId = imageId;
+        this.photos = photos;
+        this.imageid=imageid;
     }
 
     public String getObjectName() {
@@ -58,11 +62,19 @@ public class MyBulletin {
         this.whatBulletin = whatBulletin;
     }
 
-    public int[] getImageId() {
-        return imageId;
+    public ArrayList<String> getPhotos() {
+        return photos;
     }
 
-    public void setImageId(int[] imageId) {
-        this.imageId = imageId;
+    public void setPhotos(ArrayList<String> photos) {
+        this.photos = photos;
+    }
+
+    public int getImageid() {
+        return imageid;
+    }
+
+    public void setImageid(int imageid) {
+        this.imageid = imageid;
     }
 }

@@ -72,17 +72,21 @@ public class PurchaseListFragment extends Fragment implements SwipeRefreshLayout
         //return inflater.inflate(R.layout.fragment_lost_found, container, false);
     }
     private void initContents() {
-        int []imageid={R.drawable.kouhong, R.drawable.yanying, R.drawable.mianmo, R.drawable.kouhong,
-        R.drawable.yanying, R.drawable.mianmo};
+        ArrayList<String> photos = new ArrayList<>();
+        for (int i = 0; i <9; i++) {
+            photos.add("http://bgashare.bingoogolapple.cn/refreshlayout/images/staggered2.png");
+//            photos.add("/storage/emulated/0/sina/weibo/storage/photoalbum_save/weibo/img-ebc3581e69b48d8c1bc1365971f12d90.jpg");
+//            photos.add("http://api.yilao.tk:5000/v1.0/users/13060887368/resources/2f5a0fff-5f37-4bb9-8667-2c3beb00dfe8");
+        }
         for (int i = 0; i < 2; i++) {
             Purchase l1 = new Purchase("口红","2020年12月3日 下午6:00前，可以在日本买到免税的MAC口红",
-                    "￥90/一个", "代购",imageid);
+                    "￥90/一个", "代购",photos,R.drawable.head2);
             purchaseList.add(l1);
             Purchase l2 = new Purchase("眼影","希望买一个3CE的眼影盘","￥150/一盘",
-                    "找代购",imageid);
+                    "找代购",photos,R.drawable.head2);
             purchaseList.add(l2);
             Purchase l3 = new Purchase("面膜","2020年12月1日前，可以在欧洲买到La Prairie蓓丽鱼子精华睡眠面膜",
-                    "￥2800/50ml", "代购",imageid);
+                    "￥2800/50ml", "代购",photos,R.drawable.head2);
             purchaseList.add(l3);
         }
     }

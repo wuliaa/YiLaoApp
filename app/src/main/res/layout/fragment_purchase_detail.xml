@@ -100,7 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.5" />
+                app:layout_constraintGuide_percent="0.7" />
 
             <TextView
                 android:id="@+id/purchasedname"
@@ -154,34 +154,41 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.93" />
+                app:layout_constraintGuide_percent="0.85" />
 
-            <ScrollView
-                android:id="@+id/purchasedphoto"
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline29"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.95" />
+
+            <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
+                android:id="@+id/PurchaseninePhoto"
+                style="@style/MatchWrap"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/guideline14"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_marginTop="10dp"
+                app:bga_npl_itemCornerRadius="0dp"
+                app:bga_npl_itemSpanCount="3"
+                app:bga_npl_itemWhiteSpacing="4dp"
+                app:bga_npl_itemWidth="0dp"
+                app:bga_npl_otherWhiteSpacing="64dp"
+                app:bga_npl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
+                app:bga_npl_showAsLargeWhenOnlyOne="true"
+                app:layout_constraintBottom_toTopOf="@+id/guideline26"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/guideline25">
-
-                <LinearLayout
-                    android:id="@+id/image_gallery"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center|center_horizontal|center_vertical"
-                    android:orientation="vertical"></LinearLayout>
-            </ScrollView>
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/guideline21"
+                app:layout_constraintTop_toTopOf="@+id/guideline25" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:gravity="right"
                 android:orientation="horizontal"
-                android:paddingStart="40dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/guideline29"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/guideline14">
@@ -190,6 +197,9 @@
                     android:id="@+id/button6"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/purchase_contact_deepen"
                     android:includeFontPadding="true"
@@ -201,6 +211,9 @@
                     android:id="@+id/button7"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginBottom="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/add_deepen"
                     android:text="@string/addtask"

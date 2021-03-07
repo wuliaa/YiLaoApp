@@ -116,27 +116,11 @@
     <fragment
         android:id="@+id/shareDetailFragment"
         android:name="com.example.yilaoapp.ui.bulletin.ShareDetailFragment"
-        android:label="ShareDetailFragment" >
-        <action
-            android:id="@+id/action_shareDetailFragment_to_sharePhotoFragment"
-            app:destination="@id/sharePhotoFragment" />
-    </fragment>
+        android:label="ShareDetailFragment" />
     <fragment
         android:id="@+id/lostDetailFragment"
         android:name="com.example.yilaoapp.ui.bulletin.LostDetailFragment"
-        android:label="LostDetailFragment" >
-        <action
-            android:id="@+id/action_lostDetailFragment_to_lostPhotoFragment"
-            app:destination="@id/lostPhotoFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/sharePhotoFragment"
-        android:name="com.example.yilaoapp.ui.bulletin.SharePhotoFragment"
-        android:label="SharePhotoFragment" />
-    <fragment
-        android:id="@+id/lostPhotoFragment"
-        android:name="com.example.yilaoapp.ui.bulletin.LostPhotoFragment"
-        android:label="LostPhotoFragment" />
+        android:label="LostDetailFragment" />
     <fragment
         android:id="@+id/teamDetailFragment"
         android:name="com.example.yilaoapp.ui.bulletin.TeamDetailFragment"
@@ -156,45 +140,21 @@
     <fragment
         android:id="@+id/purchaseDetailFragment"
         android:name="com.example.yilaoapp.ui.purchase.PurchaseDetailFragment"
-        android:label="PurchaseDetailFragment" >
-        <action
-            android:id="@+id/action_purchaseDetailFragment_to_purchasePhotoFragment"
-            app:destination="@id/purchasePhotoFragment" />
-    </fragment>
+        android:label="PurchaseDetailFragment" />
     <fragment
         android:id="@+id/myBulletinDetailFragment"
         android:name="com.example.yilaoapp.ui.mine.MyBulletinDetailFragment"
-        android:label="MyBulletinDetailFragment" >
-        <action
-            android:id="@+id/action_myBulletinDetailFragment_to_minePhotoFragment"
-            app:destination="@id/minePhotoFragment" />
-    </fragment>
+        android:label="MyBulletinDetailFragment" />
     <fragment
         android:id="@+id/myErrandsDetailFragment"
         android:name="com.example.yilaoapp.ui.mine.MyErrandsDetailFragment"
-        android:label="MyErrandsDetailFragment" >
-        <action
-            android:id="@+id/action_myErrandsDetailFragment_to_minePhotoFragment"
-            app:destination="@id/minePhotoFragment" />
-    </fragment>
+        android:label="MyErrandsDetailFragment" />
     <fragment
         android:id="@+id/myPurchaseDetailFragment"
         android:name="com.example.yilaoapp.ui.mine.MyPurchaseDetailFragment"
-        android:label="MyPurchaseDetailFragment" >
-        <action
-            android:id="@+id/action_myPurchaseDetailFragment_to_minePhotoFragment"
-            app:destination="@id/minePhotoFragment" />
-    </fragment>
+        android:label="MyPurchaseDetailFragment" />
     <fragment
         android:id="@+id/changePhoneFragment"
         android:name="com.example.yilaoapp.ui.mine.ChangePhoneFragment"
         android:label="ChangePhoneFragment" />
-    <fragment
-        android:id="@+id/minePhotoFragment"
-        android:name="com.example.yilaoapp.ui.mine.MinePhotoFragment"
-        android:label="MinePhotoFragment" />
-    <fragment
-        android:id="@+id/purchasePhotoFragment"
-        android:name="com.example.yilaoapp.ui.purchase.PurchasePhotoFragment"
-        android:label="PurchasePhotoFragment" />
 </navigation>

@@ -78,17 +78,15 @@ public class MyErrandsFragment extends Fragment implements SwipeRefreshLayout.On
         //return inflater.inflate(R.layout.fragment_lost_found, container, false);
     }
     private void initContents() {
-        int []imageid={R.drawable.kfc, R.drawable.mcdonald, R.drawable.shengjian,
-                R.drawable.kfc, R.drawable.mcdonald, R.drawable.shengjian};
         for (int i = 0; i < 2; i++) {
             MyErrands l1 = new MyErrands("肯德基","2020年12月3日 下午6:00前，买一份肯德基的全家桶",
-                    "￥100/一个", "跑腿","发布的任务",imageid);
+                    "￥100/一个", "跑腿","发布的任务" ,R.drawable.head3);
             errandsList.add(l1);
             MyErrands l2 = new MyErrands("麦当劳","今天下午5:00前买一份新奥尔良烤鸡腿堡","￥15/一个",
-                    "找跑腿","领取的任务",imageid);
+                    "找跑腿","领取的任务" ,R.drawable.head3);
             errandsList.add(l2);
             MyErrands l3 = new MyErrands("生煎包","明天上午8.买一份陈记生煎包",
-                    "￥28/一份", "跑腿","发布的任务",imageid);
+                    "￥28/一份", "跑腿","发布的任务",R.drawable.head3 );
             errandsList.add(l3);
         }
     }
