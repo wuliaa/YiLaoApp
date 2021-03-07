@@ -35,6 +35,9 @@ public class ServiceHelp {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.d("1", "success");
+                SharedPreferences.Editor e = pre.edit();
+                e.putString(key, value);
+                e.commit();
                 if(flag){
                     NavController controller = Navigation.findNavController(v);
                     controller.popBackStack();

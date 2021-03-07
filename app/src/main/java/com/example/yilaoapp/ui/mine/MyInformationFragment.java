@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -64,7 +65,9 @@ import static android.app.Activity.RESULT_OK;
  */
 public class MyInformationFragment extends Fragment {
     FragmentMyInformationBinding binding;
-    public MyInformationFragment() {}
+
+    public MyInformationFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +78,7 @@ public class MyInformationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_my_information,container,false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_information, container, false);
         //binding.setData(MineViewModel);
         binding.setLifecycleOwner(requireActivity());
         binding.toolbar.setNavigationIcon(R.drawable.ic_baseline_chevron_left_24);
@@ -86,49 +89,8 @@ public class MyInformationFragment extends Fragment {
                 controller.popBackStack();
             }
         });
-        UserService service = new RetrofitUser().get().create(UserService.class);
-        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-        String mobile = pre.getString("mobile", "");
-        String token = pre.getString("token", "");
-        //获取用户信息
-        new Thread(){
-            public void run() {
-                Call<ResponseBody> get = service.get_user(mobile, "df3b72a07a0a4fa1854a48b543690eab", token);
-                get.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        String str = "";
-                        try {
-                            str = response.body().string();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Gson gson = new Gson();
-                        User user = gson.fromJson(str, User.class);
-                        requireActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                binding.informationTextView16.setText(user.getMobile().toString());
-                                if(user.getSex()!=null){
-                                    if (user.getSex().equals("male"))
-                                        binding.informationTextView13.setText("男");
-                                    else binding.informationTextView13.setText("女");
-                                }
-                                if(user.getId_school()!=null)
-                                    binding.school.setText(user.getId_school());
-                                if(user.getNickname()!=null)
-                                    binding.informationTextView10.setText(user.getNickname());
-                            }
-                        });
-                    }
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        }.start();
-        binding.informationCardView2.setOnClickListener(new View.OnClickListener(){
+        initUI();
+        binding.informationCardView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 BottomMenu.show((AppCompatActivity) requireContext(), new String[]{"上传图片", "取消"}, new OnMenuItemClickListener() {
@@ -138,20 +100,20 @@ public class MyInformationFragment extends Fragment {
                         if (index == 0) {
                             String[] PERMISSIONS = {
                                     "android.permission.READ_EXTERNAL_STORAGE",
-                                    "android.permission.WRITE_EXTERNAL_STORAGE" };
+                                    "android.permission.WRITE_EXTERNAL_STORAGE"};
                             //检测是否有读的权限
                             int permission = ContextCompat.checkSelfPermission(requireContext(),
                                     "android.permission.READ_EXTERNAL_STORAGE");
                             if (permission != PackageManager.PERMISSION_GRANTED) {
                                 // 没有读的权限，去申请写的权限，会弹出对话框
-                                ActivityCompat.requestPermissions(requireActivity(), PERMISSIONS,1);
+                                ActivityCompat.requestPermissions(requireActivity(), PERMISSIONS, 1);
                             }
                             if (permission != PackageManager.PERMISSION_GRANTED) {
                                 TipDialog.show((AppCompatActivity) getActivity(), "上传失败", TipDialog.TYPE.ERROR);
-                            }else{
+                            } else {
                                 Intent intent = new Intent("android.intent.action.GET_CONTENT");
                                 intent.setType("image/*");
-                                startActivityForResult(intent,200);//打开系统相册
+                                startActivityForResult(intent, 200);//打开系统相册
                             }
                         }
                     }
@@ -169,13 +131,12 @@ public class MyInformationFragment extends Fragment {
         binding.recyclerItemSb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(binding.informationTextView13.getText()=="男"){
+                if (binding.informationTextView13.getText() == "男") {
                     binding.informationTextView13.setText("女");
-                    ServiceHelp.UserUpdate(getContext(),"sex","female",false,null);
-                }
-                else {
+                    ServiceHelp.UserUpdate(getContext(), "sex", "female", false, null);
+                } else {
                     binding.informationTextView13.setText("男");
-                    ServiceHelp.UserUpdate(getContext(),"sex","male",false,null);
+                    ServiceHelp.UserUpdate(getContext(), "sex", "male", false, null);
                 }
             }
         });
@@ -256,5 +217,73 @@ public class MyInformationFragment extends Fragment {
         } else {
             Toast.makeText(getContext(), "failed to get image", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void Refresh() {
+        UserService service = new RetrofitUser().get().create(UserService.class);
+        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+        String mobile = pre.getString("mobile", "");
+        String token = pre.getString("token", "");
+        SharedPreferences.Editor e = pre.edit();
+        //获取用户信息
+        new Thread() {
+            public void run() {
+                Call<ResponseBody> get = service.get_user(mobile, "df3b72a07a0a4fa1854a48b543690eab", token);
+                get.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        String str = "";
+                        try {
+                            str = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Gson gson = new Gson();
+                        User user = gson.fromJson(str, User.class);
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                binding.informationTextView16.setText(user.getMobile().toString());
+                                if (user.getSex() != null) {
+                                    if (user.getSex().equals("male")){
+                                        binding.informationTextView13.setText("男");
+                                        e.putString("sex", "男");
+                                    }
+                                    else {
+                                        binding.informationTextView13.setText("女");
+                                        e.putString("sex", "女");
+                                    }
+                                }
+                                if (user.getId_school() != null){
+                                    binding.school.setText(user.getId_school());
+                                    e.putString("id_school", user.getId_school());
+                                }
+                                if (user.getId_name() != null){
+                                    binding.informationTextView10.setText(user.getId_name());
+                                    e.putString("id_name",user.getId_name());
+                                }
+                                e.commit();
+                            }
+                        });
+                    }
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }.start();
+    }
+    public void initUI(){
+        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+        binding.informationTextView16.setText(pre.getString("mobile", ""));
+        binding.school.setText(pre.getString("id_school",""));
+        binding.informationTextView10.setText(pre.getString("id_name",""));
+        String sex=pre.getString("sex","");
+        if(sex.equals(""))Refresh();
+        else if(sex.equals("male"))
+            binding.informationTextView13.setText("男");
+        else binding.informationTextView13.setText("女");
+
     }
 }
