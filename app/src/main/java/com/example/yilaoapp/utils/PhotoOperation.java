@@ -3,10 +3,14 @@ package com.example.yilaoapp.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class PhotoOperation {
 
@@ -24,7 +28,7 @@ public class PhotoOperation {
     }
 
     /**
-     * 将Byte数组转化为bitmap
+     * 将Byte数组转化为biaatmap
      * @param byteArray
      * @return
      */
@@ -45,5 +49,17 @@ public class PhotoOperation {
         Bitmap bitmap  = BitmapFactory.decodeStream(fis);
         byte[] byteArray = Bitmap2ByteArray(bitmap);
         return byteArray;
+    }
+
+    /**
+     * 将bitmap转化为ByteArrayOutputStream
+     * @param bitmap
+     * @return  byteArray
+     */
+    public ByteArrayOutputStream Bitmap2OutputStream(Bitmap bitmap){
+        ByteArrayOutputStream byStream = new ByteArrayOutputStream();
+        //将bitmap压缩成png，压缩到图片原本质量80%，最后保存在压缩数据的输出流 byStream
+        bitmap.compress(Bitmap.CompressFormat.PNG, 80, byStream);
+        return  byStream;
     }
 }
