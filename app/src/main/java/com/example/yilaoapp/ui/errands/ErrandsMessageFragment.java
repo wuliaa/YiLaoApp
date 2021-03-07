@@ -85,7 +85,8 @@ public class ErrandsMessageFragment extends Fragment {
                 errand_back.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
+                        NavController controller = Navigation.findNavController(view);
+                        controller.popBackStack();
                         Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
                     }
 

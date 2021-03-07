@@ -22,6 +22,9 @@ import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
 import com.example.yilaoapp.utils.ServiceHelp;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,6 +60,7 @@ public class ChangePsdFragment extends Fragment {
         //修改用户密码
         SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
         String psd=pre.getString("password","");
+        String mobile=pre.getString("mobile","");
         binding.changePsdButton9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,15 +69,43 @@ public class ChangePsdFragment extends Fragment {
                 binding.changePsdEditText11.getText().toString().equals("")){
                     Toast.makeText(getContext(),"密码输入不能为空",Toast.LENGTH_LONG).show();
                 }
-                else if(!binding.editText9.getText().toString().equals(psd)){
-                    Toast.makeText(getContext(),"原始密码输入错误",Toast.LENGTH_SHORT).show();
-                }else if(binding.editText9.getText().toString().equals(psd) &&
-                        binding.changePsdEditText10.getText().toString().equals(binding.changePsdEditText11.getText().toString())){
-                    String password=binding.changePsdEditText10.getText().toString();
-                    ServiceHelp.UserUpdate(getContext(),"passwd",password,true,v);
-                    SharedPreferences.Editor e = pre.edit();
-                    e.putString("password", password);
-                    e.commit();
+                else if(!binding.changePsdEditText10.getText().toString()
+                        .equals(binding.changePsdEditText11.getText().toString())){
+                    Toast.makeText(getContext(),"输入新密码不一致",Toast.LENGTH_LONG).show();
+                }
+                else{
+                    String password=binding.editText9.getText().toString();
+                    UserService service = new RetrofitUser().get().create(UserService.class);
+                    Call<ResponseBody> back = service.login_password(mobile, "df3b72a07a0a4fa1854a48b543690eab", password);
+                    back.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            Map<String,String> map=new HashMap<String,String>();
+                            map.put("passwd",binding.changePsdEditText10.getText().toString());
+                            Call<ResponseBody> updatepsd=service.updatePsd(mobile,"df3b72a07a0a4fa1854a48b543690eab",password,
+                                    map);
+                            updatepsd.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    SharedPreferences.Editor e = pre.edit();
+                                    e.putString("password", password);
+                                    e.commit();
+                                    NavController controller = Navigation.findNavController(v);
+                                    controller.popBackStack();
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    Toast.makeText(getContext(),"网络连接失败",Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Toast.makeText(getContext(),"原始密码输入错误",Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });

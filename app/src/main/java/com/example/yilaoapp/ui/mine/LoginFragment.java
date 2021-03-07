@@ -145,6 +145,9 @@ public class LoginFragment extends Fragment {
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    android.os.Message msg = new android.os.Message();
+                                    msg.what = 1;
+                                    handler.sendMessage(msg); //发送msg消息
                                     Toast.makeText(getContext(), "账号密码错误", Toast.LENGTH_LONG).show();
                                 }
                             });
