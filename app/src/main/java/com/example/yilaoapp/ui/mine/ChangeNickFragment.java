@@ -64,7 +64,7 @@ public class ChangeNickFragment extends Fragment {
                     Toast.makeText(getContext(),"输入的昵称为空",Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    ServiceHelp.UserUpdate(getContext(),"nickname",nickname,true,v);
+                    ServiceHelp.UserUpdate(getContext(),"id_name",nickname,true,v);
                 }
             }
         });

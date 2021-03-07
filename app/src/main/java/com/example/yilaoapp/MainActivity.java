@@ -45,7 +45,6 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private NavController navController;
     private DrawerLayout drawerLayout;
-    private TextView nick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,9 +77,9 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (user.getNickname() != null) {
-                            nick = findViewById(R.id.mnickn);
-                            nick.setText(user.getNickname());
+                        if (user.getId_name() != null) {
+                            TextView nick = findViewById(R.id.mnickn);
+                            nick.setText(user.getId_name());
                         }
                     }
                 });
