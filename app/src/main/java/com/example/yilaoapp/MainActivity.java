@@ -28,6 +28,7 @@ import com.example.yilaoapp.bean.messbean;
 import com.example.yilaoapp.bean.tok;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
+import com.example.yilaoapp.utils.ServiceHelp;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
 import com.google.android.material.navigation.NavigationView;
@@ -62,27 +63,34 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences pre = this.getSharedPreferences("login", Context.MODE_PRIVATE);
         String mobile = pre.getString("mobile", "");
         String token = pre.getString("token", "");
+        String password2 = pre.getString("password", "");
         Call<ResponseBody> get = service.get_user(mobile, "df3b72a07a0a4fa1854a48b543690eab", token);
         get.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                String str = "";
-                try {
-                    str = response.body().string();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Gson gson = new Gson();
-                User user = gson.fromJson(str, User.class);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (user.getId_name() != null) {
-                            TextView nick = findViewById(R.id.mnickn);
-                            nick.setText(user.getId_name());
-                        }
+                if (response.code() / 100 == 4) {
+//                    ServiceHelp.GetToken(getApplicationContext(), mobile, password2);
+//                    onCreate(savedInstanceState);
+                    Toast.makeText(getApplicationContext(),"失败",Toast.LENGTH_SHORT).show();
+                } else {
+                    String str = "";
+                    try {
+                        str = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                });
+                    Gson gson = new Gson();
+                    User user = gson.fromJson(str, User.class);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (user.getId_name() != null) {
+                                TextView nick = findViewById(R.id.mnickn);
+                                nick.setText(user.getId_name());
+                            }
+                        }
+                    });
+                }
             }
 
             @Override
@@ -90,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("1", "failed");
             }
         });
+
 
         //底部导航栏
         final BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);

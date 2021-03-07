@@ -30,7 +30,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;import android.widget.CompoundButton;
+import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.example.yilaoapp.MainActivity;
@@ -38,11 +39,13 @@ import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.Uuid;
 import com.example.yilaoapp.bean.messbean;
 import com.example.yilaoapp.bean.testbyte;
+import com.example.yilaoapp.bean.tok;
 import com.example.yilaoapp.databinding.FragmentUserBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
 import com.example.yilaoapp.service.image_service;
 import com.example.yilaoapp.utils.PhotoOperation;
+import com.example.yilaoapp.utils.ServiceHelp;
 import com.google.gson.Gson;
 import com.kongzue.dialog.interfaces.OnMenuItemClickListener;
 import com.kongzue.dialog.v3.BottomMenu;
@@ -70,20 +73,25 @@ import static android.app.Activity.RESULT_OK;
  */
 public class UserFragment extends Fragment {
 
-    String mpath=null;
-    public UserFragment() {}
+    String mpath = null;
+
+    public UserFragment() {
+    }
 
     Bitmap Imagebitmap;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
     FragmentUserBinding binding;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_user,container,false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_user, container, false);
         //binding.setData(mineViewModel);
         binding.setLifecycleOwner(requireActivity());
         binding.toolbar.setNavigationIcon(R.drawable.ic_baseline_chevron_left_24);
@@ -94,7 +102,7 @@ public class UserFragment extends Fragment {
                 controller.popBackStack();
             }
         });
-        binding.userImage2.setOnClickListener(new View.OnClickListener(){
+        binding.userImage2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 BottomMenu.show((AppCompatActivity) requireContext(), new String[]{"上传图片", "取消"}, new OnMenuItemClickListener() {
@@ -104,23 +112,21 @@ public class UserFragment extends Fragment {
                         if (index == 0) {
                             String[] PERMISSIONS = {
                                     "android.permission.READ_EXTERNAL_STORAGE",
-                                    "android.permission.WRITE_EXTERNAL_STORAGE" };
+                                    "android.permission.WRITE_EXTERNAL_STORAGE"};
                             //检测是否有读的权限
                             int permission = ContextCompat.checkSelfPermission(requireContext(),
                                     "android.permission.READ_EXTERNAL_STORAGE");
                             if (permission != PackageManager.PERMISSION_GRANTED) {
                                 // 没有读的权限，去申请写的权限，会弹出对话框
-                                ActivityCompat.requestPermissions(requireActivity(), PERMISSIONS,1);
+                                ActivityCompat.requestPermissions(requireActivity(), PERMISSIONS, 1);
                             }
                             if (permission != PackageManager.PERMISSION_GRANTED) {
                                 TipDialog.show((AppCompatActivity) getActivity(), "上传失败", TipDialog.TYPE.ERROR);
-                            }else{
+                            } else {
                                 Intent intent = new Intent("android.intent.action.GET_CONTENT");
                                 intent.setType("image/*");
-                                startActivityForResult(intent,200);//打开系统相册
-                                if(Imagebitmap!=null){
+                                startActivityForResult(intent, 200);//打开系统相册
 
-                                }
                             }
                         }
                     }
@@ -130,46 +136,46 @@ public class UserFragment extends Fragment {
         binding.userXyb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte[] ba=null;
-                //photo=binding.userImage2.getDrawingCache();
-                if(mpath==null){
+                byte[] ba = null;
+                if (mpath == null) {
                     Resources res = getResources();
                     Bitmap bmp = BitmapFactory.decodeResource(res, R.drawable.touxiang);
-                    PhotoOperation Operation=new PhotoOperation();
-                    ba=Operation.Bitmap2ByteArray(bmp);
-                }
-                else{
-                    PhotoOperation Operation=new PhotoOperation();
+                    PhotoOperation Operation = new PhotoOperation();
+                    ba = Operation.Bitmap2ByteArray(bmp);
+                } else {
+                    PhotoOperation Operation = new PhotoOperation();
                     try {
-                        ba=Operation.Path2ByteArray(mpath);
+                        ba = Operation.Path2ByteArray(mpath);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                         Log.d("PhotoFIle", "onClick: 打不开文件");
                     }
                 }
-               // System.out.println("path:"+mpath);
+                // System.out.println("path:"+mpath);
                 Map<String, RequestBody> map = new HashMap<>();
                 //File file=new File(mpath);
                 RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/from-data"), ba);
                 //注意：file就是与服务器对应的key,后面filename是服务器得到的文件名
                 map.put("file\"; filename=\"" + "1.jpeg", requestFile);
                 SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                String mobile2=pre2.getString("mobile","");
-                String token2=pre2.getString("token","");
-                image_service img=new RetrofitUser().get().create(image_service.class);
-                Call<ResponseBody> image_call=img.send_photo(mobile2,token2,"df3b72a07a0a4fa1854a48b543690eab",map);
+                String mobile2 = pre2.getString("mobile", "");
+                String token2 = pre2.getString("token", "");
+                image_service img = new RetrofitUser().get().create(image_service.class);
+                Call<ResponseBody> image_call = img.send_photo(mobile2, token2, "df3b72a07a0a4fa1854a48b543690eab", map);
                 image_call.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                        String uid="";
-                        try {
-                            uid=response.body().string();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Gson gson=new Gson();
-                        Uuid u=gson.fromJson(uid,Uuid.class);
+                        if (response.code() / 100 == 4) {
+                            Toast.makeText(getContext(),"上传失败，请重新上传",Toast.LENGTH_LONG).show();
+                        } else {
+                            String uid = "";
+                            try {
+                                uid = response.body().string();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            Gson gson = new Gson();
+                            Uuid u = gson.fromJson(uid, Uuid.class);
                        /* image_service i=new RetrofitUser().get().create(image_service.class);
                         Call<ResponseBody> get_photo=i.load_photo(mobile2,u.getUuid(),token2,"df3b72a07a0a4fa1854a48b543690eab");
                         get_photo.enqueue(new Callback<ResponseBody>() {
@@ -187,62 +193,62 @@ public class UserFragment extends Fragment {
 
                             }
                         });*/
-                        String name,sex,address;
-                        String photo="";
-                        photo=u.getUuid();
-                        name=binding.userName.getText().toString();
-                        System.out.println("name:"+name);
+                            String name, sex, address;
+                            String photo = "";
+                            photo = u.getUuid();
+                            name = binding.userName.getText().toString();
+                            System.out.println("name:" + name);
 
-                        if(binding.userSwitch.getShowText())
-                            sex="male";
-                        else
-                            sex="female";
-                        System.out.println("sex:"+sex);
-                        address=binding.userSchool.getText().toString();
-                        if(name!=null&&sex!=null&&address!=null){
-                            UserService messservice=new RetrofitUser().get().create(UserService.class);
-                            messbean mess=new messbean(photo,name,sex,address);
-                            SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                            String mobile=pre.getString("mobile","");
-                            String token=pre.getString("token","");
-                            Call<ResponseBody> update=messservice.update(mobile,"df3b72a07a0a4fa1854a48b543690eab",token,mess);
-                            update.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
-                                }
+                            if (binding.userSwitch.getShowText())
+                                sex = "male";
+                            else
+                                sex = "female";
+                            System.out.println("sex:" + sex);
+                            address = binding.userSchool.getText().toString();
+                            if (name != null && sex != null && address != null) {
+                                UserService messservice = new RetrofitUser().get().create(UserService.class);
+                                messbean mess = new messbean(photo, name, sex, address);
+                                SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                                String mobile = pre.getString("mobile", "");
+                                String token = pre.getString("token", "");
+                                Call<ResponseBody> update = messservice.update(mobile, "df3b72a07a0a4fa1854a48b543690eab", token, mess);
+                                update.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor e = pre.edit();
+                                        e.putString("sex", sex);
+                                        e.putString("id_name",name);
+                                        e.putString("id_school",address);
+                                        e.commit();
+                                        TipDialog.show((AppCompatActivity) getActivity(), "注册成功", TipDialog.TYPE.SUCCESS);
+                                        new Handler(new Handler.Callback() {
+                                            @Override
+                                            public boolean handleMessage(@NonNull android.os.Message msg) {
+                                                return false;
+                                            }
+                                        }).sendEmptyMessageDelayed(0, 3000);Intent intent = new Intent(requireActivity(), MainActivity.class);
+                                        startActivity(intent);
+                                        requireActivity().finish();
+                                    }
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                }
-                            });
+                                    }
+                                });
+                            }
+                            Toast.makeText(getContext(), "success", Toast.LENGTH_LONG).show();
                         }
-                        Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
                     }
-
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
 
                     }
                 });
-
-                TipDialog.show((AppCompatActivity) getActivity(), "注册成功", TipDialog.TYPE.SUCCESS);
-                new Handler(new Handler.Callback() {
-                    @Override
-                    public boolean handleMessage(@NonNull android.os.Message msg) {
-                        return false;
-                    }
-                }).sendEmptyMessageDelayed(0, 3000);
-                Intent intent = new Intent(requireActivity(), MainActivity.class);
-                startActivity(intent);
-                requireActivity().finish();
             }
         });
         return binding.getRoot();
-        //return inflater.inflate(R.layout.fragment_user, container, false);
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -280,8 +286,8 @@ public class UserFragment extends Fragment {
             imagePath = uri.getPath();
         }
         displayImage(imagePath);//根据图片路径显示图片
-        mpath=imagePath;
-        Log.d("123", "handleImageOnKitkat: "+mpath);
+        mpath = imagePath;
+        Log.d("123", "handleImageOnKitkat: " + mpath);
     }
 
     private void handleImageBeforeKitkat(Intent data) {
@@ -298,7 +304,7 @@ public class UserFragment extends Fragment {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-                Log.d("PhotoMoment", "getImagePath: "+path);
+                Log.d("PhotoMoment", "getImagePath: " + path);
             }
             cursor.close();
         }
@@ -310,9 +316,7 @@ public class UserFragment extends Fragment {
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
             Imagebitmap = BitmapFactory.decodeFile(imagePath);
             binding.userImage2.setImageBitmap(bitmap);
-            TipDialog.show((AppCompatActivity) getActivity(), "上传成功",
-                    TipDialog.TYPE.SUCCESS);
-            Log.d("UserFagment", "displayImage: "+imagePath);
+            Log.d("UserFagment", "displayImage: " + imagePath);
         } else {
             Toast.makeText(getContext(), "failed to get image", Toast.LENGTH_SHORT).show();
         }

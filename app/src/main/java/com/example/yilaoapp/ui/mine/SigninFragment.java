@@ -1,6 +1,8 @@
 package com.example.yilaoapp.ui.mine;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -23,6 +25,7 @@ import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
 import com.example.yilaoapp.service.Verify_service;
 import com.example.yilaoapp.utils.ConfigUtil;
+import com.example.yilaoapp.utils.ServiceHelp;
 import com.kongzue.dialog.v3.TipDialog;
 
 import okhttp3.ResponseBody;
@@ -101,10 +104,13 @@ public class SigninFragment extends Fragment {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             System.out.println(response.body());
-
-                            //跳回登录界面
+                            SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor e = pre.edit();
+                            e.putString("mobile", phone);
+                            e.putString("password", pwd1);
+                            e.commit();
                             NavController controller = Navigation.findNavController(v);
-                            controller.navigate(R.id.action_signinFragment2_to_userFragment2);
+                            controller.popBackStack();
                         }
 
                         @Override
