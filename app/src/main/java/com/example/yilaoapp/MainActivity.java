@@ -9,6 +9,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,8 @@ import com.example.yilaoapp.bean.messbean;
 import com.example.yilaoapp.bean.tok;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
+import com.example.yilaoapp.service.image_service;
+import com.example.yilaoapp.utils.PhotoOperation;
 import com.example.yilaoapp.utils.ServiceHelp;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
@@ -36,6 +40,10 @@ import com.google.gson.Gson;
 import com.jaeger.library.StatusBarUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.util.LinkedList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -63,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences pre = this.getSharedPreferences("login", Context.MODE_PRIVATE);
         String mobile = pre.getString("mobile", "");
         String token = pre.getString("token", "");
-        String password2 = pre.getString("password", "");
         Call<ResponseBody> get = service.get_user(mobile, "df3b72a07a0a4fa1854a48b543690eab", token);
         get.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -90,6 +97,41 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     });
+                    if(user.getId_photo()!=null){
+                        BigInteger mobile=user.getMobile();
+                        image_service load=new RetrofitUser().get().create(image_service.class);
+                        Call<ResponseBody> load_back=load.load_photo(mobile,user.getId_photo(),"df3b72a07a0a4fa1854a48b543690eab");
+                        load_back.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                assert response.body() != null;
+                                InputStream photo = null;
+                                photo = response.body().byteStream();
+                                PhotoOperation Operation = new PhotoOperation();
+                                byte[] ba = null;
+                                try {
+                                    ba = Operation.read(photo);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                Bitmap bmp = Operation.ByteArray2Bitmap(ba);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (bmp != null) {
+                                            ImageView portrait = findViewById(R.id.pcircularImageView);
+                                            portrait.setImageBitmap(bmp);
+                                        }
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                            }
+                        });
+                    }
                 }
             }
 
@@ -98,6 +140,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("1", "failed");
             }
         });
+
+
 
 
         //底部导航栏

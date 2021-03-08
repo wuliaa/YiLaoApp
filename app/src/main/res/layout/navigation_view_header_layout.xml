@@ -27,7 +27,7 @@
         app:layout_constraintGuide_percent="0.79" />
 
     <com.github.siyamed.shapeimageview.CircularImageView
-        android:id="@+id/circularImageView"
+        android:id="@+id/pcircularImageView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:src="@drawable/touxiang"

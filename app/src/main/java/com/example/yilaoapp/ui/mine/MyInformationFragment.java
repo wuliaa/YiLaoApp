@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +42,8 @@ import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.databinding.FragmentMyInformationBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
+import com.example.yilaoapp.service.image_service;
+import com.example.yilaoapp.utils.PhotoOperation;
 import com.example.yilaoapp.utils.SavePhoto;
 import com.example.yilaoapp.utils.ServiceHelp;
 import com.google.gson.Gson;
@@ -49,6 +52,8 @@ import com.kongzue.dialog.v3.BottomMenu;
 import com.kongzue.dialog.v3.TipDialog;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -145,6 +150,92 @@ public class MyInformationFragment extends Fragment {
             public void onClick(View v) {
                 NavController controller = Navigation.findNavController(v);
                 controller.navigate(R.id.action_myInformationFragment_to_addressFragment);
+            }
+        });
+        UserService service = new RetrofitUser().get().create(UserService.class);
+        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+        String mobile = pre.getString("mobile", "");
+        String token = pre.getString("token", "");
+        SharedPreferences.Editor e = pre.edit();
+        Call<ResponseBody> get = service.get_user(mobile, "df3b72a07a0a4fa1854a48b543690eab", token);
+        get.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() / 100 == 4) {
+                    Toast.makeText(getContext(), "失败", Toast.LENGTH_SHORT).show();
+                } else {
+                    String str = "";
+                    try {
+                        str = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Gson gson = new Gson();
+                    User user = gson.fromJson(str, User.class);
+                    requireActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            binding.informationTextView16.setText(user.getMobile().toString());
+                            if (user.getSex() != null) {
+                                if (user.getSex().equals("male")){
+                                    binding.informationTextView13.setText("男");
+                                    e.putString("sex", "男");
+                                }
+                                else {
+                                    binding.informationTextView13.setText("女");
+                                    e.putString("sex", "女");
+                                }
+                            }
+                            if (user.getId_school() != null){
+                                binding.school.setText(user.getId_school());
+                                e.putString("id_school", user.getId_school());
+                            }
+                            if (user.getId_name() != null){
+                                binding.informationTextView10.setText(user.getId_name());
+                                e.putString("id_name",user.getId_name());
+                            }
+                            e.commit();
+                        }
+                    });
+                    if (user.getId_photo() != null) {
+                        BigInteger mobile = user.getMobile();
+                        image_service load = new RetrofitUser().get().create(image_service.class);
+                        Call<ResponseBody> load_back = load.load_photo(mobile, user.getId_photo(), "df3b72a07a0a4fa1854a48b543690eab");
+                        load_back.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                assert response.body() != null;
+                                InputStream photo = null;
+                                photo = response.body().byteStream();
+                                PhotoOperation Operation = new PhotoOperation();
+                                byte[] ba = null;
+                                try {
+                                    ba = Operation.read(photo);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                Bitmap bmp = Operation.ByteArray2Bitmap(ba);
+                                requireActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (bmp != null) {
+                                            binding.informationImageView2.setImageBitmap(bmp);
+                                        }
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
             }
         });
         return binding.getRoot();

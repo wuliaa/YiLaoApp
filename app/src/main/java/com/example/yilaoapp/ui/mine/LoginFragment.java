@@ -209,6 +209,7 @@ public class LoginFragment extends Fragment {
 //                                            Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_LONG).show();
 //                                        }
 //                                    });
+
                                 }
 
                                 @Override
@@ -283,7 +284,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onDestroy() {
         //将线程销毁掉
-        handler.removeCallbacksAndMessages(null);
+        //handler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
 }

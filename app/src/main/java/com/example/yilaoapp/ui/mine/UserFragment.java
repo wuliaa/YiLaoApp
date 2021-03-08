@@ -54,6 +54,7 @@ import com.kyleduo.switchbutton.SwitchButton;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -78,7 +79,7 @@ public class UserFragment extends Fragment {
     public UserFragment() {
     }
 
-    Bitmap Imagebitmap;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -199,10 +200,10 @@ public class UserFragment extends Fragment {
                             name = binding.userName.getText().toString();
                             System.out.println("name:" + name);
 
-                            if (binding.userSwitch.getShowText())
-                                sex = "male";
-                            else
+                            if (binding.userSwitch.isChecked())
                                 sex = "female";
+                            else
+                                sex = "male";
                             System.out.println("sex:" + sex);
                             address = binding.userSchool.getText().toString();
                             if (name != null && sex != null && address != null) {
@@ -220,6 +221,7 @@ public class UserFragment extends Fragment {
                                         e.putString("sex", sex);
                                         e.putString("id_name",name);
                                         e.putString("id_school",address);
+                                        e.putString("uuid",u.getUuid());
                                         e.commit();
                                         TipDialog.show((AppCompatActivity) getActivity(), "注册成功", TipDialog.TYPE.SUCCESS);
                                         new Handler(new Handler.Callback() {
@@ -255,15 +257,23 @@ public class UserFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 200 && resultCode == RESULT_OK && null != data) {
             if (Build.VERSION.SDK_INT >= 19) {
-                handleImageOnKitkat(data);
+                try {
+                    handleImageOnKitkat(data);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             } else {
-                handleImageBeforeKitkat(data);
+                try {
+                    handleImageBeforeKitkat(data);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
     @TargetApi(19)
-    private void handleImageOnKitkat(Intent data) {
+    private void handleImageOnKitkat(Intent data) throws FileNotFoundException {
         String imagePath = null;
         Uri uri = data.getData();
         if (DocumentsContract.isDocumentUri(getContext(), uri)) {
@@ -290,7 +300,7 @@ public class UserFragment extends Fragment {
         Log.d("123", "handleImageOnKitkat: " + mpath);
     }
 
-    private void handleImageBeforeKitkat(Intent data) {
+    private void handleImageBeforeKitkat(Intent data) throws FileNotFoundException {
         Uri uri = data.getData();
         String imagePath = getImagePath(uri, null);
         displayImage(imagePath);
@@ -311,10 +321,11 @@ public class UserFragment extends Fragment {
         return path;
     }
 
-    private void displayImage(String imagePath) {
+    private void displayImage(String imagePath) throws FileNotFoundException {
         if (imagePath != null) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-            Imagebitmap = BitmapFactory.decodeFile(imagePath);
+            FileInputStream fis = new FileInputStream(imagePath);
+            Bitmap bitmap  = BitmapFactory.decodeStream(fis);
+            //Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
             binding.userImage2.setImageBitmap(bitmap);
             Log.d("UserFagment", "displayImage: " + imagePath);
         } else {
