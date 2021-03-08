@@ -138,13 +138,13 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
     private void initErrands() {
         for (int i = 0; i < 2; i++) {
-            Errand e1 = new Errand(R.drawable.head1,"快递","南区" +
+            Errand e1 = new Errand(R.drawable.head1,"一课401","南区" +
                     "菜鸟驿站拿两个快递","下午 6:00","2￥");
             errandList.add(e1);
-            Errand e2 = new Errand(R.drawable.head2,"外卖","西门外" +
+            Errand e2 = new Errand(R.drawable.head2,"陶园","西门外" +
                     "卖可帮忙拿到陶园吗","上午 9:00","1￥");
             errandList.add(e2);
-            Errand e3 = new Errand(R.drawable.head3,"水果","西门" +
+            Errand e3 = new Errand(R.drawable.head3,"东十九楼下","西门" +
                     "水果店代买",
                     "下午14:00", "2￥");
             errandList.add(e3);

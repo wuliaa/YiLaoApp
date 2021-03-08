@@ -15,7 +15,7 @@ public class All_orders {
     String create_at;
     int id;
     String detail;
-    String type;
+    String type;//类型
     String category;
     String photos;
     String in_at;
