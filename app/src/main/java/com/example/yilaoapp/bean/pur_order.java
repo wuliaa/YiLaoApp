@@ -8,7 +8,7 @@ public class pur_order {
     String detail;
     Point_address destination;
     float reward;
-    String id_photo;
+    String photos;
 
     public pur_order(BigInteger phone, String type, String detail, Point_address destination, float reward, String id_photo) {
         this.phone = phone;
@@ -16,7 +16,7 @@ public class pur_order {
         this.detail = detail;
         this.destination = destination;
         this.reward = reward;
-        this.id_photo = id_photo;
+        this.photos = id_photo;
     }
 
     public BigInteger getPhone() {
@@ -59,11 +59,11 @@ public class pur_order {
         this.reward = reward;
     }
 
-    public String getId_photo() {
-        return id_photo;
+    public String getPhotos() {
+        return photos;
     }
 
-    public void setId_photo(String id_photo) {
-        this.id_photo = id_photo;
+    public void setPhotos(String photos) {
+        this.photos = photos;
     }
 }
