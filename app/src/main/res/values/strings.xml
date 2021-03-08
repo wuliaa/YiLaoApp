@@ -215,6 +215,7 @@
     <string name="Tip">提示</string>
     <string name="applypermission">请申请权限</string>
     <string name="cancel">取消</string>
+    <string name="cancelTask">取消订单</string>
 
 
     <string name="makeup">化妆品</string>

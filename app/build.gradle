@@ -71,6 +71,7 @@ dependencies {
     implementation 'com.robertlevonyan.view:MaterialChipView:2.0.4'
     //对话框
     implementation 'com.kongzue.dialog_v3:dialog:3.2.4'
+
     //聊天
     //v2.2.3与glide版本不匹配会闪退
     implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'

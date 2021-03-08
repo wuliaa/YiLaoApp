@@ -76,6 +76,7 @@ public class BullentinMessageFragment extends Fragment implements EasyPermission
         binding.mPhotosSnpl.setPlusEnable(true);
         binding.mPhotosSnpl.setSortable(true);
         binding.mPhotosSnpl.setDelegate((BGASortableNinePhotoLayout.Delegate) this);
+         
 
         return binding.getRoot();
         //return inflater.inflate(R.layout.fragment_bullentin_message, container, false);

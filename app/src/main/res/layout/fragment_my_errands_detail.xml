@@ -67,6 +67,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="8dp"
                         android:orientation="horizontal"
                         android:paddingStart="20dp"
                         android:paddingTop="10dp"
@@ -74,87 +75,117 @@
 
                         <com.github.siyamed.shapeimageview.CircularImageView
                             android:id="@+id/myErrandsHead"
-                            android:layout_width="45dp"
+                            android:layout_width="0dp"
                             android:layout_height="45dp"
-                            android:layout_weight="0.1"
+                            android:layout_weight="0.3"
                             android:contentDescription="@string/Avatar"
                             android:src="@drawable/touxiang" />
 
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/MyErrandsname"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/MyErrandsname"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="20dp"
-                                android:text="@string/Nick"
-                                android:textColor="#000000"
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:id="@+id/MyErrandscontent"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:maxEms="12"
-                                android:singleLine="false"
-                                android:text="@string/Content" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
                             android:layout_weight="1"
-                            android:gravity="right"
-                            android:orientation="vertical">
+                            android:text="@string/Nick"
+                            android:textColor="#000000"
+                            android:textSize="16sp" />
 
-                            <com.robertlevonyan.views.chip.Chip
-                                android:id="@+id/chip1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/myAcceptTask"
-                                android:textSize="@dimen/chattimesize"
-                                app:mcv_backgroundColor="@color/fbutton_color_emerald"
-                                app:mcv_cornerRadius="0dp"
-                                app:mcv_strokeSize="2dp"
-                                app:mcv_textColor="#FFFFFF" />
-
-                            <com.robertlevonyan.views.chip.Chip
-                                android:id="@+id/MyErrandschip"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/errands"
-                                android:textSize="@dimen/chattimesize"
-                                app:mcv_backgroundColor="#686868"
-                                app:mcv_cornerRadius="0dp"
-                                app:mcv_strokeSize="2dp"
-                                app:mcv_textColor="#FFFFFF" />
-
-                            <TextView
-                                android:id="@+id/MyErrandsmoney"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="￥120/个"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/purchasedchip" />
-                        </LinearLayout>
+                        <com.robertlevonyan.views.chip.Chip
+                            android:id="@+id/chip1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:text="@string/myAcceptTask"
+                            android:textSize="@dimen/chattimesize"
+                            app:mcv_backgroundColor="@color/fbutton_color_emerald"
+                            app:mcv_cornerRadius="0dp"
+                            app:mcv_strokeSize="2dp"
+                            app:mcv_textColor="#FFFFFF" />
 
                     </LinearLayout>
 
-                    <Button
-                        android:id="@+id/compeleteButton_errands"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginBottom="20dp"
-                        android:background="@drawable/add_deepen"
-                        android:text="@string/compeleteTask"
-                        android:textColor="#FFFFFF" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="5dp"
+                        android:layout_weight="3"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/MyErrandscontent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="50dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:maxEms="12"
+                            android:singleLine="false"
+                            android:text="@string/Content"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/MyErrandsphoneNumber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="50dp"
+                            android:layout_marginBottom="10dp"
+                            android:text="@string/phonenumber"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/MyErrandsAddress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="50dp"
+                            android:layout_marginBottom="10dp"
+                            android:text="@string/address"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/MyErrandsmoney"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="50dp"
+                            android:layout_marginBottom="10dp"
+                            android:text="￥120/个"
+                            android:textSize="16sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/purchasedchip" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/compeleteButton_errands"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="80dp"
+                            android:layout_marginTop="30dp"
+                            android:layout_marginBottom="20dp"
+                            android:background="@drawable/add_deepen"
+                            android:text="@string/compeleteTask"
+                            android:textColor="#FFFFFF" />
+
+                        <Button
+                            android:id="@+id/cancelButton_errands"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="50dp"
+                            android:layout_marginTop="30dp"
+                            android:layout_marginBottom="20dp"
+                            android:background="@drawable/purchase_contact_deepen"
+                            android:text="@string/cancelTask"
+                            android:textColor="#FFFFFF" />
+                    </LinearLayout>
+
+
                 </LinearLayout>
             </ScrollView>
 

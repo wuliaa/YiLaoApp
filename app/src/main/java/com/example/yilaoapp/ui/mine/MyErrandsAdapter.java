@@ -1,5 +1,7 @@
 package com.example.yilaoapp.ui.mine;
 
+import android.annotation.SuppressLint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,7 @@ public class MyErrandsAdapter extends  RecyclerView.Adapter<MyErrandsAdapter.MyE
         return new MyErrandsAdapter.MyErrandsviewHolder(itemView);
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull MyErrandsAdapter.MyErrandsviewHolder holder, int position) {
         MyErrands errands = merrandsList.get(position);
@@ -37,7 +40,6 @@ public class MyErrandsAdapter extends  RecyclerView.Adapter<MyErrandsAdapter.MyE
         holder.content.setText(errands.getContent());
         holder.money.setText(errands.getMoney());
         holder.isPublish.setText(errands.getIsPublish());
-        holder.isErrands.setText(errands.getIsErrands());
     }
 
     @Override
@@ -48,7 +50,7 @@ public class MyErrandsAdapter extends  RecyclerView.Adapter<MyErrandsAdapter.MyE
     class MyErrandsviewHolder extends RecyclerView.ViewHolder{
         ImageView photo;
         TextView objectName,money;
-        Chip isErrands,isPublish;
+        Chip  isPublish;
         ExpandTextView content;
         public MyErrandsviewHolder(@NonNull View itemView) {
             super(itemView);
@@ -57,7 +59,6 @@ public class MyErrandsAdapter extends  RecyclerView.Adapter<MyErrandsAdapter.MyE
             content= (ExpandTextView)itemView.findViewById(R.id.errandsExText);
             money=itemView.findViewById(R.id.money);
             isPublish=itemView.findViewById(R.id.chip);
-            isErrands=itemView.findViewById(R.id.chip2);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

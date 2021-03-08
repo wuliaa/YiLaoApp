@@ -37,7 +37,6 @@ public class MyPurchaseAdapter extends RecyclerView.Adapter<MyPurchaseAdapter.My
         holder.content.setText(purchase.getContent());
         holder.money.setText(purchase.getMoney());
         holder.isPublish.setText(purchase.getIsPublish());
-        holder.isPurchase.setText(purchase.getIsPurchase());
     }
 
     @Override
@@ -48,7 +47,7 @@ public class MyPurchaseAdapter extends RecyclerView.Adapter<MyPurchaseAdapter.My
     class MyPurchaseiewHolder extends RecyclerView.ViewHolder{
         ImageView photo;
         TextView objectName,money;
-        Chip isPurchase,isPublish;
+        Chip  isPublish;
         ExpandTextView content;
         public MyPurchaseiewHolder(@NonNull View itemView) {
             super(itemView);
@@ -57,7 +56,6 @@ public class MyPurchaseAdapter extends RecyclerView.Adapter<MyPurchaseAdapter.My
             content= (ExpandTextView)itemView.findViewById(R.id.purchaseExText);
             money=itemView.findViewById(R.id.money);
             isPublish=itemView.findViewById(R.id.chip);
-            isPurchase=itemView.findViewById(R.id.chip2);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

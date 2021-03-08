@@ -4,18 +4,20 @@ public class MyErrands {
     private String objectName;
     private String content;
     private String money;
-    private String isErrands;
     private String isPublish;
     private int imageid;   //头像
+    private String PhoneNumber;
+    private String Address;  //收货地址
 
-    public MyErrands(String objectName, String content, String money, String isErrands,
-                      String isPublish,int imageid) {
+    public MyErrands(String objectName, String content, String money,
+                      String isPublish,int imageid,String PhoneNumber,String Address) {
         this.objectName = objectName;
         this.content = content;
         this.money = money;
-        this.isErrands = isErrands;
         this.isPublish=isPublish;
         this.imageid=imageid;
+        this.PhoneNumber=PhoneNumber;
+        this.Address=Address;
     }
 
     public String getObjectName() {
@@ -42,14 +44,6 @@ public class MyErrands {
         this.money = money;
     }
 
-    public String getIsErrands() {
-        return isErrands;
-    }
-
-    public void setIsErrands(String isPurchase) {
-        this.isErrands = isPurchase;
-    }
-
     public String getIsPublish() {
         return isPublish;
     }
@@ -64,5 +58,21 @@ public class MyErrands {
 
     public void setImageid(int imageid) {
         this.imageid = imageid;
+    }
+
+    public String getPhoneNumber() {
+        return PhoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        PhoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return Address;
+    }
+
+    public void setAddress(String address) {
+        Address = address;
     }
 }

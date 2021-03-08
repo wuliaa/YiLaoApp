@@ -87,13 +87,13 @@ public class MyPurchaseFragment extends Fragment implements SwipeRefreshLayout.O
         }
         for (int i = 0; i < 2; i++) {
             MyPurchase l1 = new MyPurchase("口红","2020年12月3日 下午6:00前，可以在日本买到免税的MAC口红",
-                    "￥90/一个", "代购","发布的任务",photos,R.drawable.head1);
+                    "￥90/一个" ,"发布的任务",photos,R.drawable.head1,"13412101248","华师大厦");
             purchaseList.add(l1);
             MyPurchase l2 = new MyPurchase("眼影","希望买一个3CE的眼影盘","￥150/一盘",
-                    "找代购","领取的任务",photos,R.drawable.head1);
+                     "领取的任务",photos,R.drawable.head1,"13412101248","华师大厦");
             purchaseList.add(l2);
             MyPurchase l3 = new MyPurchase("面膜","2020年12月1日前，可以在欧洲买到La Prairie蓓丽鱼子精华睡眠面膜",
-                    "￥2800/50ml", "代购","发布的任务",photos,R.drawable.head1);
+                    "￥2800/50ml",  "发布的任务",photos,R.drawable.head1,"13412101248","华师大厦");
             purchaseList.add(l3);
         }
     }

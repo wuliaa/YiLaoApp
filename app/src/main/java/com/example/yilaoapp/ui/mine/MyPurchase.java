@@ -6,20 +6,23 @@ public class MyPurchase {
     private String objectName;
     private String content;
     private String money;
-    private String isPurchase;
     private String isPublish;
     private ArrayList<String> photos;
     private int imageid;  //头像
+    private String PhoneNumber;
+    private String Address;  //收货地址
 
-    public MyPurchase(String objectName, String content, String money, String isPurchase,
-                      String isPublish,ArrayList<String> photos,int imageid) {
+    public MyPurchase(String objectName, String content, String money, String isPublish,
+                      ArrayList<String> photos,int imageid, String PhoneNumber,
+                                String Address) {
         this.objectName = objectName;
         this.content = content;
         this.money = money;
-        this.isPurchase = isPurchase;
         this.isPublish=isPublish;
         this.photos = photos;
         this.imageid=imageid;
+        this.PhoneNumber=PhoneNumber;
+        this.Address=Address;
     }
 
     public String getObjectName() {
@@ -46,14 +49,6 @@ public class MyPurchase {
         this.money = money;
     }
 
-    public String getIsPurchase() {
-        return isPurchase;
-    }
-
-    public void setIsPurchase(String isPurchase) {
-        this.isPurchase = isPurchase;
-    }
-
     public String getIsPublish() {
         return isPublish;
     }
@@ -76,5 +71,21 @@ public class MyPurchase {
 
     public void setImageid(int imageid) {
         this.imageid = imageid;
+    }
+
+    public String getPhoneNumber() {
+        return PhoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        PhoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return Address;
+    }
+
+    public void setAddress(String address) {
+        Address = address;
     }
 }
