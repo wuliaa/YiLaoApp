@@ -110,8 +110,7 @@ public class SigninFragment extends Fragment {
                             e.putString("password", pwd1);
                             e.commit();
                             NavController controller = Navigation.findNavController(v);
-                            //controller.popBackStack();
-                            controller.navigate(R.id.action_signinFragment2_to_userFragment2);
+                            controller.popBackStack();
                         }
 
                         @Override

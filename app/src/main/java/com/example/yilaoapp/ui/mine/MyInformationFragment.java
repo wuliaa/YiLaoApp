@@ -177,22 +177,21 @@ public class MyInformationFragment extends Fragment {
                         public void run() {
                             binding.informationTextView16.setText(user.getMobile().toString());
                             if (user.getSex() != null) {
-                                if (user.getSex().equals("male")){
+                                if (user.getSex().equals("male")) {
                                     binding.informationTextView13.setText("男");
                                     e.putString("sex", "男");
-                                }
-                                else {
+                                } else {
                                     binding.informationTextView13.setText("女");
                                     e.putString("sex", "女");
                                 }
                             }
-                            if (user.getId_school() != null){
+                            if (user.getId_school() != null) {
                                 binding.school.setText(user.getId_school());
                                 e.putString("id_school", user.getId_school());
                             }
-                            if (user.getId_name() != null){
+                            if (user.getId_name() != null) {
                                 binding.informationTextView10.setText(user.getId_name());
-                                e.putString("id_name",user.getId_name());
+                                e.putString("id_name", user.getId_name());
                             }
                             e.commit();
                         }
@@ -204,25 +203,29 @@ public class MyInformationFragment extends Fragment {
                         load_back.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                assert response.body() != null;
-                                InputStream photo = null;
-                                photo = response.body().byteStream();
-                                PhotoOperation Operation = new PhotoOperation();
-                                byte[] ba = null;
-                                try {
-                                    ba = Operation.read(photo);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                Bitmap bmp = Operation.ByteArray2Bitmap(ba);
-                                requireActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (bmp != null) {
-                                            binding.informationImageView2.setImageBitmap(bmp);
-                                        }
+                                if (response.code() / 100 == 4) {
+                                    Toast.makeText(getContext(), "图片获取失败", Toast.LENGTH_LONG).show();
+                                } else {
+                                    assert response.body() != null;
+                                    InputStream photo = null;
+                                    photo = response.body().byteStream();
+                                    PhotoOperation Operation = new PhotoOperation();
+                                    byte[] ba = null;
+                                    try {
+                                        ba = Operation.read(photo);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
                                     }
-                                });
+                                    Bitmap bmp = Operation.ByteArray2Bitmap(ba);
+                                    requireActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (bmp != null) {
+                                                binding.informationImageView2.setImageBitmap(bmp);
+                                            }
+                                        }
+                                    });
+                                }
                             }
 
                             @Override
@@ -233,6 +236,7 @@ public class MyInformationFragment extends Fragment {
                     }
                 }
             }
+
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
 
@@ -336,27 +340,27 @@ public class MyInformationFragment extends Fragment {
                             public void run() {
                                 binding.informationTextView16.setText(user.getMobile().toString());
                                 if (user.getSex() != null) {
-                                    if (user.getSex().equals("male")){
+                                    if (user.getSex().equals("male")) {
                                         binding.informationTextView13.setText("男");
                                         e.putString("sex", "男");
-                                    }
-                                    else {
+                                    } else {
                                         binding.informationTextView13.setText("女");
                                         e.putString("sex", "女");
                                     }
                                 }
-                                if (user.getId_school() != null){
+                                if (user.getId_school() != null) {
                                     binding.school.setText(user.getId_school());
                                     e.putString("id_school", user.getId_school());
                                 }
-                                if (user.getId_name() != null){
+                                if (user.getId_name() != null) {
                                     binding.informationTextView10.setText(user.getId_name());
-                                    e.putString("id_name",user.getId_name());
+                                    e.putString("id_name", user.getId_name());
                                 }
                                 e.commit();
                             }
                         });
                     }
+
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_LONG).show();
@@ -365,14 +369,15 @@ public class MyInformationFragment extends Fragment {
             }
         }.start();
     }
-    public void initUI(){
+
+    public void initUI() {
         SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
         binding.informationTextView16.setText(pre.getString("mobile", ""));
-        binding.school.setText(pre.getString("id_school",""));
-        binding.informationTextView10.setText(pre.getString("id_name",""));
-        String sex=pre.getString("sex","");
-        if(sex.equals(""))Refresh();
-        else if(sex.equals("male"))
+        binding.school.setText(pre.getString("id_school", ""));
+        binding.informationTextView10.setText(pre.getString("id_name", ""));
+        String sex = pre.getString("sex", "");
+        if (sex.equals("")) Refresh();
+        else if (sex.equals("male"))
             binding.informationTextView13.setText("男");
         else binding.informationTextView13.setText("女");
 

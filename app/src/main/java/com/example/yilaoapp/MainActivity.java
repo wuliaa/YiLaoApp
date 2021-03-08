@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 if (response.code() / 100 == 4) {
 //                    ServiceHelp.GetToken(getApplicationContext(), mobile, password2);
 //                    onCreate(savedInstanceState);
-                    Toast.makeText(getApplicationContext(),"失败",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "失败", Toast.LENGTH_SHORT).show();
                 } else {
                     String str = "";
                     try {
@@ -97,33 +97,37 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     });
-                    if(user.getId_photo()!=null){
-                        BigInteger mobile=user.getMobile();
-                        image_service load=new RetrofitUser().get().create(image_service.class);
-                        Call<ResponseBody> load_back=load.load_photo(mobile,user.getId_photo(),"df3b72a07a0a4fa1854a48b543690eab");
+                    if (user.getId_photo() != null) {
+                        BigInteger mobile = user.getMobile();
+                        image_service load = new RetrofitUser().get().create(image_service.class);
+                        Call<ResponseBody> load_back = load.load_photo(mobile, user.getId_photo(), "df3b72a07a0a4fa1854a48b543690eab");
                         load_back.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                assert response.body() != null;
-                                InputStream photo = null;
-                                photo = response.body().byteStream();
-                                PhotoOperation Operation = new PhotoOperation();
-                                byte[] ba = null;
-                                try {
-                                    ba = Operation.read(photo);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                Bitmap bmp = Operation.ByteArray2Bitmap(ba);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (bmp != null) {
-                                            ImageView portrait = findViewById(R.id.pcircularImageView);
-                                            portrait.setImageBitmap(bmp);
-                                        }
+                                if (response.code() / 100 == 4) {
+                                    Toast.makeText(getApplicationContext(),"图片获取失败",Toast.LENGTH_LONG).show();
+                                } else {
+                                    assert response.body() != null;
+                                    InputStream photo = null;
+                                    photo = response.body().byteStream();
+                                    PhotoOperation Operation = new PhotoOperation();
+                                    byte[] ba = null;
+                                    try {
+                                        ba = Operation.read(photo);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
                                     }
-                                });
+                                    Bitmap bmp = Operation.ByteArray2Bitmap(ba);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (bmp != null) {
+                                                ImageView portrait = findViewById(R.id.pcircularImageView);
+                                                portrait.setImageBitmap(bmp);
+                                            }
+                                        }
+                                    });
+                                }
                             }
 
                             @Override
@@ -140,8 +144,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("1", "failed");
             }
         });
-
-
 
 
         //底部导航栏

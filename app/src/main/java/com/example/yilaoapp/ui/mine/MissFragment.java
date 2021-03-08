@@ -1,6 +1,8 @@
 package com.example.yilaoapp.ui.mine;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,9 +20,14 @@ import android.widget.Toast;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentMissBinding;
 import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.UserService;
 import com.example.yilaoapp.service.Verify_service;
 import com.example.yilaoapp.bean.Verify;
+import com.example.yilaoapp.utils.ConfigUtil;
 import com.kongzue.dialog.v3.TipDialog;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -61,7 +68,7 @@ public class MissFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String phone=binding.missPhone.getText().toString();
-                if(phone.length()!=11)
+                if(!ConfigUtil.isPhoneNum(phone))
                     Toast.makeText(getContext(),"请输入正确的手机号码",Toast.LENGTH_LONG).show();
                 else{
                     Verify_service yzmservice=new RetrofitUser().get().create(Verify_service.class);
@@ -86,8 +93,53 @@ public class MissFragment extends Fragment {
         binding.missQrxg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NavController controller = Navigation.findNavController(v);
-                controller.popBackStack();
+                //修改用户密码
+                SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                String psd=pre.getString("password","");
+                String mobile=pre.getString("mobile","");
+                if(binding.missPass.getText().toString().equals("")||
+                        binding.missAgainpass.getText().toString().equals("")){
+                    Toast.makeText(getContext(),"密码输入不能为空",Toast.LENGTH_LONG).show();
+                }
+                else if(!binding.missPass.getText().toString()
+                        .equals(binding.missAgainpass.getText().toString())){
+                    Toast.makeText(getContext(),"输入新密码不一致",Toast.LENGTH_LONG).show();
+                }
+                else {
+                    UserService service = new RetrofitUser().get().create(UserService.class);
+                    String password = binding.missPass.getText().toString();
+                    Call<ResponseBody> back = service.login_password(mobile, "df3b72a07a0a4fa1854a48b543690eab", psd);
+                    back.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            Map<String, String> map = new HashMap<String, String>();
+                            map.put("passwd", binding.missPass.getText().toString());
+                            Call<ResponseBody> updatepsd = service.updatePsd(mobile, "df3b72a07a0a4fa1854a48b543690eab", password,
+                                    map);
+                            updatepsd.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    SharedPreferences.Editor e = pre.edit();
+                                    e.putString("password", password);
+                                    e.commit();
+                                    NavController controller = Navigation.findNavController(v);
+                                    controller.popBackStack();
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Toast.makeText(getContext(), "原始密码输入错误", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
             }
         });
         return binding.getRoot();
