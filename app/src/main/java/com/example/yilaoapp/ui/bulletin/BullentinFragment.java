@@ -38,14 +38,24 @@ public class BullentinFragment extends Fragment {
     public BullentinFragment() {
         // Required empty public constructor
     }
-
+    FragmentBullentinBinding binding;
+    private DrawerLayout mDrawerLayout;
+    FragmentPagerItemAdapter adapter;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        mDrawerLayout=requireActivity().findViewById(R.id.drawer_layout);
+
+        adapter = new FragmentPagerItemAdapter(
+                getChildFragmentManager(), FragmentPagerItems.with(getContext())
+                .add(R.string.shareTools, ShareToolsFragment.class)
+                .add(R.string.lost, LostFoundFragment.class)
+                .add(R.string.teamStudy, TeamStudyFragment.class)
+                .create());
     }
-    FragmentBullentinBinding binding;
-    private DrawerLayout mDrawerLayout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,19 +67,19 @@ public class BullentinFragment extends Fragment {
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setDisplayShowTitleEnabled(false);
         binding.toolbar.inflateMenu(R.menu.menu_main);
         binding.toolbar.setNavigationIcon(R.drawable.ic_baseline_dehaze_24);
-        mDrawerLayout=requireActivity().findViewById(R.id.drawer_layout);
+//        mDrawerLayout=requireActivity().findViewById(R.id.drawer_layout);
         binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mDrawerLayout.openDrawer(GravityCompat.START);
             }
         });
-        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
-                getChildFragmentManager(), FragmentPagerItems.with(getContext())
-                .add(R.string.shareTools, ShareToolsFragment.class)
-                .add(R.string.lost, LostFoundFragment.class)
-                .add(R.string.teamStudy, TeamStudyFragment.class)
-                .create());
+//        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
+//                getChildFragmentManager(), FragmentPagerItems.with(getContext())
+//                .add(R.string.shareTools, ShareToolsFragment.class)
+//                .add(R.string.lost, LostFoundFragment.class)
+//                .add(R.string.teamStudy, TeamStudyFragment.class)
+//                .create());
         binding.viewpager.setAdapter(adapter);
         binding.viewpagertab.setViewPager(binding.viewpager);
 

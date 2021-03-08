@@ -60,12 +60,10 @@ public class LoginFragment extends Fragment {
     }
 
     FragmentLoginBinding binding;
-    private User user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false);
         //binding.setData(mineViewModel);
         binding.setLifecycleOwner(requireActivity());
@@ -77,28 +75,25 @@ public class LoginFragment extends Fragment {
                 mobile = binding.loginEdittext.getText().toString();
                 password = binding.loginEdittext1.getText().toString();
                 if (mobile.equals(""))
-                    Toast.makeText(getContext(), "请输入手机号码", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "请输入手机号码", Toast.LENGTH_SHORT).show();
                 else if (password.equals(""))
-                    Toast.makeText(getContext(), "请输入密码", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "请输入密码", Toast.LENGTH_SHORT).show();
                 else {
                     initProgressDialog();
                     new Thread() {
                         public void run() {
-                            UserService loginservice = new RetrofitUser().get().create(UserService.class);
-                            Call<ResponseBody> loginback = loginservice.login_password(mobile, "df3b72a07a0a4fa1854a48b543690eab", password);
+                            UserService service = new RetrofitUser().get().create(UserService.class);
+                            Call<ResponseBody> loginback = service.login_password(mobile, "df3b72a07a0a4fa1854a48b543690eab", password);
+                            android.os.Message msg = new android.os.Message();
                             loginback.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     if(response.code()/100==4){
-                                        android.os.Message msg = new android.os.Message();
-                                        msg.what = 1;
+                                        msg.what = '1';
                                         handler.sendMessage(msg); //发送msg消息
-                                        Toast.makeText(getContext(),"账号或密码输入错误",Toast.LENGTH_SHORT).show();
                                     }else if(response.code()/100==5){
-                                        android.os.Message msg = new android.os.Message();
-                                        msg.what = 1;
-                                        handler.sendMessage(msg); //发送msg消息
-                                        Toast.makeText(getContext(),"服务器错误",Toast.LENGTH_SHORT).show();
+                                        msg.what = '2';
+                                        handler.sendMessage(msg);
                                     }else{
                                         String str = "";
                                         try {
@@ -113,9 +108,8 @@ public class LoginFragment extends Fragment {
                                         e.putString("token", token.getToken());
                                         e.putString("mobile", mobile);
                                         e.putString("password", password);
-                                        e.commit();
-                                        UserService get_service = new RetrofitUser().get().create(UserService.class);
-                                        Call<ResponseBody> userCall = get_service.get_user(mobile, "df3b72a07a0a4fa1854a48b543690eab", token.getToken());
+                                        e.apply(); //apply()比commit()更快
+                                        Call<ResponseBody> userCall = service.get_user(mobile, "df3b72a07a0a4fa1854a48b543690eab", token.getToken());
                                         userCall.enqueue(new Callback<ResponseBody>() {
                                             @Override
                                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -127,20 +121,14 @@ public class LoginFragment extends Fragment {
                                                 }
                                                 Gson gson1 = new Gson();
                                                 User user = gson1.fromJson(u, User.class);
-                                                System.out.println(u);
-                                                android.os.Message msg = new android.os.Message();
-                                                msg.what = 1;
-                                                handler.sendMessage(msg); //发送msg消息
                                                 if (user.getId_name() == null || user.getId_photo() == null || user.getSex() == null || user.getId_school() == null) {
-                                                    Toast.makeText(getContext(), "该账户还没有进行认证，请前往认证，填写完整信息！", Toast.LENGTH_LONG).show();
-                                                    requireActivity().runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            NavController controller = Navigation.findNavController(v);
-                                                            controller.navigate(R.id.action_loginFragment2_to_userFragment2);
-                                                        }
-                                                    });
+                                                    msg.what = '3';
+                                                    handler.sendMessage(msg);
+                                                    NavController controller = Navigation.findNavController(v);
+                                                    controller.navigate(R.id.action_loginFragment2_to_userFragment2);
                                                 }else{
+                                                    msg.what = '4';
+                                                    handler.sendMessage(msg);
                                                     Intent intent = new Intent(requireActivity(), MainActivity.class);
                                                     startActivity(intent);
                                                     requireActivity().finish();
@@ -148,76 +136,17 @@ public class LoginFragment extends Fragment {
                                             }
                                             @Override
                                             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                                android.os.Message msg = new android.os.Message();
-                                                msg.what = 1;
-                                                handler.sendMessage(msg); //发送msg消息
-                                                Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_LONG).show();
+                                                msg.what = '5';
+                                                handler.sendMessage(msg);
                                             }
                                         });
                                     }
-                                    //                                    String str = "";
-//                                    try {
-//                                        str = response.body().string();
-//                                    } catch (IOException e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                    Gson gson = new Gson();
-//                                    tok token = gson.fromJson(str, tok.class);
-//                                    SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-//                                    SharedPreferences.Editor e = pre.edit();
-//                                    e.putString("token", token.getToken());
-//                                    e.putString("mobile", mobile);
-//                                    e.putString("password", password);
-//                                    e.commit();
-//                                    UserService get_service = new RetrofitUser().get().create(UserService.class);
-//                                    Call<ResponseBody> userCall = get_service.get_user(mobile, "df3b72a07a0a4fa1854a48b543690eab", token.getToken());
-//                                    userCall.enqueue(new Callback<ResponseBody>() {
-//                                        @Override
-//                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                                            String u = null;
-//                                            try {
-//                                                u = response.body().string();
-//                                            } catch (IOException ioException) {
-//                                                ioException.printStackTrace();
-//                                            }
-//                                            Gson gson1 = new Gson();
-//                                            User user = gson1.fromJson(u, User.class);
-//                                            System.out.println(u);
-//                                            android.os.Message msg = new android.os.Message();
-//                                            msg.what = 1;
-//                                            handler.sendMessage(msg); //发送msg消息
-//                                            if (user.getId_name() == null || user.getId_photo() == null || user.getSex() == null || user.getId_school() == null) {
-//                                                Toast.makeText(getContext(), "该账户还没有进行认证，请前往认证，填写完整信息！", Toast.LENGTH_LONG).show();
-//                                                requireActivity().runOnUiThread(new Runnable() {
-//                                                    @Override
-//                                                    public void run() {
-//                                                        NavController controller = Navigation.findNavController(v);
-//                                                        controller.navigate(R.id.action_loginFragment2_to_userFragment2);
-//                                                    }
-//                                                });
-//                                            }else{
-//                                                Intent intent = new Intent(requireActivity(), MainActivity.class);
-//                                                startActivity(intent);
-//                                                requireActivity().finish();
-//                                            }
-//                                        }
-//                                        @Override
-//                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                                            android.os.Message msg = new android.os.Message();
-//                                            msg.what = 1;
-//                                            handler.sendMessage(msg); //发送msg消息
-//                                            Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_LONG).show();
-//                                        }
-//                                    });
-
                                 }
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    android.os.Message msg = new android.os.Message();
-                                    msg.what = 1;
+                                    msg.what = '5';
                                     handler.sendMessage(msg); //发送msg消息
-                                    Toast.makeText(getContext(), "账号密码错误", Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
@@ -227,8 +156,20 @@ public class LoginFragment extends Fragment {
                         @Override
                         public void handleMessage(android.os.Message msg) {
                             super.handleMessage(msg);
-                            if (msg.what == 1) {
-                                mProgressDialog.dismiss();
+                            switch (msg.what){
+                                case '1': mProgressDialog.dismiss();
+                                        Toast.makeText(getContext(),"账号或密码输入错误",Toast.LENGTH_SHORT).show();
+                                        break;
+                                case '2':mProgressDialog.dismiss();
+                                        Toast.makeText(getContext(),"服务器错误",Toast.LENGTH_SHORT).show();
+                                        break;
+                                case '3':mProgressDialog.dismiss();
+                                        Toast.makeText(getContext(), "该账户还没有进行认证，请前往认证，填写完整信息！", Toast.LENGTH_SHORT).show();
+                                        break;
+                                case '4':mProgressDialog.dismiss();break;
+                                case '5':mProgressDialog.dismiss();
+                                        Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_SHORT).show();
+                                        break;
                             }
                         }
                     };
@@ -249,28 +190,6 @@ public class LoginFragment extends Fragment {
                 controller.navigate(R.id.action_loginFragment2_to_signinFragment2);
             }
         });
-
-        /*SharedPreferences pre1=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-        String token1=pre1.getString("token","");
-        if(!token1.equals("")){
-            String mob=pre1.getString("mobile","");
-            String pas=pre1.getString("password","");
-            UserService loginservice=new RetrofitUser().get().create(UserService.class);
-            Call<ResponseBody> loginback=loginservice.login_password(mob,"df3b72a07a0a4fa1854a48b543690eab",pas);
-            loginback.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Toast.makeText(getContext(),"登录成功!",Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(requireActivity(), MainActivity.class);
-                    startActivity(intent);
-                    requireActivity().finish();
-                }
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Toast.makeText(getContext(),"网络连接失败",Toast.LENGTH_LONG).show();
-                }
-            });
-        }*/
         return binding.getRoot();
     }
 

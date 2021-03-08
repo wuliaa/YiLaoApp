@@ -29,14 +29,15 @@ import java.util.List;
 public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     public LostFoundFragment() {}
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
     FragmentLostFoundBinding binding;
     private List<Lost> lostList = new ArrayList<>();
     private BullentinViewModel viewModel;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initLosts();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
         binding.setLifecycleOwner(requireActivity());
 
         binding.swipeLost.setOnRefreshListener(this);
-        initLosts();
+//        initLosts();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.lostrecyclerview.setLayoutManager(layoutManager);

@@ -84,5 +84,5 @@
     <color name="bga_pp_loading_progress_endColor">@color/colorPrimaryDarkTrans</color>
     <color name="bga_pp_eighteen_maskColor">#0FFFFFFF</color>
     <!-- ========================== 自定义 PhotoPicker 颜色 END ========================== -->
-
+    <color name="gray">#FFFFFF</color>
 </resources>
