@@ -70,7 +70,7 @@ public class SigninFragment extends Fragment {
                     Toast.makeText(getContext(),"请输入正确的手机号码",Toast.LENGTH_LONG).show();
                 else{
                     Verify_service yzmservice=new RetrofitUser().get().create(Verify_service.class);
-                    Verify yz=new Verify("df3b72a07a0a4fa1854a48b543690eab",phone,"PUT","http://api.yilao.tk:5000/v1.0/users/"+phone);
+                    Verify yz=new Verify("df3b72a07a0a4fa1854a48b543690eab",phone,"PUT","/v1.0/users/"+phone);
                     Call<ResponseBody> callback=yzmservice.send_code(yz);
                     callback.enqueue(new Callback<ResponseBody>() {
                         @Override

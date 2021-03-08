@@ -4,13 +4,13 @@ public class Verify {
     String appid;
     String mobile;
     String method;
-    String base_url;
+    String path;
 
     public Verify(String appid, String mobile, String method, String base_url) {
         this.appid = appid;
         this.mobile = mobile;
         this.method = method;
-        this.base_url = base_url;
+        this.path = base_url;
     }
 
     public String getAppid() {
@@ -38,10 +38,10 @@ public class Verify {
     }
 
     public String getBase_url() {
-        return base_url;
+        return path;
     }
 
     public void setBase_url(String base_url) {
-        this.base_url = base_url;
+        this.path = base_url;
     }
 }

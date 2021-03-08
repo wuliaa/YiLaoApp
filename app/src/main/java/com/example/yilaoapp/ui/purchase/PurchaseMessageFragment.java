@@ -3,6 +3,7 @@ package com.example.yilaoapp.ui.purchase;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
 
@@ -15,6 +16,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.os.Environment;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,19 +26,42 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.yilaoapp.MainActivity;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.Point_address;
+import com.example.yilaoapp.bean.Uuid;
+import com.example.yilaoapp.bean.messbean;
+import com.example.yilaoapp.bean.pur_order;
 import com.example.yilaoapp.databinding.FragmentPurchaseMessageBinding;
+import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.UserService;
+import com.example.yilaoapp.service.image_service;
+import com.example.yilaoapp.service.pur_service;
+import com.example.yilaoapp.utils.PhotoOperation;
+import com.google.gson.Gson;
+import com.kongzue.dialog.v3.TipDialog;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -76,7 +102,87 @@ public class PurchaseMessageFragment extends Fragment implements EasyPermissions
         binding.mPurchasePhotosSnpl.setPlusEnable(true);
         binding.mPurchasePhotosSnpl.setSortable(true);
         binding.mPurchasePhotosSnpl.setDelegate((BGASortableNinePhotoLayout.Delegate) this);
+        binding.Purchasefinish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                byte[] m=null;
+                PhotoOperation p=new PhotoOperation();
+                Map<String, RequestBody> map = new HashMap<>();
+                for(int i=0;i<binding.mPurchasePhotosSnpl.getData().size();i++){
+                    try {
+                        m=p.Path2ByteArray(binding.mPurchasePhotosSnpl.getData().get(i));
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/from-data"), m);
+                    map.put("file\"; filename=\"" +Integer.toString(i)+".jpeg", requestFile);
+                }
+                SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                String mobile2 = pre2.getString("mobile", "");
+                String token2 = pre2.getString("token", "");
+                image_service img = new RetrofitUser().get().create(image_service.class);
+                Call<ResponseBody> image_call = img.send_photo(mobile2, token2, "df3b72a07a0a4fa1854a48b543690eab", map);
+                image_call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.code() / 100 == 4) {
+                            Toast.makeText(getContext(), "上传失败，请重新上传", Toast.LENGTH_LONG).show();
+                        } else {
+                            String uid = "";
+                            try {
+                                uid = response.body().string();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            System.out.println(uid);
+                            Gson gson = new Gson();
+                            Uuid u = gson.fromJson(uid, Uuid.class);
+                            System.out.println(u.getUuid());
+                            String detail=binding.editTextTextMultiLine.getText().toString();
+                            String address=binding.addressText.getText().toString();
+                            BigInteger phone=new BigInteger(binding.telephoneText.getText().toString());
+                            float money= Float.parseFloat(binding.moneyText.getText().toString());
+                            Point_address des=new Point_address(0,0,address);
+                            pur_order order=new pur_order(phone,"代购",detail,des,money,u.getUuid());
+                            pur_service pur=new RetrofitUser().get().create(pur_service.class);
+                            Call<ResponseBody> new_order=pur.new_order(mobile2,token2,"\"df3b72a07a0a4fa1854a48b543690eab\"",order);
+                            new_order.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                }
+                            });
+                       /* image_service i=new RetrofitUser().get().create(image_service.class);
+                        Call<ResponseBody> get_photo=i.load_photo(mobile2,u.getUuid(),token2,"df3b72a07a0a4fa1854a48b543690eab");
+                        get_photo.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                try {
+                                    System.out.println(response.body().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                            }
+                        });*/
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+            }
+        });
         return binding.getRoot();
         //return inflater.inflate(R.layout.fragment_bullentin_message, container, false);
     }
