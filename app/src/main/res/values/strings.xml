@@ -245,4 +245,5 @@
     <string name="Finish">完成</string>
     <string name="school">学校</string>
     <string name="nick">昵称</string>
+    <string name="arriveAddress">送至</string>
 </resources>

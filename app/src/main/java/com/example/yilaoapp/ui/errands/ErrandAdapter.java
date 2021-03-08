@@ -11,8 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.yilaoapp.R;
-import com.example.yilaoapp.ui.bulletin.Share;
-import com.example.yilaoapp.ui.bulletin.ShareAdapter;
 import com.lcodecore.extextview.ExpandTextView;
 import com.robertlevonyan.views.chip.Chip;
 
@@ -37,7 +35,7 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
     public void onBindViewHolder(@NonNull ErrandViewHolder holder, int position) {
         Errand errand = mErrandList.get(position);
         holder.head.setImageResource(errand.getImageId());
-        holder.objectName.setText(errand.getObjectName());
+        holder.address.setText(errand.getAddress());
         holder.content.setText(errand.getContent());
         holder.time.setText(errand.getTime());
         holder.money.setText(errand.getMoney());
@@ -50,14 +48,14 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
 
     class ErrandViewHolder extends RecyclerView.ViewHolder{
         ImageView head;
-        TextView objectName,time,RemainTime;
+        TextView address,time;
         Chip money;
         ExpandTextView content;
         Button getTask;
         public ErrandViewHolder(@NonNull View itemView) {
             super(itemView);
             head=itemView.findViewById(R.id.errandPhoto);
-            objectName=itemView.findViewById(R.id.errandObject);
+            address=itemView.findViewById(R.id.errandAddress);
             content= (ExpandTextView)itemView.findViewById(R.id.errandExText);
             time=itemView.findViewById(R.id.errandTime);
             money=itemView.findViewById(R.id.errandchip);

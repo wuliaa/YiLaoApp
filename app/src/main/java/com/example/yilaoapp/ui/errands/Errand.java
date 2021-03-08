@@ -2,14 +2,14 @@ package com.example.yilaoapp.ui.errands;
 
 public class Errand {
     private int imageId;
-    private String objectName;
+    private String address;
     private String content;
     private String time;
     private String money;
 
-    public Errand(int imageId, String objectName, String content, String time, String money) {
+    public Errand(int imageId, String address, String content, String time, String money) {
         this.imageId = imageId;
-        this.objectName = objectName;
+        this.address = address;
         this.content = content;
         this.time = time;
         this.money = money;
@@ -23,12 +23,12 @@ public class Errand {
         this.imageId = imageId;
     }
 
-    public String getObjectName() {
-        return objectName;
+    public String getAddress() {
+        return address;
     }
 
-    public void setObjectName(String objectName) {
-        this.objectName = objectName;
+    public void setAddress(String objectName) {
+        this.address = address;
     }
 
     public String getContent() {

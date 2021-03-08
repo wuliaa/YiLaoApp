@@ -43,6 +43,7 @@
                 android:id="@+id/errandExText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:maxEms="12"
                 android:singleLine="false"
@@ -52,10 +53,9 @@
                 app:arrowAlign="center"
                 app:arrowPadding="4dp"
                 app:arrowPosition="right"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/errandObject"
+                app:layout_constraintBottom_toTopOf="@+id/textView"
+                app:layout_constraintStart_toStartOf="@+id/guideline19"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.55"
                 app:maxCollapsedLines="1" />
 
             <androidx.constraintlayout.widget.Guideline
@@ -86,15 +86,14 @@
                 app:layout_constraintVertical_bias="0.37" />
 
             <TextView
-                android:id="@+id/errandObject"
+                android:id="@+id/errandAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/object"
-                app:layout_constraintBottom_toTopOf="@+id/errandExText"
+                android:text="@string/address"
+                app:layout_constraintBottom_toBottomOf="@+id/textView"
                 app:layout_constraintEnd_toStartOf="@+id/guideline20"
-                app:layout_constraintHorizontal_bias="0.03"
-                app:layout_constraintStart_toStartOf="@+id/guideline19"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintHorizontal_bias="0.02"
+                app:layout_constraintStart_toEndOf="@+id/textView" />
 
             <com.robertlevonyan.views.chip.Chip
                 android:id="@+id/errandchip"
@@ -122,6 +121,16 @@
                 app:layout_constraintStart_toStartOf="@+id/guideline20"
                 app:layout_constraintTop_toBottomOf="@+id/errandTime"
                 app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/arriveAddress"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/errandExText"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.8" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
