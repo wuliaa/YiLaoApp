@@ -30,16 +30,32 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.All_orders;
 import com.example.yilaoapp.databinding.FragmentPurchaseBinding;
+import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.image_service;
+import com.example.yilaoapp.service.pur_service;
 import com.example.yilaoapp.ui.errands.ErrandsViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -143,6 +159,55 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
+        pur_service pur=new RetrofitUser().get().create(pur_service.class);
+        Call<ResponseBody> get_errand=pur.get_orders("代购");
+        List<InputStream> photo=new LinkedList<>();
+        get_errand.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String str="";
+                try {
+                    str=response.body().string();
+                    Gson gson=new Gson();
+                    Type type=new TypeToken<List<All_orders>>(){}.getType();
+                    List<All_orders> all=gson.fromJson(str,type);
+
+                    for(int i=0;i<all.size();i++){
+                        String uid=all.get(i).getId_photo();
+                        BigInteger mobile=all.get(i).getFrom_user();
+                        image_service load=new RetrofitUser().get().create(image_service.class);
+                        Call<ResponseBody> load_back=load.load_photo(mobile,uid,"df3b72a07a0a4fa1854a48b543690eab");
+                        load_back.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                assert response.body() != null;
+                                photo.add(response.body().byteStream());
+                                try {
+                                    response.body().byteStream().close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                // photo.add()
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                    //System.out.println(all.get(0).getDetail());
+                    //System.out.println(response.body().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
         binding.swipePurchasess.postDelayed(new Runnable() { // 发送延迟消息到消息队列
             @Override
             public void run() {
