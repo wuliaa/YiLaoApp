@@ -2,15 +2,21 @@ package com.example.yilaoapp.ui.purchase;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -25,18 +31,25 @@ import android.widget.TextView;
 
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentPurchaseBinding;
+import com.example.yilaoapp.ui.errands.ErrandsViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PurchaseFragment extends Fragment {
+public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+
+    FragmentPurchaseBinding binding;
+    private DrawerLayout mDrawerLayout;
+    private PurchaseViewModel mViewModel;
+    private List<Purchase> purchaseList = new ArrayList<>();
 
     public PurchaseFragment() {}
 
@@ -45,14 +58,14 @@ public class PurchaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
-    FragmentPurchaseBinding binding;
-    private DrawerLayout mDrawerLayout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the layout for t his fragment
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_purchase,container,false);
-        //binding.setData(PurchaseViewModel);
+        mViewModel = ViewModelProviders.of(requireActivity()).get( PurchaseViewModel.class);
+        binding.setData(mViewModel);
         binding.setLifecycleOwner(requireActivity());
         ((AppCompatActivity) requireActivity()).setSupportActionBar(binding.toolbar);
         //隐藏toolbar的标题
@@ -67,17 +80,32 @@ public class PurchaseFragment extends Fragment {
             }
         });
         setHasOptionsMenu(true);
-        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
-                getChildFragmentManager(), FragmentPagerItems.with(getContext())
-                .add(R.string.makeup, PurchaseListFragment.class)
-                .add(R.string.bag, PurchaseListFragment.class)
-                .add(R.string.shoes, PurchaseListFragment.class)
-                .add(R.string.book, PurchaseListFragment.class)
-                .add(R.string.special_edition, PurchaseListFragment.class)
-                .add(R.string.other, PurchaseListFragment.class)
-                .create());
-        binding.viewpager.setAdapter(adapter);
-        binding.viewpagertab.setViewPager(binding.viewpager);
+
+        binding.swipePurchasess.setOnRefreshListener(this);
+        initContents();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        binding.purchasesRecyclerview.setLayoutManager(layoutManager);
+        PurchaseAdapter adapter = new PurchaseAdapter(purchaseList);
+        binding.purchasesRecyclerview.setAdapter(adapter);
+
+        //RecyclerView中没有item的监听事件，需要自己在适配器中写一个监听事件的接口。参数根据自定义
+        adapter.setOnItemClickListener(new PurchaseAdapter.OnItemClickListener() {
+            @Override
+            public void OnItemClick(View view, Purchase data) {
+                new Handler(new Handler.Callback() {
+                    @Override
+                    public boolean handleMessage(@NonNull android.os.Message msg) {
+//                        Toast.makeText(getActivity(),"我是item",Toast.LENGTH_SHORT).show();
+                        NavController controller = Navigation.findNavController(view);
+                        controller.navigate(R.id.action_purchaseFragment_to_purchaseDetailFragment);
+                         mViewModel.setPurchase(data);
+                        return false;
+                    }
+                }).sendEmptyMessageDelayed(0, 500);
+            }
+        });
+
         return binding.getRoot();
         //return inflater.inflate(R.layout.fragment_purchase, container, false);
     }
@@ -91,5 +119,35 @@ public class PurchaseFragment extends Fragment {
         NavigationUI.onNavDestinationSelected(item,
                 Navigation.findNavController(requireActivity(), R.id.nav_host_fragment));
         return true;
+    }
+
+    private void initContents() {
+        ArrayList<String> photos = new ArrayList<>();
+        for (int i = 0; i <9; i++) {
+            photos.add("http://bgashare.bingoogolapple.cn/refreshlayout/images/staggered2.png");
+//            photos.add("/storage/emulated/0/sina/weibo/storage/photoalbum_save/weibo/img-ebc3581e69b48d8c1bc1365971f12d90.jpg");
+//            photos.add("http://api.yilao.tk:5000/v1.0/users/13060887368/resources/2f5a0fff-5f37-4bb9-8667-2c3beb00dfe8");
+        }
+        for (int i = 0; i < 2; i++) {
+            Purchase l1 = new Purchase("口红","2020年12月3日 下午6:00前，可以在日本买到免税的MAC口红",
+                    "￥90/一个", "代购",photos,R.drawable.head2);
+            purchaseList.add(l1);
+            Purchase l2 = new Purchase("眼影","希望买一个3CE的眼影盘","￥150/一盘",
+                    "找代购",photos,R.drawable.head2);
+            purchaseList.add(l2);
+            Purchase l3 = new Purchase("面膜","2020年12月1日前，可以在欧洲买到La Prairie蓓丽鱼子精华睡眠面膜",
+                    "￥2800/50ml", "代购",photos,R.drawable.head2);
+            purchaseList.add(l3);
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        binding.swipePurchasess.postDelayed(new Runnable() { // 发送延迟消息到消息队列
+            @Override
+            public void run() {
+                binding.swipePurchasess.setRefreshing(false); // 是否显示刷新进度;false:不显示
+            }
+        },3000);
     }
 }

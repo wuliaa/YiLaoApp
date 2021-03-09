@@ -2,7 +2,6 @@ package com.example.yilaoapp.ui.mine;
 
 import android.os.Bundle;
 
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -11,13 +10,9 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.databinding.FragmentMyTaskBinding;
-import com.example.yilaoapp.ui.bulletin.LostFoundFragment;
-import com.example.yilaoapp.ui.errands.ErrandsFragment;
-import com.example.yilaoapp.ui.purchase.PurchaseListFragment;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 
