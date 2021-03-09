@@ -3,6 +3,7 @@ package com.example.yilaoapp.ui.bulletin;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
 
@@ -24,18 +25,39 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.Point_address;
+import com.example.yilaoapp.bean.Uuid;
+import com.example.yilaoapp.bean.bul_order;
+import com.example.yilaoapp.bean.pur_order;
 import com.example.yilaoapp.databinding.FragmentBullentinMessageBinding;
+import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.bur_service;
+import com.example.yilaoapp.service.image_service;
+import com.example.yilaoapp.service.pur_service;
+import com.example.yilaoapp.utils.PhotoOperation;
+import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -76,7 +98,77 @@ public class BullentinMessageFragment extends Fragment implements EasyPermission
         binding.mPhotosSnpl.setPlusEnable(true);
         binding.mPhotosSnpl.setSortable(true);
         binding.mPhotosSnpl.setDelegate((BGASortableNinePhotoLayout.Delegate) this);
-         
+        binding.button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                byte[] m=null;
+                PhotoOperation p=new PhotoOperation();
+                Map<String, RequestBody> map = new HashMap<>();
+                for(int i=0;i<binding.mPhotosSnpl.getData().size();i++){
+                    try {
+                        m=p.Path2ByteArray(binding.mPhotosSnpl.getData().get(i));
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/from-data"), m);
+                    map.put("file\"; filename=\"" +Integer.toString(i)+".jpeg", requestFile);
+                }
+                SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                String mobile2 = pre2.getString("mobile", "");
+                String token2 = pre2.getString("token", "");
+                image_service img = new RetrofitUser().get().create(image_service.class);
+                Call<ResponseBody> image_call = img.send_photo(mobile2, token2, "df3b72a07a0a4fa1854a48b543690eab", map);
+                image_call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.code() / 100 == 4) {
+                            Toast.makeText(getContext(), "上传失败，请重新上传", Toast.LENGTH_LONG).show();
+                        } else {
+                            String uid = "";
+                            try {
+                                uid = response.body().string();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            //System.out.println(uid);
+                            Gson gson = new Gson();
+                            Uuid u = gson.fromJson(uid, Uuid.class);
+                            //System.out.println(u.getUuid());
+                            String detail=binding.editTextTextMultiLine.getText().toString();
+                            String address=binding.lostAddress.getText().toString();
+                            BigInteger phone=new BigInteger(binding.telephoneText.getText().toString());
+                            Point_address des=new Point_address(0,0,address);
+                            String category="";
+                            if(binding.radioButton.isChecked())
+                                category="失物招领";
+                            else if(binding.radioButton2.isChecked())
+                                category="组队学习";
+                            else
+                                category="共享工具";
+                            bul_order order=new bul_order(phone,"公告",detail,des,category,u.getUuid());
+                            bur_service pur=new RetrofitUser().get().create(bur_service.class);
+                            Call<ResponseBody> new_order=pur.new_order(mobile2,token2,"df3b72a07a0a4fa1854a48b543690eab",order);
+                            new_order.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                      Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    Toast.makeText(getContext(),t.getMessage(),Toast.LENGTH_LONG).show();
+                                }
+                            });
+
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+            }
+        });
 
         return binding.getRoot();
         //return inflater.inflate(R.layout.fragment_bullentin_message, container, false);
