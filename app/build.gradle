@@ -112,6 +112,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
 
     //单元测试
-    testCompile 'org.robolectric:robolectric:3.8'
-    testCompile 'org.robolectric:shadows-support-v4:3.4-rc2'
+//    testCompile 'org.robolectric:robolectric:3.8'
+//    testCompile 'org.robolectric:shadows-support-v4:3.4-rc2'
 }
