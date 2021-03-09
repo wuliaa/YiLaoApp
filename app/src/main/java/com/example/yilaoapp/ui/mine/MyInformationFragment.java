@@ -213,6 +213,7 @@ public class MyInformationFragment extends Fragment {
                                     byte[] ba = null;
                                     try {
                                         ba = Operation.read(photo);
+                                        photo.close();
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
@@ -230,7 +231,8 @@ public class MyInformationFragment extends Fragment {
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                                Toast.makeText(getContext(), "图片加载失败", Toast.LENGTH_LONG).show();
+                                System.out.println(t.getMessage());
                             }
                         });
                     }
