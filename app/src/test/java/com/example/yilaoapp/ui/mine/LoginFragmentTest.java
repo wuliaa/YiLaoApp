@@ -3,6 +3,7 @@ package com.example.yilaoapp.ui.mine;
 
 import com.example.yilaoapp.BuildConfig;
 import com.example.yilaoapp.bean.Token;
+import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.bean.tok;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
@@ -27,11 +28,23 @@ public class LoginFragmentTest {
 
     @Test
     public void login() throws IOException {
-        LoginFragment loginFragment = new LoginFragment();
         UserService service = new RetrofitUser().get().create(UserService.class);
         Call<ResponseBody> loginback = service.login_password("18825133593", "df3b72a07a0a4fa1854a48b543690eab", "887709912");
         Response<ResponseBody> response = loginback.execute();
-        //loginFragment.getCallBack().onResponse(null,response);
+        String str = "";
+        try {
+            str = response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertEquals(response.code(),201);
+    }
+
+    @Test
+    public void getInfo() throws IOException {
+        UserService service = new RetrofitUser().get().create(UserService.class);
+        Call<ResponseBody> loginback = service.login_password("18825133593", "df3b72a07a0a4fa1854a48b543690eab", "887709912");
+        Response<ResponseBody> response = loginback.execute();
         String str = "";
         try {
             str = response.body().string();
@@ -40,11 +53,16 @@ public class LoginFragmentTest {
         }
         Gson gson = new Gson();
         tok token = gson.fromJson(str, tok.class);
-        //assertEquals(token.getToken(), "519f07255a294261b97ece794c3fb328");
-        assertEquals(response.code(),201);
-    }
-
-    @Test
-    public void getInfo() {
+        Call<ResponseBody> userCall = service.get_user("18825133593", "df3b72a07a0a4fa1854a48b543690eab", token.getToken());
+        Response<ResponseBody> response2 =userCall.execute();
+        String u = null;
+        try {
+            u = response2.body().string();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        Gson gson1 = new Gson();
+        User user = gson1.fromJson(u, User.class);
+        assertNotNull(user.getId_name());
     }
 }

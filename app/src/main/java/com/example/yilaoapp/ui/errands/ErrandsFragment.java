@@ -50,7 +50,7 @@ import com.example.yilaoapp.ui.bulletin.BullentinViewModel;
 import com.example.yilaoapp.ui.bulletin.Share;
 import com.example.yilaoapp.ui.bulletin.ShareAdapter;
 import com.example.yilaoapp.ui.bulletin.Team;
-import com.example.yilaoapp.utils.LruCacheImageLoader;
+//import com.example.yilaoapp.utils.LruCacheImageLoader;
 import com.example.yilaoapp.utils.PhotoOperation;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

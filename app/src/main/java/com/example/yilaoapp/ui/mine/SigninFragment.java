@@ -69,22 +69,7 @@ public class SigninFragment extends Fragment {
                 if(!ConfigUtil.isPhoneNum(phone))
                     Toast.makeText(getContext(),"请输入正确的手机号码",Toast.LENGTH_LONG).show();
                 else{
-                    Verify_service yzmservice=new RetrofitUser().get().create(Verify_service.class);
-                    Verify yz=new Verify("df3b72a07a0a4fa1854a48b543690eab",phone,"PUT","/v1.0/users/"+phone);
-                    Call<ResponseBody> callback=yzmservice.send_code(yz);
-                    callback.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            TipDialog.show((AppCompatActivity) getActivity(), "发送成功", TipDialog.TYPE.SUCCESS);
-                            myCountDownTimer.start();
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            TipDialog.show((AppCompatActivity) getActivity(), "发送失败", TipDialog.TYPE.ERROR);
-                            binding.getYZM.setText("重新获取");
-                        }
-                    });
+                    GetCode(phone);
                 }
             }
         });
@@ -96,28 +81,9 @@ public class SigninFragment extends Fragment {
                 pwd2=binding.signinPassagain.getText().toString();
                 code=binding.signinInputyzm.getText().toString();
                 phone=binding.signinPhone.getText().toString();
-               if(pwd1.equals(pwd2)&&phone.length()==11&&code.length()==4){
+               if(pwd1.equals(pwd2)&&ConfigUtil.isPhoneNum(phone)&&code.length()==4){
                     Password pass=new Password(pwd1);
-                    UserService xybservice=new RetrofitUser().get().create(UserService.class);
-                    Call<ResponseBody> xybback=xybservice.sigin(phone,"df3b72a07a0a4fa1854a48b543690eab",code,pass);
-                    xybback.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            System.out.println(response.body());
-                            SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                            SharedPreferences.Editor e = pre.edit();
-                            e.putString("mobile", phone);
-                            e.putString("password", pwd1);
-                            e.commit();
-                            NavController controller = Navigation.findNavController(v);
-                            controller.popBackStack();
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                             System.out.println(t.toString());
-                        }
-                    });
+                    Signin(phone,code,pass,v);
                 }
                else{
                    Toast.makeText(getContext(),"请输入正确密码或验证码",Toast.LENGTH_LONG).show();
@@ -154,6 +120,41 @@ public class SigninFragment extends Fragment {
             //设置可点击
             binding.getYZM.setClickable(true);
         }
+    }
+
+    public void GetCode(String phone){
+        Verify_service yzmservice=new RetrofitUser().get().create(Verify_service.class);
+        Verify yz=new Verify("df3b72a07a0a4fa1854a48b543690eab",phone,"PUT","/v1.0/users/"+phone);
+        Call<ResponseBody> callback=yzmservice.send_code(yz);
+        callback.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                TipDialog.show((AppCompatActivity) getActivity(), "发送成功", TipDialog.TYPE.SUCCESS);
+                myCountDownTimer.start();
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                TipDialog.show((AppCompatActivity) getActivity(), "发送失败", TipDialog.TYPE.ERROR);
+                binding.getYZM.setText("重新获取");
+            }
+        });
+    }
+
+    public void Signin(String phone,String code,Password pass,View v){
+        UserService xybservice=new RetrofitUser().get().create(UserService.class);
+        Call<ResponseBody> xybback=xybservice.sigin(phone,"df3b72a07a0a4fa1854a48b543690eab",code,pass);
+        xybback.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                NavController controller = Navigation.findNavController(v);
+                controller.popBackStack();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                System.out.println(t.toString());
+            }
+        });
     }
 
     @Override

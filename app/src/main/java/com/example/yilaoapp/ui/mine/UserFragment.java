@@ -111,24 +111,7 @@ public class UserFragment extends Fragment {
                     public void onClick(String text, int index) {
                         //返回参数 text 即菜单名称，index 即菜单索引
                         if (index == 0) {
-                            String[] PERMISSIONS = {
-                                    "android.permission.READ_EXTERNAL_STORAGE",
-                                    "android.permission.WRITE_EXTERNAL_STORAGE"};
-                            //检测是否有读的权限
-                            int permission = ContextCompat.checkSelfPermission(requireContext(),
-                                    "android.permission.READ_EXTERNAL_STORAGE");
-                            if (permission != PackageManager.PERMISSION_GRANTED) {
-                                // 没有读的权限，去申请写的权限，会弹出对话框
-                                ActivityCompat.requestPermissions(requireActivity(), PERMISSIONS, 1);
-                            }
-                            if (permission != PackageManager.PERMISSION_GRANTED) {
-                                TipDialog.show((AppCompatActivity) getActivity(), "上传失败", TipDialog.TYPE.ERROR);
-                            } else {
-                                Intent intent = new Intent("android.intent.action.GET_CONTENT");
-                                intent.setType("image/*");
-                                startActivityForResult(intent, 200);//打开系统相册
-
-                            }
+                            getAuthority();
                         }
                     }
                 });
@@ -152,104 +135,111 @@ public class UserFragment extends Fragment {
                         Log.d("PhotoFIle", "onClick: 打不开文件");
                     }
                 }
-                // System.out.println("path:"+mpath);
-                Map<String, RequestBody> map = new HashMap<>();
-                //File file=new File(mpath);
-                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/from-data"), ba);
-                //注意：file就是与服务器对应的key,后面filename是服务器得到的文件名
-                map.put("file\"; filename=\"" + "1.jpeg", requestFile);
-                SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                String mobile2 = pre2.getString("mobile", "");
-                String token2 = pre2.getString("token", "");
-                image_service img = new RetrofitUser().get().create(image_service.class);
-                Call<ResponseBody> image_call = img.send_photo(mobile2, token2, "df3b72a07a0a4fa1854a48b543690eab", map);
-                image_call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.code() / 100 == 4) {
-                            Toast.makeText(getContext(),"上传失败，请重新上传",Toast.LENGTH_LONG).show();
-                        } else {
-                            String uid = "";
-                            try {
-                                uid = response.body().string();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            Gson gson = new Gson();
-                            Uuid u = gson.fromJson(uid, Uuid.class);
-                       /* image_service i=new RetrofitUser().get().create(image_service.class);
-                        Call<ResponseBody> get_photo=i.load_photo(mobile2,u.getUuid(),token2,"df3b72a07a0a4fa1854a48b543690eab");
-                        get_photo.enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                try {
-                                    System.out.println(response.body().string());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                            }
-                        });*/
-                            String name, sex, address;
-                            String photo = "";
-                            photo = u.getUuid();
-                            name = binding.userName.getText().toString();
-                            System.out.println("name:" + name);
-
-                            if (binding.userSwitch.isChecked())
-                                sex = "female";
-                            else
-                                sex = "male";
-                            System.out.println("sex:" + sex);
-                            address = binding.userSchool.getText().toString();
-                            if (name != null && sex != null && address != null) {
-                                UserService messservice = new RetrofitUser().get().create(UserService.class);
-                                messbean mess = new messbean(photo, name, sex, address);
-                                SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                                String mobile = pre.getString("mobile", "");
-                                String token = pre.getString("token", "");
-                                Call<ResponseBody> update = messservice.update(mobile, "df3b72a07a0a4fa1854a48b543690eab", token, mess);
-                                update.enqueue(new Callback<ResponseBody>() {
-                                    @Override
-                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                                        SharedPreferences.Editor e = pre.edit();
-                                        e.putString("sex", sex);
-                                        e.putString("id_name",name);
-                                        e.putString("id_school",address);
-                                        e.putString("uuid",u.getUuid());
-                                        e.commit();
-                                        TipDialog.show((AppCompatActivity) getActivity(), "注册成功", TipDialog.TYPE.SUCCESS);
-                                        new Handler(new Handler.Callback() {
-                                            @Override
-                                            public boolean handleMessage(@NonNull android.os.Message msg) {
-                                                return false;
-                                            }
-                                        }).sendEmptyMessageDelayed(0, 3000);Intent intent = new Intent(requireActivity(), MainActivity.class);
-                                        startActivity(intent);
-                                        requireActivity().finish();
-                                    }
-                                    @Override
-                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                    }
-                                });
-                            }
-                            Toast.makeText(getContext(), "success", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                    }
-                });
+                postPortrait(ba);
             }
         });
         return binding.getRoot();
+    }
+
+    public void getAuthority(){
+        String[] PERMISSIONS = {
+                "android.permission.READ_EXTERNAL_STORAGE",
+                "android.permission.WRITE_EXTERNAL_STORAGE"};
+        //检测是否有读的权限
+        int permission = ContextCompat.checkSelfPermission(requireContext(),
+                "android.permission.READ_EXTERNAL_STORAGE");
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // 没有读的权限，去申请写的权限，会弹出对话框
+            ActivityCompat.requestPermissions(requireActivity(), PERMISSIONS, 1);
+        }
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            TipDialog.show((AppCompatActivity) getActivity(), "上传失败", TipDialog.TYPE.ERROR);
+        } else {
+            Intent intent = new Intent("android.intent.action.GET_CONTENT");
+            intent.setType("image/*");
+            startActivityForResult(intent, 200);//打开系统相册
+
+        }
+    }
+
+    public void postPortrait(byte[] ba){
+        Map<String, RequestBody> map = new HashMap<>();
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/from-data"), ba);
+        //注意：file就是与服务器对应的key,后面filename是服务器得到的文件名
+        map.put("file\"; filename=\"" + "1.jpeg", requestFile);
+        SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+        String mobile2 = pre2.getString("mobile", "");
+        String token2 = pre2.getString("token", "");
+        image_service img = new RetrofitUser().get().create(image_service.class);
+        Call<ResponseBody> image_call = img.send_photo(mobile2, token2, "df3b72a07a0a4fa1854a48b543690eab", map);
+        image_call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() / 100 == 4) {
+                    Toast.makeText(getContext(),"上传失败，请重新上传",Toast.LENGTH_LONG).show();
+                } else {
+                    String uid = "";
+                    try {
+                        uid = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Gson gson = new Gson();
+                    Uuid u = gson.fromJson(uid, Uuid.class);
+                    String name, sex, address;
+                    String photo = "";
+                    photo = u.getUuid();
+                    name = binding.userName.getText().toString();
+                    if (binding.userSwitch.isChecked())
+                        sex = "female";
+                    else
+                        sex = "male";
+                    address = binding.userSchool.getText().toString();
+                    if (name != null && sex != null && address != null) {
+                        updateInfo(photo,name,sex,address,u);
+                    }
+                    Toast.makeText(getContext(), "success", Toast.LENGTH_LONG).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void updateInfo(String photo,String name,String sex,String address,Uuid u){
+        UserService messservice = new RetrofitUser().get().create(UserService.class);
+        messbean mess = new messbean(photo, name, sex, address);
+        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+        String mobile = pre.getString("mobile", "");
+        String token = pre.getString("token", "");
+        Call<ResponseBody> update = messservice.update(mobile, "df3b72a07a0a4fa1854a48b543690eab", token, mess);
+        update.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                SharedPreferences.Editor e = pre.edit();
+                e.putString("sex", sex);
+                e.putString("id_name",name);
+                e.putString("id_school",address);
+                e.putString("uuid",u.getUuid());
+                e.apply();
+                TipDialog.show((AppCompatActivity) getActivity(), "注册成功", TipDialog.TYPE.SUCCESS);
+                new Handler(new Handler.Callback() {
+                    @Override
+                    public boolean handleMessage(@NonNull android.os.Message msg) {
+                        return false;
+                    }
+                }).sendEmptyMessageDelayed(0, 3000);Intent intent = new Intent(requireActivity(), MainActivity.class);
+                startActivity(intent);
+                requireActivity().finish();
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override
