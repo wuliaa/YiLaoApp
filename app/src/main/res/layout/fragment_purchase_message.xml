@@ -97,6 +97,15 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/textView3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginBottom="30dp"
+                                android:text="@string/purchase_type"
+                                android:textSize="18sp" />
+
+                            <TextView
                                 android:id="@+id/address"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -131,6 +140,26 @@
                             android:layout_marginEnd="10dp"
                             android:layout_weight="3"
                             android:orientation="vertical">
+
+                            <RadioGroup
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <RadioButton
+                                    android:id="@+id/radioButton4"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/can_purchase"
+                                    android:textSize="16sp" />
+
+                                <RadioButton
+                                    android:id="@+id/radioButton5"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/find_purchase"
+                                    android:textSize="16sp" />
+                            </RadioGroup>
 
                             <com.rengwuxian.materialedittext.MaterialEditText
                                 android:id="@+id/address_text"
