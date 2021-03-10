@@ -1,13 +1,15 @@
 package com.example.yilaoapp.ui.errands;
 
+import android.graphics.Bitmap;
+
 public class Errand {
-    private int imageId;
+    private Bitmap imageId;
     private String address;
     private String content;
     private String time;
     private String money;
 
-    public Errand(int imageId, String address, String content, String time, String money) {
+    public Errand(Bitmap imageId, String address, String content, String time, String money) {
         this.imageId = imageId;
         this.address = address;
         this.content = content;
@@ -15,11 +17,11 @@ public class Errand {
         this.money = money;
     }
 
-    public int getImageId() {
+    public Bitmap getImageId() {
         return imageId;
     }
 
-    public void setImageId(int imageId) {
+    public void setImageId(Bitmap imageId) {
         this.imageId = imageId;
     }
 

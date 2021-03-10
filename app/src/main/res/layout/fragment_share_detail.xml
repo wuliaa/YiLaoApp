@@ -117,9 +117,9 @@
                 android:id="@+id/sharedcontent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/Content"
-                android:singleLine="false"
                 android:maxEms="12"
+                android:singleLine="false"
+                android:text="@string/Content"
                 app:layout_constraintBottom_toTopOf="@+id/guideline25"
                 app:layout_constraintStart_toStartOf="@+id/sharedname"
                 app:layout_constraintTop_toBottomOf="@+id/sharedname" />

@@ -1,5 +1,6 @@
 package com.example.yilaoapp.ui.errands;
 
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.example.yilaoapp.R;
 import com.lcodecore.extextview.ExpandTextView;
 import com.robertlevonyan.views.chip.Chip;
@@ -34,7 +37,7 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
     @Override
     public void onBindViewHolder(@NonNull ErrandViewHolder holder, int position) {
         Errand errand = mErrandList.get(position);
-        holder.head.setImageResource(errand.getImageId());
+        holder.head.setImageBitmap(errand.getImageId());
         holder.address.setText(errand.getAddress());
         holder.content.setText(errand.getContent());
         holder.time.setText(errand.getTime());
@@ -69,6 +72,7 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
                     }
                 }
             });
+
         }
     }
     /**
