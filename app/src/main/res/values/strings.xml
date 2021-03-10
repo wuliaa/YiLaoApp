@@ -247,4 +247,7 @@
     <string name="school">学校</string>
     <string name="nick">昵称</string>
     <string name="arriveAddress">送至</string>
+    <string name="purchase_type">代购类型</string>
+    <string name="can_purchase">能够代购</string>
+
 </resources>

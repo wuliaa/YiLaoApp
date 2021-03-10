@@ -1,6 +1,7 @@
 package com.example.yilaoapp.ui.errands;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.All_orders;
 import com.lcodecore.extextview.ExpandTextView;
 import com.robertlevonyan.views.chip.Chip;
 
@@ -21,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandViewHolder> {
-    private List<Errand> mErrandList = new ArrayList<>();
-    public ErrandAdapter(List<Errand> errandList) {
+    private List<All_orders> mErrandList = new ArrayList<>();
+    public ErrandAdapter(List<All_orders> errandList) {
         mErrandList = errandList;
     }
 
@@ -36,12 +39,17 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
 
     @Override
     public void onBindViewHolder(@NonNull ErrandViewHolder holder, int position) {
-        Errand errand = mErrandList.get(position);
-        holder.head.setImageBitmap(errand.getImageId());
-        holder.address.setText(errand.getAddress());
-        holder.content.setText(errand.getContent());
-        holder.time.setText(errand.getTime());
-        holder.money.setText(errand.getMoney());
+        All_orders errand = mErrandList.get(position);
+        String url="http://api.yilao.tk:5000/v1.0/users/"+errand.getPhone()+
+                "/resources/"+errand.getId_photo();
+        Glide.with(MyApplication.getContext())
+                .load(url)
+                .error(R.drawable.head1)
+                .into(holder.head);
+        holder.address.setText(errand.getDestination().getName());
+        holder.content.setText(errand.getDetail());
+        holder.time.setText(errand.getCreate_at());
+        holder.money.setText(String.valueOf(errand.getReward()));
     }
 
     @Override
@@ -82,7 +90,7 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
         /**
          * 接口中的点击每一项的实现方法，参数自己定义
          */
-        public void OnItemClick(View view, Errand data);
+        public void OnItemClick(View view, All_orders data);
     }
     //需要外部访问，所以需要设置set方法，方便调用
     private ErrandAdapter.OnItemClickListener onItemClickListener;

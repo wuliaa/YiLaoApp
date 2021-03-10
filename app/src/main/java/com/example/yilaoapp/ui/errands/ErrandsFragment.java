@@ -42,6 +42,7 @@ import android.widget.Toast;
 
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.All_orders;
+import com.example.yilaoapp.bean.Point_address;
 import com.example.yilaoapp.databinding.FragmentErrandsBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.errand_service;
@@ -79,7 +80,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     private ErrandsViewModel mViewModel;
     private DrawerLayout mDrawerLayout;
-    private List<Errand> errandList = new ArrayList<>();
+    private List<All_orders> errandList = new ArrayList<>();
     InputStream inputStream = null;
     FragmentErrandsBinding binding;
     List<All_orders> all = new LinkedList<>();
@@ -104,7 +105,8 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         binding.setData(mViewModel);
         binding.setLifecycleOwner(requireActivity());
         ((AppCompatActivity) requireActivity()).setSupportActionBar(binding.toolbar);
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setDisplayShowTitleEnabled(false);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).
+                getSupportActionBar()).setDisplayShowTitleEnabled(false);
         binding.toolbar.inflateMenu(R.menu.menu_main);
         binding.toolbar.setNavigationIcon(R.drawable.ic_baseline_dehaze_24);
         mDrawerLayout = requireActivity().findViewById(R.id.drawer_layout);
@@ -129,7 +131,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         //RecyclerView中没有item的监听事件，需要自己在适配器中写一个监听事件的接口。参数根据自定义
         adapter.setOnItemClickListener(new ErrandAdapter.OnItemClickListener() {
             @Override
-            public void OnItemClick(View view, Errand data) {
+            public void OnItemClick(View view, All_orders data) {
                 new Handler(new Handler.Callback() {
                     @Override
                     public boolean handleMessage(@NonNull android.os.Message msg) {
@@ -147,7 +149,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
             public void run() {
                 adapter.notifyDataSetChanged();
             }
-        }, 500);
+        }, 1000);
         binding.errandRecyclerview.requestLayout();
         return binding.getRoot();
     }
@@ -201,14 +203,19 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                         e.printStackTrace();
                                     }
                                     String content = all.get(finalI).getDetail();
-                                    String address = all.get(finalI).getDestination().getName();
+                                    Point_address address = all.get(finalI).getDestination();
                                     String money = String.valueOf(all.get(finalI).getReward());
                                     String time = all.get(finalI).getCreate_at();
-                                    Errand errand1 = new Errand(head, address, content, time, money);
+                                    BigInteger phone = all.get(finalI).getPhone();
+                                    String protected_info = all.get(finalI).getProtected_info();
+                                    String uuid = all.get(finalI).getId_photo();
+                                    All_orders errand1 = new All_orders(phone, address, time, task_id.get(finalI),
+                                            content, Float.parseFloat(money), protected_info, uuid);
                                     errandList.add(errand1);
                                     Log.d("initerrand", "message: " + content + "1" + address + "2" + money + "3" + time);
                                     // photo.add()
                                 }
+
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
 
@@ -243,41 +250,20 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     }.getType();
                     all = gson.fromJson(str, type);
                     for (int i = 0; i < all.size(); i++) {
-                        String uid = all.get(i).getId_photo();
-                        BigInteger mobile = all.get(i).getFrom_user();
-                        image_service load = new RetrofitUser().get().create(image_service.class);
-                        Call<ResponseBody> load_back = load.load_photo(mobile, uid, "df3b72a07a0a4fa1854a48b543690eab");
-                        int finalI = i;
                         if (!task_id.contains(all.get(i).getId())) {
                             task_id.add(all.get(i).getId());
-                            load_back.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    assert response.body() != null;
-                                    inputStream = response.body().byteStream();
-                                    Log.d("errand", "onResponse: " + inputStream);
-                                    //订单信息
-                                    PhotoOperation operation = new PhotoOperation();
-                                    Bitmap head = null;
-                                    try {
-                                        head = operation.ByteArray2Bitmap(PhotoOperation.read(inputStream));
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    String content = all.get(finalI).getDetail();
-                                    String address = all.get(finalI).getDestination().getName();
-                                    String money = String.valueOf(all.get(finalI).getReward());
-                                    String time = all.get(finalI).getCreate_at();
-                                    Errand errand1 = new Errand(head, address, content, time, money);
-                                    errandList.add(errand1);
-                                    Log.d("errand", "message: " + content + "1" + address + "2" + money + "3" + time);
-                                    // photo.add()
-                                }
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                }
-                            });   //头像请求结束
+                            String content = all.get(i).getDetail();
+                            Point_address address = all.get(i).getDestination();
+                            String money = String.valueOf(all.get(i).getReward());
+                            String time = all.get(i).getCreate_at();
+                            BigInteger phone = all.get(i).getFrom_user();
+                            String protected_info = all.get(i).getProtected_info();
+                            String uuid = all.get(i).getId_photo();
+                            All_orders errand1 = new All_orders(phone, address, time, task_id.get(i),
+                                    content, Float.parseFloat(money), protected_info, uuid);
+                            errandList.add(errand1);
+                            Log.d("errand", "message: " + content + "1" + address + "2" + money + "3" + time);
+                            // photo.add()
                         }
                     }
                 } catch (IOException e) {
