@@ -1,5 +1,6 @@
 package com.example.yilaoapp.ui.errands;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -114,14 +116,15 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         });
         setHasOptionsMenu(true);
 
-        binding.swipeErrands.setOnRefreshListener(this);
         initErrands();
+        binding.swipeErrands.setOnRefreshListener(this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.errandRecyclerview.setLayoutManager(layoutManager);
         ErrandAdapter adapter = new ErrandAdapter(errandList);
         binding.errandRecyclerview.setHasFixedSize(true);
         binding.errandRecyclerview.setAdapter(adapter);
+
 
         //RecyclerView中没有item的监听事件，需要自己在适配器中写一个监听事件的接口。参数根据自定义
         adapter.setOnItemClickListener(new ErrandAdapter.OnItemClickListener() {
@@ -137,6 +140,15 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 }).sendEmptyMessageDelayed(0, 500);
             }
         });
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+            }
+        }, 500);
+        binding.errandRecyclerview.requestLayout();
         return binding.getRoot();
     }
 
@@ -153,20 +165,67 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     private void initErrands() {
-//        for (int i = 0; i < 2; i++) {
-//            Errand e1 = new Errand(R,"一课401","南区" +
-//                    "菜鸟驿站拿两个快递","下午 6:00","2￥");
-//            errandList.add(e1);
-//            Errand e2 = new Errand(R.drawable.head2,"陶园","西门外" +
-//                    "卖可帮忙拿到陶园吗","上午 9:00","1￥");
-//            errandList.add(e2);
-//            Errand e3 = new Errand(R.drawable.head3,"东十九楼下","西门" +
-//                    "水果店代买",
-//                    "下午14:00", "2￥");
-//            errandList.add(e3);
-//        }
-////        Errand errand=new Errand(bitmap,address,content,time,money);
-////        errandList.add(errand);
+        errand_service errand = new RetrofitUser().get().create(errand_service.class);
+        Call<ResponseBody> get_errand = errand.get_orders("跑腿");
+        get_errand.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String str = "";
+                try {
+                    str = response.body().string();
+                    Gson gson = new Gson();
+                    Type type = new TypeToken<List<All_orders>>() {
+                    }.getType();
+                    all = gson.fromJson(str, type);
+                    for (int i = 0; i < all.size(); i++) {
+                        String uid = all.get(i).getId_photo();
+                        BigInteger mobile = all.get(i).getFrom_user();
+                        image_service load = new RetrofitUser().get().create(image_service.class);
+                        Call<ResponseBody> load_back = load.load_photo(mobile, uid, "df3b72a07a0a4fa1854a48b543690eab");
+                        int finalI = i;
+                        if (!task_id.contains(all.get(i).getId())) {
+                            task_id.add(all.get(i).getId());
+                            load_back.enqueue(new Callback<ResponseBody>() {
+                                @SuppressLint("HandlerLeak")
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    assert response.body() != null;
+                                    inputStream = response.body().byteStream();
+                                    Log.d("initerrand", "onResponse: " + inputStream);
+                                    //订单信息
+                                    PhotoOperation operation = new PhotoOperation();
+                                    Bitmap head = null;
+                                    try {
+                                        head = operation.ByteArray2Bitmap(PhotoOperation.read(inputStream));
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    String content = all.get(finalI).getDetail();
+                                    String address = all.get(finalI).getDestination().getName();
+                                    String money = String.valueOf(all.get(finalI).getReward());
+                                    String time = all.get(finalI).getCreate_at();
+                                    Errand errand1 = new Errand(head, address, content, time, money);
+                                    errandList.add(errand1);
+                                    Log.d("initerrand", "message: " + content + "1" + address + "2" + money + "3" + time);
+                                    // photo.add()
+                                }
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                }
+                            });   //头像请求结束
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override
