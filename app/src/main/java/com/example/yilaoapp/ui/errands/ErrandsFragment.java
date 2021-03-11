@@ -181,15 +181,15 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
             }
         });
 
-//        Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-////                adapter.notifyDataSetChanged();
-//                adapter.notifyItemInserted(adapter.getItemCount());
-//            }
-//        },  1000);
-        adapter.notifyItemInserted(adapter.getItemCount());
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+//                adapter.notifyDataSetChanged();
+                adapter.notifyItemInserted(adapter.getItemCount());
+            }
+        },  1000);
+
 //        binding.errandRecyclerview.requestLayout();
         return binding.getRoot();
     }

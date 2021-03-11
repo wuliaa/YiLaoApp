@@ -154,7 +154,8 @@ public class PurchaseMessageFragment extends Fragment implements EasyPermissions
                             new_order.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
+                                    NavController controller = Navigation.findNavController(v);
+                                    controller.popBackStack();
                                 }
 
                                 @Override

@@ -71,18 +71,21 @@ public class BullentinMessageFragment extends Fragment implements EasyPermission
     private static final int RC_PHOTO_PREVIEW = 2;
     private static final String EXTRA_MOMENT = "EXTRA_MOMENT";
 
-    public BullentinMessageFragment() {}
+    public BullentinMessageFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
     FragmentBullentinMessageBinding binding;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_bullentin_message,container,false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_bullentin_message, container, false);
         //binding.setData(BullentinViewModel);
         binding.setLifecycleOwner(requireActivity());
         binding.toolbar.setNavigationIcon(R.drawable.ic_baseline_chevron_left_24);
@@ -101,17 +104,17 @@ public class BullentinMessageFragment extends Fragment implements EasyPermission
         binding.button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte[] m=null;
-                PhotoOperation p=new PhotoOperation();
+                byte[] m = null;
+                PhotoOperation p = new PhotoOperation();
                 Map<String, RequestBody> map = new HashMap<>();
-                for(int i=0;i<binding.mPhotosSnpl.getData().size();i++){
+                for (int i = 0; i < binding.mPhotosSnpl.getData().size(); i++) {
                     try {
-                        m=p.Path2ByteArray(binding.mPhotosSnpl.getData().get(i));
+                        m = p.Path2ByteArray(binding.mPhotosSnpl.getData().get(i));
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
                     RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/from-data"), m);
-                    map.put("file\"; filename=\"" +Integer.toString(i)+".jpeg", requestFile);
+                    map.put("file\"; filename=\"" + Integer.toString(i) + ".jpeg", requestFile);
                 }
                 SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                 String mobile2 = pre2.getString("mobile", "");
@@ -134,34 +137,37 @@ public class BullentinMessageFragment extends Fragment implements EasyPermission
                             Gson gson = new Gson();
                             Uuid u = gson.fromJson(uid, Uuid.class);
                             //System.out.println(u.getUuid());
-                            String detail=binding.editTextTextMultiLine.getText().toString();
-                            String address=binding.lostAddress.getText().toString();
-                            BigInteger phone=new BigInteger(binding.telephoneText.getText().toString());
-                            Point_address des=new Point_address(0,0,address);
-                            String category="";
-                            if(binding.radioButton.isChecked())
-                                category="失物招领";
-                            else if(binding.radioButton2.isChecked())
-                                category="组队学习";
+                            String detail = binding.editTextTextMultiLine.getText().toString();
+                            String address = binding.lostAddress.getText().toString();
+                            BigInteger phone = new BigInteger(binding.telephoneText.getText().toString());
+                            Point_address des = new Point_address(0, 0, address);
+                            String category = "";
+                            if (binding.radioButton.isChecked())
+                                category = "失物招领";
+                            else if (binding.radioButton2.isChecked())
+                                category = "组队学习";
                             else
-                                category="共享工具";
-                            bul_order order=new bul_order(phone,"公告",detail,des,category,u.getUuid());
-                            bur_service pur=new RetrofitUser().get().create(bur_service.class);
-                            Call<ResponseBody> new_order=pur.new_order(mobile2,token2,"df3b72a07a0a4fa1854a48b543690eab",order);
+                                category = "共享工具";
+                            bul_order order = new bul_order(phone, "公告", detail, des, category, u.getUuid());
+                            bur_service pur = new RetrofitUser().get().create(bur_service.class);
+                            Call<ResponseBody> new_order = pur.new_order(mobile2, token2, "df3b72a07a0a4fa1854a48b543690eab", order);
                             new_order.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                      Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), "success", Toast.LENGTH_LONG).show();
+                                    NavController controller = Navigation.findNavController(v);
+                                    controller.popBackStack();
                                 }
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    Toast.makeText(getContext(),t.getMessage(),Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_LONG).show();
                                 }
                             });
 
                         }
                     }
+
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
 

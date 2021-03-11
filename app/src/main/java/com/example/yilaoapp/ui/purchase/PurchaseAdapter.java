@@ -9,7 +9,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.All_orders;
 import com.lcodecore.extextview.ExpandTextView;
 import com.robertlevonyan.views.chip.Chip;
 
@@ -31,11 +35,19 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.Purcha
 
     @Override
     public void onBindViewHolder(@NonNull PurchaseAdapter.PurchaseViewHolder holder, int position) {
-        Purchase purchase = mpurchaseList.get(position);
-        holder.photo.setImageResource(purchase.getImageid());
+//        All_orders purchase = mpurchaseList.get(position);
+//        String url="http://api.yilao.tk:5000/v1.0/users/"+purchase.getPhone()+
+//                "/resources/"+purchase.getId_photo();
+//        Glide.with(MyApplication.getContext())
+//                .load(url)
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .placeholder(R.drawable.head1)
+//                .error(R.drawable.head2)
+//                .into(holder.photo);
+        Purchase  purchase=mpurchaseList.get(position);
         holder.objectName.setText(purchase.getObjectName());
         holder.content.setText(purchase.getContent());
-        holder.money.setText(purchase.getMoney());
+        holder.money.setText(String.valueOf(purchase.getMoney()));
         holder.isPurchase.setText(purchase.getIsPurchase());
     }
 
