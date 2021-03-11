@@ -44,12 +44,8 @@ public class SplashActivity extends AppCompatActivity {
                         }
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(getApplicationContext(),"网络连接失败",Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                            Toast.makeText(getApplicationContext(),"网络连接失败",Toast.LENGTH_SHORT).show();
+
                         }
                     });
                 }else{

@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -25,8 +26,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,8 +41,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.yilaoapp.MainActivity;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.User;
+import com.example.yilaoapp.bean.Uuid;
+import com.example.yilaoapp.bean.messbean;
 import com.example.yilaoapp.databinding.FragmentMyInformationBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
@@ -52,6 +59,7 @@ import com.kongzue.dialog.interfaces.OnMenuItemClickListener;
 import com.kongzue.dialog.v3.BottomMenu;
 import com.kongzue.dialog.v3.TipDialog;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -59,6 +67,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -137,11 +147,10 @@ public class MyInformationFragment extends Fragment {
                 controller.navigate(R.id.action_myInformationFragment_to_addressFragment);
             }
         });
-        getInfo();
         return binding.getRoot();
     }
 
-    public void getAuthority(){
+    public void getAuthority() {
         String[] PERMISSIONS = {
                 "android.permission.READ_EXTERNAL_STORAGE",
                 "android.permission.WRITE_EXTERNAL_STORAGE"};
@@ -162,7 +171,7 @@ public class MyInformationFragment extends Fragment {
         }
     }
 
-    public void getInfo(){
+    public void getInfo() {
         UserService service = new RetrofitUser().get().create(UserService.class);
         SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
         String mobile = pre.getString("mobile", "");
@@ -201,14 +210,85 @@ public class MyInformationFragment extends Fragment {
                         binding.informationTextView10.setText(user.getId_name());
                         e.putString("id_name", user.getId_name());
                     }
-                    e.apply();
                     if (user.getId_photo() != null) {
                         BigInteger mobile = user.getMobile();
-                        String url = "http://api.yilao.tk:5000/v1.0/users/" + mobile + "/resources/" +
+                        String url = "http://api.yilao.tk:15000/v1.0/users/" + mobile + "/resources/" +
                                 user.getId_photo();
-                        Glide.with(getContext()).load(url).into(binding.informationImageView2);
+                        Glide.with(getContext())
+                                .load(url)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .into(binding.informationImageView2);
+                        e.putString("id_photo", user.getId_photo());
                     }
+                    e.apply();
                 }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void postPortrait(byte[] ba) {
+        Map<String, RequestBody> map = new HashMap<>();
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/from-data"), ba);
+        //注意：file就是与服务器对应的key,后面filename是服务器得到的文件名
+        map.put("file\"; filename=\"" + "2.jpeg", requestFile);
+        SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+        String mobile2 = pre2.getString("mobile", "");
+        String token2 = pre2.getString("token", "");
+        image_service img = new RetrofitUser().get().create(image_service.class);
+        Call<ResponseBody> image_call = img.send_photo(mobile2, token2, "df3b72a07a0a4fa1854a48b543690eab", map);
+        image_call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() / 100 == 4) {
+                    Toast.makeText(getContext(), "上传失败，请重新上传", Toast.LENGTH_LONG).show();
+                } else {
+                    String uid = "";
+                    try {
+                        uid = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Gson gson = new Gson();
+                    Uuid u = gson.fromJson(uid, Uuid.class);
+                    String photo = "";
+                    photo = u.getUuid();
+                    updateInfo(photo, null, null, null, u);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void updateInfo(String photo, String name, String sex, String address, Uuid u) {
+        UserService messservice = new RetrofitUser().get().create(UserService.class);
+        messbean mess = new messbean(photo, name, sex, address);
+        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+        String mobile = pre.getString("mobile", "");
+        String token = pre.getString("token", "");
+        Call<ResponseBody> update = messservice.update(mobile, "df3b72a07a0a4fa1854a48b543690eab", token, mess);
+        update.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                SharedPreferences.Editor e = pre.edit();
+                e.putString("id_photo", u.getUuid());
+                Log.d("2", u.getUuid());
+                e.apply();
+                TipDialog.show((AppCompatActivity) getActivity(), "上传成功", TipDialog.TYPE.SUCCESS);
+                new Handler(new Handler.Callback() {
+                    @Override
+                    public boolean handleMessage(@NonNull android.os.Message msg) {
+                        return false;
+                    }
+                }).sendEmptyMessageDelayed(0, 3000);
             }
 
             @Override
@@ -254,14 +334,12 @@ public class MyInformationFragment extends Fragment {
             imagePath = uri.getPath();
         }
         displayImage(imagePath);//根据图片路径显示图片
-
     }
 
     private void handleImageBeforeKitkat(Intent data) {
         Uri uri = data.getData();
         String imagePath = getImagePath(uri, null);
         displayImage(imagePath);
-
     }
 
     private String getImagePath(Uri uri, String selection) {
@@ -279,69 +357,22 @@ public class MyInformationFragment extends Fragment {
 
     private void displayImage(String imagePath) {
         if (imagePath != null) {
+            byte[] ba = null;
+            PhotoOperation Operation = new PhotoOperation();
+            try {
+                ba = Operation.Path2ByteArray(imagePath);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Log.d("PhotoFIle", "onClick: 打不开文件");
+            }
+            postPortrait(ba);
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
             binding.informationImageView2.setImageBitmap(bitmap);
-            TipDialog.show((AppCompatActivity) getActivity(), "上传成功", TipDialog.TYPE.SUCCESS);
         } else {
             Toast.makeText(getContext(), "failed to get image", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void Refresh() {
-        UserService service = new RetrofitUser().get().create(UserService.class);
-        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-        String mobile = pre.getString("mobile", "");
-        String token = pre.getString("token", "");
-        SharedPreferences.Editor e = pre.edit();
-        //获取用户信息
-        new Thread() {
-            public void run() {
-                Call<ResponseBody> get = service.get_user(mobile, "df3b72a07a0a4fa1854a48b543690eab", token);
-                get.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        String str = "";
-                        try {
-                            str = response.body().string();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Gson gson = new Gson();
-                        User user = gson.fromJson(str, User.class);
-                        requireActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                binding.informationTextView16.setText(user.getMobile().toString());
-                                if (user.getSex() != null) {
-                                    if (user.getSex().equals("male")) {
-                                        binding.informationTextView13.setText("男");
-                                        e.putString("sex", "男");
-                                    } else {
-                                        binding.informationTextView13.setText("女");
-                                        e.putString("sex", "女");
-                                    }
-                                }
-                                if (user.getId_school() != null) {
-                                    binding.school.setText(user.getId_school());
-                                    e.putString("id_school", user.getId_school());
-                                }
-                                if (user.getId_name() != null) {
-                                    binding.informationTextView10.setText(user.getId_name());
-                                    e.putString("id_name", user.getId_name());
-                                }
-                                e.apply();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        }.start();
-    }
 
     public void initUI() {
         SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
@@ -349,10 +380,17 @@ public class MyInformationFragment extends Fragment {
         binding.school.setText(pre.getString("id_school", ""));
         binding.informationTextView10.setText(pre.getString("id_name", ""));
         String sex = pre.getString("sex", "");
-        if (sex.equals("")) Refresh();
+        if (sex.equals("")) getInfo();
         else if (sex.equals("male"))
             binding.informationTextView13.setText("男");
         else binding.informationTextView13.setText("女");
+        String url = "http://api.yilao.tk:15000/v1.0/users/" + pre.getString("mobile", "") + "/resources/" +
+                pre.getString("id_photo", "");
+        Glide.with(getContext())
+                .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(binding.informationImageView2);
+        Log.d("1", url);
 
     }
 }

@@ -40,7 +40,7 @@ public class ServiceHelp {
                 Log.d("1", "success");
                 SharedPreferences.Editor e = pre.edit();
                 e.putString(key, value);
-                e.commit();
+                e.apply();
                 if(flag){
                     NavController controller = Navigation.findNavController(v);
                     controller.popBackStack();
@@ -74,7 +74,7 @@ public class ServiceHelp {
                 e.putString("token", token.getToken());
                 e.putString("mobile", mobile);
                 e.putString("password", password);
-                e.commit();
+                e.apply();
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {

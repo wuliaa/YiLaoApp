@@ -83,7 +83,7 @@ public class MyPurchaseFragment extends Fragment implements SwipeRefreshLayout.O
         for (int i = 0; i <9; i++) {
             photos.add("http://bgashare.bingoogolapple.cn/refreshlayout/images/staggered2.png");
 //            photos.add("/storage/emulated/0/sina/weibo/storage/photoalbum_save/weibo/img-ebc3581e69b48d8c1bc1365971f12d90.jpg");
-//             photos.add("http://api.yilao.tk:5000/v1.0/users/13060887368/resources/2f5a0fff-5f37-4bb9-8667-2c3beb00dfe8");
+//             photos.add("http://api.yilao.tk:15000/v1.0/users/13060887368/resources/2f5a0fff-5f37-4bb9-8667-2c3beb00dfe8");
         }
         for (int i = 0; i < 2; i++) {
             MyPurchase l1 = new MyPurchase("口红","2020年12月3日 下午6:00前，可以在日本买到免税的MAC口红",

@@ -1,5 +1,6 @@
 package com.example.yilaoapp;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.bean.messbean;
 import com.example.yilaoapp.bean.tok;
@@ -51,6 +53,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.yilaoapp.MyApplication.getContext;
+
 
 public class  MainActivity extends AppCompatActivity {
     private NavController navController;
@@ -65,11 +69,46 @@ public class  MainActivity extends AppCompatActivity {
         //抽屉式导航栏
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationView navigationView = findViewById(R.id.navigationView);
+        View headerview=navigationView.inflateHeaderView(R.layout.navigation_view_header_layout);
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationUI.setupWithNavController(navigationView, navController);
         //抽屉导航栏的用户信息
-        ImageView portrait = (ImageView) navigationView.inflateHeaderView(R.layout.navigation_view_header_layout).findViewById(R.id.pcircularImageView);
-        getNickAddPortrait(portrait);
+        ImageView portrait = (ImageView)headerview.findViewById(R.id.pcircularImageView);
+        TextView nick = (TextView)headerview.findViewById(R.id.mnickn);
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+                SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                if(pre.contains("id_name")){
+                    nick.setText(pre.getString("id_name",""));
+                }
+                if(pre.contains("id_photo")){
+                    String url = "http://api.yilao.tk:15000/v1.0/users/" + pre.getString("mobile","") + "/resources/" +
+                            pre.getString("id_photo","");
+                    Glide.with(getApplicationContext())
+                            .load(url)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(portrait);
+                }else {
+                    getNickAddPortrait(portrait, nick);
+                }
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
         //底部导航栏
         final BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
@@ -85,7 +124,7 @@ public class  MainActivity extends AppCompatActivity {
         });
     }
 
-    public void getNickAddPortrait(ImageView portrait){
+    public void getNickAddPortrait(ImageView portrait,TextView nick){
         UserService service = new RetrofitUser().get().create(UserService.class);
         SharedPreferences pre = this.getSharedPreferences("login", Context.MODE_PRIVATE);
         String mobile = pre.getString("mobile", "");
@@ -108,14 +147,16 @@ public class  MainActivity extends AppCompatActivity {
                     Gson gson = new Gson();
                     User user = gson.fromJson(str, User.class);
                     if (user.getId_name() != null) {
-                        TextView nick = findViewById(R.id.mnickn);
                         nick.setText(user.getId_name());
                     }
                     if (user.getId_photo() != null) {
                         BigInteger mobile = user.getMobile();
-                        String url = "http://api.yilao.tk:5000/v1.0/users/" + mobile + "/resources/" +
+                        String url = "http://api.yilao.tk:15000/v1.0/users/" + mobile + "/resources/" +
                                 user.getId_photo();
-                        Glide.with(getApplicationContext()).load(url).into(portrait);
+                        Glide.with(getApplicationContext())
+                                .load(url)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .into(portrait);
                     }
                 }
             }

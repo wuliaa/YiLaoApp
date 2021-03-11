@@ -223,7 +223,7 @@ public class UserFragment extends Fragment {
                 e.putString("sex", sex);
                 e.putString("id_name",name);
                 e.putString("id_school",address);
-                e.putString("uuid",u.getUuid());
+                e.putString("id_photo",u.getUuid());
                 e.apply();
                 TipDialog.show((AppCompatActivity) getActivity(), "注册成功", TipDialog.TYPE.SUCCESS);
                 new Handler(new Handler.Callback() {

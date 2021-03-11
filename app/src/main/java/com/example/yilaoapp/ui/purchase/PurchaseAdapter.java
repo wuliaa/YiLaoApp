@@ -36,7 +36,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.Purcha
     @Override
     public void onBindViewHolder(@NonNull PurchaseAdapter.PurchaseViewHolder holder, int position) {
 //        All_orders purchase = mpurchaseList.get(position);
-//        String url="http://api.yilao.tk:5000/v1.0/users/"+purchase.getPhone()+
+//        String url="http://api.yilao.tk:15000/v1.0/users/"+purchase.getPhone()+
 //                "/resources/"+purchase.getId_photo();
 //        Glide.with(MyApplication.getContext())
 //                .load(url)
