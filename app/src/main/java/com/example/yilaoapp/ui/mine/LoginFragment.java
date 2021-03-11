@@ -112,11 +112,14 @@ public class LoginFragment extends Fragment {
     }
 
     public void login(View v, String mobile, String password) {
-        UserService service = new RetrofitUser().get().create(UserService.class);
+        UserService service = new RetrofitUser().get(getContext()).create(UserService.class);
         Call<ResponseBody> loginback = service.login_password(mobile, "df3b72a07a0a4fa1854a48b543690eab", password);
+        System.out.println(111);
         loginback.enqueue(callback=new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                System.out.println(222);
+                System.out.println(response.message());
                 if (response.code() / 100 == 4) {
                     UIOp('1',null);
                 } else if (response.code() / 100 == 5) {
@@ -141,6 +144,7 @@ public class LoginFragment extends Fragment {
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                System.out.println(t.getMessage());
                 UIOp('5',null);
             }
         });

@@ -142,14 +142,14 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                 String mobile=pre.getString("mobile","");
                 String token=pre.getString("token","");
-                accept_service ac=new RetrofitUser().get().create(accept_service.class);
+                accept_service ac=new RetrofitUser().get(getContext()).create(accept_service.class);
                 Call<ResponseBody> act=ac.accept_order(mobile,data.getId(),token,"df3b72a07a0a4fa1854a48b543690eab","true");
                 act.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
                         chat_task ch=new chat_task("您的任务我已领取，订单信息如下:"+data.getDetail(),data.getFrom_user());
-                        chat_service send=new RetrofitUser().get().create(chat_service.class);
+                        chat_service send=new RetrofitUser().get(getContext()).create(chat_service.class);
                         Call<ResponseBody> sen_mes=send.send_message(mobile,token,"df3b72a07a0a4fa1854a48b543690eab",ch);
                         sen_mes.enqueue(new Callback<ResponseBody>() {
                             @Override
@@ -213,7 +213,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     private void initErrands() {
-        errand_service errand = new RetrofitUser().get().create(errand_service.class);
+        errand_service errand = new RetrofitUser().get(getContext()).create(errand_service.class);
         Call<ResponseBody> get_errand = errand.get_orders("跑腿");
         get_errand.enqueue(new Callback<ResponseBody>() {
             @Override

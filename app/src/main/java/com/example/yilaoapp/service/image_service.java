@@ -23,7 +23,6 @@ public interface image_service {
     @POST("users/{mobile}/resources")
     Call<ResponseBody> send_photo(@Path("mobile")String mobile, @Query("token")String token, @Query("appid")String app, @PartMap Map<String,RequestBody> image);
     //   RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpg"), bytes);
-    @Headers({"Connection:close"})
     @GET("users/{mobile}/resources/{uuid}")
     Call<ResponseBody> load_photo(@Path("mobile") BigInteger mobile, @Path("uuid")String uuid, @Query("appid")String appid);
 

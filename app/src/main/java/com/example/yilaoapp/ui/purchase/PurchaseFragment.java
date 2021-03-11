@@ -161,7 +161,7 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        pur_service pur=new RetrofitUser().get().create(pur_service.class);
+        pur_service pur=new RetrofitUser().get(getContext()).create(pur_service.class);
         Call<ResponseBody> get_errand=pur.get_orders("代购");
         List<InputStream> photo=new LinkedList<>();//用户照片
         List<List<InputStream>> order_photos=new LinkedList<>();//订单照片
@@ -177,7 +177,7 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                     List<All_orders> all=gson.fromJson(str,type);
                     String uid="";
                     BigInteger mobile;
-                    image_service load=new RetrofitUser().get().create(image_service.class);
+                    image_service load=new RetrofitUser().get(getContext()).create(image_service.class);
                     //获取每个用户的照片的字节流
                     for(int i=0;i<all.size();i++){
                         uid=all.get(i).getId_photo();

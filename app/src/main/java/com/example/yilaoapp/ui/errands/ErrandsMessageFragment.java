@@ -76,7 +76,7 @@ public class ErrandsMessageFragment extends Fragment {
                 SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                 String mobile=pre.getString("mobile","");
                 String token=pre.getString("token","");
-                errand_service errand=new RetrofitUser().get().create(errand_service.class);
+                errand_service errand=new RetrofitUser().get(getContext()).create(errand_service.class);
                 Call<ResponseBody> errand_back=errand.new_order(mobile,token,"df3b72a07a0a4fa1854a48b543690eab",order);
                 errand_back.enqueue(new Callback<ResponseBody>() {
                     @Override

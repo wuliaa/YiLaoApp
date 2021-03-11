@@ -1,7 +1,9 @@
 package com.example.yilaoapp.ui.mine;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,19 +18,28 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.Message;
+import com.example.yilaoapp.bean.chat_task;
 import com.example.yilaoapp.chat.activity.ChatActivity;
 import com.example.yilaoapp.chat.util.LogUtil;
 import com.example.yilaoapp.chat.widget.SetPermissionDialog;
 import com.example.yilaoapp.databinding.FragmentMyMessageBinding;
+import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.chat_service;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.functions.Consumer;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -71,6 +82,23 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
         adapter.setOnItemClickListener(new MessageAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(View view, Message data) {
+                chat_task ch=new chat_task("您的任务我已领取，订单信息如下:"+data.getContent(),data.getMobile());
+                chat_service send=new RetrofitUser().get(getContext()).create(chat_service.class);
+                SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                String mobile=pre.getString("mobile","");
+                String token=pre.getString("token","");
+                Call<ResponseBody> sen_mes=send.send_message(mobile,token,"df3b72a07a0a4fa1854a48b543690eab",ch);
+                sen_mes.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Toast.makeText(getContext(),"信息已success",Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
                 new Handler(new Handler.Callback() {
                     @Override
                     public boolean handleMessage(@NonNull android.os.Message msg) {
@@ -102,6 +130,9 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                     "下午14:00", R.drawable.head3);
             messageList.add(m3);
         }*/
+        BigInteger m2=new BigInteger("13060887368");
+        Message m=new Message("jgq","hello","16:30","b8caed0f-48ce-4aa2-b98d-1500c6e42998",m2);
+        messageList.add(m);
     }
     private void requestPermisson(View view){
         RxPermissions rxPermission = new RxPermissions(this);

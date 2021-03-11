@@ -120,7 +120,7 @@ public class BullentinFragment extends Fragment {
     }
 
     public void onRefresh() {
-        bur_service bul = new RetrofitUser().get().create(bur_service.class);
+        bur_service bul = new RetrofitUser().get(getContext()).create(bur_service.class);
         Call<ResponseBody> get_errand = bul.get_orders("代购");
         List<InputStream> photo = new LinkedList<>();//用户照片
         List<List<InputStream>> order_photos = new LinkedList<>();//订单照片
@@ -137,7 +137,7 @@ public class BullentinFragment extends Fragment {
                     List<All_orders> all = gson.fromJson(str, type);
                     String uid = "";
                     BigInteger mobile;
-                    image_service load = new RetrofitUser().get().create(image_service.class);
+                    image_service load = new RetrofitUser().get(getContext()).create(image_service.class);
                     //获取每个用户的照片的字节流
                     for (int i = 0; i < all.size(); i++) {
                         uid = all.get(i).getId_photo();

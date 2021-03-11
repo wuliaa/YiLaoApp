@@ -39,7 +39,7 @@ public class SplashActivity extends AppCompatActivity {
                 if (!token1.equals("")) {
                     String mob = pre1.getString("mobile", "");
                     String pas = pre1.getString("password", "");
-                    UserService loginservice = new RetrofitUser().get().create(UserService.class);
+                    UserService loginservice = new RetrofitUser().get(getContext()).create(UserService.class);
                     Call<ResponseBody> loginback = loginservice.login_password(mob, "df3b72a07a0a4fa1854a48b543690eab", pas);
                     loginback.enqueue(new Callback<ResponseBody>() {
                         @Override

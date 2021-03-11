@@ -100,7 +100,7 @@ public class MissFragment extends Fragment {
     }
 
     public void getCode(String phone){
-        Verify_service yzmservice=new RetrofitUser().get().create(Verify_service.class);
+        Verify_service yzmservice=new RetrofitUser().get(getContext()).create(Verify_service.class);
         Verify yz=new Verify("df3b72a07a0a4fa1854a48b543690eab",phone,"PUT","/v1.0/users/"+phone);
         Call<ResponseBody> callback=yzmservice.send_code(yz);
         callback.enqueue(new Callback<ResponseBody>() {
@@ -119,7 +119,7 @@ public class MissFragment extends Fragment {
     }
 
     public void changePsd(String mobile,String psd,View v){
-        UserService service = new RetrofitUser().get().create(UserService.class);
+        UserService service = new RetrofitUser().get(getContext()).create(UserService.class);
         String password = binding.missPass.getText().toString();
         Call<ResponseBody> back = service.login_password(mobile, "df3b72a07a0a4fa1854a48b543690eab", psd);
         back.enqueue(new Callback<ResponseBody>() {
