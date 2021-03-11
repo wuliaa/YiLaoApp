@@ -9,14 +9,16 @@ public class bul_order {
     Point_address destination;
     String category;
     String photos;
+    String name;
 
-    public bul_order(BigInteger phone, String type, String detail, Point_address destination, String category, String photos) {
+    public bul_order(BigInteger phone, String type, String detail, Point_address destination, String category, String photos, String name) {
         this.phone = phone;
         this.type = type;
         this.detail = detail;
         this.destination = destination;
         this.category = category;
         this.photos = photos;
+        this.name = name;
     }
 
     public BigInteger getPhone() {
@@ -65,5 +67,13 @@ public class bul_order {
 
     public void setPhotos(String photos) {
         this.photos = photos;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

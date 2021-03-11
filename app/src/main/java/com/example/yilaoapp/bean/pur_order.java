@@ -10,8 +10,9 @@ public class pur_order {
     String category;
     float reward;
     String photos;
+    String name;
 
-    public pur_order(BigInteger phone, String type, String detail, Point_address destination, String category, float reward, String photos) {
+    public pur_order(BigInteger phone, String type, String detail, Point_address destination, String category, float reward, String photos, String name) {
         this.phone = phone;
         this.type = type;
         this.detail = detail;
@@ -19,6 +20,7 @@ public class pur_order {
         this.category = category;
         this.reward = reward;
         this.photos = photos;
+        this.name = name;
     }
 
     public BigInteger getPhone() {
@@ -75,5 +77,13 @@ public class pur_order {
 
     public void setPhotos(String photos) {
         this.photos = photos;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
