@@ -169,7 +169,13 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
                     }
                 });
+
+                errandList.remove(position);
                 adapter.notifyItemRemoved(position);
+                if(position != errandList.size()){ // 如果移除的是最后一个，忽略
+                    adapter.notifyItemRangeChanged(position, errandList.size() - position);
+                }
+
                 new Handler(new Handler.Callback() {
                     @Override
                     public boolean handleMessage(@NonNull android.os.Message msg) {
@@ -220,7 +226,8 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     }.getType();
                     all = gson.fromJson(str, type);
                     for (int i = 0; i < all.size(); i++) {
-                        if (!task_id.contains(all.get(i).getId())) {
+                        if (!task_id.contains(all.get(i).getId())&&all.get(i).getExecutor()==null) {
+                            Log.d("executor", "onResponse"+i+": "+all.get(i).getExecutor());
                             task_id.add(all.get(i).getId());
                             String content = all.get(i).getDetail();
                             Point_address address = all.get(i).getDestination();
@@ -250,45 +257,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     @Override
     public void onRefresh() {
-        errand_service errand = new RetrofitUser().get().create(errand_service.class);
-        Call<ResponseBody> get_errand = errand.get_orders("跑腿");
-        get_errand.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                String str = "";
-                try {
-                    str = response.body().string();
-                    Gson gson = new Gson();
-                    Type type = new TypeToken<List<All_orders>>() {
-                    }.getType();
-                    all = gson.fromJson(str, type);
-                    for (int i = 0; i < all.size(); i++) {
-                        if (!task_id.contains(all.get(i).getId())) {
-                            task_id.add(all.get(i).getId());
-                            String content = all.get(i).getDetail();
-                            Point_address address = all.get(i).getDestination();
-                            String money = String.valueOf(all.get(i).getReward());
-                            String time = all.get(i).getCreate_at();
-                            BigInteger phone = all.get(i).getFrom_user();
-                            String protected_info = all.get(i).getProtected_info();
-                            String uuid = all.get(i).getId_photo();
-                            All_orders errand1 = new All_orders(phone, address, time, task_id.get(i),
-                                    content, Float.parseFloat(money), protected_info, uuid);
-                            errandList.add(errand1);
-                            Log.d("errand", "message: " + content + "1" + address + "2" + money + "3" + time);
-                            // photo.add()
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
+        initErrands();
         binding.swipeErrands.postDelayed(new Runnable() { // 发送延迟消息到消息队列
             @Override
             public void run() {
