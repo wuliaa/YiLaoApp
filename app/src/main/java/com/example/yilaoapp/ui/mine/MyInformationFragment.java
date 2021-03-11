@@ -37,6 +37,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.databinding.FragmentMyInformationBinding;
@@ -103,23 +104,7 @@ public class MyInformationFragment extends Fragment {
                     public void onClick(String text, int index) {
                         //返回参数 text 即菜单名称，index 即菜单索引
                         if (index == 0) {
-                            String[] PERMISSIONS = {
-                                    "android.permission.READ_EXTERNAL_STORAGE",
-                                    "android.permission.WRITE_EXTERNAL_STORAGE"};
-                            //检测是否有读的权限
-                            int permission = ContextCompat.checkSelfPermission(requireContext(),
-                                    "android.permission.READ_EXTERNAL_STORAGE");
-                            if (permission != PackageManager.PERMISSION_GRANTED) {
-                                // 没有读的权限，去申请写的权限，会弹出对话框
-                                ActivityCompat.requestPermissions(requireActivity(), PERMISSIONS, 1);
-                            }
-                            if (permission != PackageManager.PERMISSION_GRANTED) {
-                                TipDialog.show((AppCompatActivity) getActivity(), "上传失败", TipDialog.TYPE.ERROR);
-                            } else {
-                                Intent intent = new Intent("android.intent.action.GET_CONTENT");
-                                intent.setType("image/*");
-                                startActivityForResult(intent, 200);//打开系统相册
-                            }
+                            getAuthority();
                         }
                     }
                 });
@@ -152,6 +137,32 @@ public class MyInformationFragment extends Fragment {
                 controller.navigate(R.id.action_myInformationFragment_to_addressFragment);
             }
         });
+        getInfo();
+        return binding.getRoot();
+    }
+
+    public void getAuthority(){
+        String[] PERMISSIONS = {
+                "android.permission.READ_EXTERNAL_STORAGE",
+                "android.permission.WRITE_EXTERNAL_STORAGE"};
+        //检测是否有读的权限
+        int permission = ContextCompat.checkSelfPermission(requireContext(),
+                "android.permission.READ_EXTERNAL_STORAGE");
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // 没有读的权限，去申请写的权限，会弹出对话框
+            ActivityCompat.requestPermissions(requireActivity(), PERMISSIONS, 1);
+        }
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            TipDialog.show((AppCompatActivity) getActivity(), "上传失败", TipDialog.TYPE.ERROR);
+        } else {
+            Intent intent = new Intent("android.intent.action.GET_CONTENT");
+            intent.setType("image/*");
+            startActivityForResult(intent, 200);//打开系统相册
+
+        }
+    }
+
+    public void getInfo(){
         UserService service = new RetrofitUser().get().create(UserService.class);
         SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
         String mobile = pre.getString("mobile", "");
@@ -172,69 +183,30 @@ public class MyInformationFragment extends Fragment {
                     }
                     Gson gson = new Gson();
                     User user = gson.fromJson(str, User.class);
-                    requireActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            binding.informationTextView16.setText(user.getMobile().toString());
-                            if (user.getSex() != null) {
-                                if (user.getSex().equals("male")) {
-                                    binding.informationTextView13.setText("男");
-                                    e.putString("sex", "男");
-                                } else {
-                                    binding.informationTextView13.setText("女");
-                                    e.putString("sex", "女");
-                                }
-                            }
-                            if (user.getId_school() != null) {
-                                binding.school.setText(user.getId_school());
-                                e.putString("id_school", user.getId_school());
-                            }
-                            if (user.getId_name() != null) {
-                                binding.informationTextView10.setText(user.getId_name());
-                                e.putString("id_name", user.getId_name());
-                            }
-                            e.commit();
+                    binding.informationTextView16.setText(user.getMobile().toString());
+                    if (user.getSex() != null) {
+                        if (user.getSex().equals("male")) {
+                            binding.informationTextView13.setText("男");
+                            e.putString("sex", "男");
+                        } else {
+                            binding.informationTextView13.setText("女");
+                            e.putString("sex", "女");
                         }
-                    });
+                    }
+                    if (user.getId_school() != null) {
+                        binding.school.setText(user.getId_school());
+                        e.putString("id_school", user.getId_school());
+                    }
+                    if (user.getId_name() != null) {
+                        binding.informationTextView10.setText(user.getId_name());
+                        e.putString("id_name", user.getId_name());
+                    }
+                    e.apply();
                     if (user.getId_photo() != null) {
                         BigInteger mobile = user.getMobile();
-                        image_service load = new RetrofitUser().get().create(image_service.class);
-                        Call<ResponseBody> load_back = load.load_photo(mobile, user.getId_photo(), "df3b72a07a0a4fa1854a48b543690eab");
-                        load_back.enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                if (response.code() / 100 == 4) {
-                                    Toast.makeText(getContext(), "图片获取失败", Toast.LENGTH_LONG).show();
-                                } else {
-                                    assert response.body() != null;
-                                    InputStream photo = null;
-                                    photo = response.body().byteStream();
-                                    PhotoOperation Operation = new PhotoOperation();
-                                    byte[] ba = null;
-                                    try {
-                                        ba = Operation.read(photo);
-                                        photo.close();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    Bitmap bmp = Operation.ByteArray2Bitmap(ba);
-                                    requireActivity().runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (bmp != null) {
-                                                binding.informationImageView2.setImageBitmap(bmp);
-                                            }
-                                        }
-                                    });
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                Toast.makeText(getContext(), "图片加载失败", Toast.LENGTH_LONG).show();
-                                System.out.println(t.getMessage());
-                            }
-                        });
+                        String url = "http://api.yilao.tk:5000/v1.0/users/" + mobile + "/resources/" +
+                                user.getId_photo();
+                        Glide.with(getContext()).load(url).into(binding.informationImageView2);
                     }
                 }
             }
@@ -244,7 +216,6 @@ public class MyInformationFragment extends Fragment {
 
             }
         });
-        return binding.getRoot();
     }
 
     @Override
@@ -358,7 +329,7 @@ public class MyInformationFragment extends Fragment {
                                     binding.informationTextView10.setText(user.getId_name());
                                     e.putString("id_name", user.getId_name());
                                 }
-                                e.commit();
+                                e.apply();
                             }
                         });
                     }

@@ -23,4 +23,15 @@ public class ConfigUtil {
         Matcher m = p.matcher(phone_num);
         return m.matches();
     }
+
+    /**
+     *
+     * 修改时间格式
+     * @param time
+     * @return String
+     */
+    public static String cutTimeFormat(String time){
+        return time;
+    }
+
 }

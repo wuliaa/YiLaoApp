@@ -7,16 +7,18 @@ public class pur_order {
     String type;
     String detail;
     Point_address destination;
+    String category;
     float reward;
     String photos;
 
-    public pur_order(BigInteger phone, String type, String detail, Point_address destination, float reward, String id_photo) {
+    public pur_order(BigInteger phone, String type, String detail, Point_address destination, String category, float reward, String photos) {
         this.phone = phone;
         this.type = type;
         this.detail = detail;
         this.destination = destination;
+        this.category = category;
         this.reward = reward;
-        this.photos = id_photo;
+        this.photos = photos;
     }
 
     public BigInteger getPhone() {
@@ -49,6 +51,14 @@ public class pur_order {
 
     public void setDestination(Point_address destination) {
         this.destination = destination;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public float getReward() {

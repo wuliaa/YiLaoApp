@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.bean.messbean;
 import com.example.yilaoapp.bean.tok;
@@ -67,6 +68,24 @@ public class  MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationUI.setupWithNavController(navigationView, navController);
         //抽屉导航栏的用户信息
+        ImageView portrait = (ImageView) navigationView.inflateHeaderView(R.layout.navigation_view_header_layout).findViewById(R.id.pcircularImageView);
+        getNickAddPortrait(portrait);
+        //底部导航栏
+        final BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        NavigationUI.setupWithNavController(bottomNavigationView, navController);
+        bottomNavigationView.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_LABELED);
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getId() == R.id.bullentinFragment ||
+                    destination.getId() == R.id.purchaseFragment ||
+                    destination.getId() == R.id.errandsFragment) {
+                bottomNavigationView.setVisibility(View.VISIBLE);
+            } else {
+                bottomNavigationView.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    public void getNickAddPortrait(ImageView portrait){
         UserService service = new RetrofitUser().get().create(UserService.class);
         SharedPreferences pre = this.getSharedPreferences("login", Context.MODE_PRIVATE);
         String mobile = pre.getString("mobile", "");
@@ -88,75 +107,21 @@ public class  MainActivity extends AppCompatActivity {
                     }
                     Gson gson = new Gson();
                     User user = gson.fromJson(str, User.class);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (user.getId_name() != null) {
-                                TextView nick = findViewById(R.id.mnickn);
-                                nick.setText(user.getId_name());
-                            }
-                        }
-                    });
+                    if (user.getId_name() != null) {
+                        TextView nick = findViewById(R.id.mnickn);
+                        nick.setText(user.getId_name());
+                    }
                     if (user.getId_photo() != null) {
                         BigInteger mobile = user.getMobile();
-                        image_service load = new RetrofitUser().get().create(image_service.class);
-                        Call<ResponseBody> load_back = load.load_photo(mobile, user.getId_photo(), "df3b72a07a0a4fa1854a48b543690eab");
-                        load_back.enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                if (response.code() / 100 == 4) {
-                                    Toast.makeText(getApplicationContext(),"图片获取失败",Toast.LENGTH_LONG).show();
-                                } else {
-                                    assert response.body() != null;
-                                    InputStream photo = null;
-                                    photo = response.body().byteStream();
-                                    PhotoOperation Operation = new PhotoOperation();
-                                    byte[] ba = null;
-                                    try {
-                                        ba = Operation.read(photo);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    Bitmap bmp = Operation.ByteArray2Bitmap(ba);
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (bmp != null) {
-                                                ImageView portrait = findViewById(R.id.pcircularImageView);
-                                                portrait.setImageBitmap(bmp);
-                                            }
-                                        }
-                                    });
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                            }
-                        });
+                        String url = "http://api.yilao.tk:5000/v1.0/users/" + mobile + "/resources/" +
+                                user.getId_photo();
+                        Glide.with(getApplicationContext()).load(url).into(portrait);
                     }
                 }
             }
-
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.d("1", "failed");
-            }
-        });
-
-
-        //底部导航栏
-        final BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        NavigationUI.setupWithNavController(bottomNavigationView, navController);
-        bottomNavigationView.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_LABELED);
-        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (destination.getId() == R.id.bullentinFragment ||
-                    destination.getId() == R.id.purchaseFragment ||
-                    destination.getId() == R.id.errandsFragment) {
-                bottomNavigationView.setVisibility(View.VISIBLE);
-            } else {
-                bottomNavigationView.setVisibility(View.GONE);
             }
         });
     }
