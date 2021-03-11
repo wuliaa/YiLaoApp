@@ -9,6 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.Message;
 
@@ -32,7 +35,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = mMessageList.get(position);
-        //holder.head.setImageResource(message.getImageId());
+        String url="http://api.yilao.tk:15000/v1.0/users/"+message.getMobile()+
+                "/resources/"+message.getUuid();
+        Glide.with(MyApplication.getContext())
+                .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.head1)
+                .error(R.drawable.head2)
+                .into(holder.head);
         holder.nick.setText(message.getNick());
         holder.content.setText(message.getContent());
         holder.time.setText(message.getTime());
