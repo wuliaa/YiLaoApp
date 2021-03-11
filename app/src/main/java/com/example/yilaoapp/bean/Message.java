@@ -1,16 +1,18 @@
-package com.example.yilaoapp.ui.mine;
+package com.example.yilaoapp.bean;
 
 public class Message {
     private String nick;
     private String content;
     private String time;
-    private int imageId;
+    private String uuid;
+    private String mobile;
 
-    public Message(String nick, String content, String time, int imageId) {
+    public Message(String nick, String content, String time, String uuid, String mobile) {
         this.nick = nick;
         this.content = content;
         this.time = time;
-        this.imageId = imageId;
+        this.uuid = uuid;
+        this.mobile = mobile;
     }
 
     public String getNick() {
@@ -37,11 +39,19 @@ public class Message {
         this.time = time;
     }
 
-    public int getImageId() {
-        return imageId;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setImageId(int imageId) {
-        this.imageId = imageId;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 }

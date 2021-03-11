@@ -10,8 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.yilaoapp.R;
-import com.example.yilaoapp.ui.bulletin.Share;
-import com.example.yilaoapp.ui.bulletin.ShareAdapter;
+import com.example.yilaoapp.bean.Message;
 
 import java.util.ArrayList;
 import java.util.List;

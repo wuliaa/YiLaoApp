@@ -5,35 +5,28 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.example.yilaoapp.MainActivity;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.Message;
 import com.example.yilaoapp.chat.activity.ChatActivity;
 import com.example.yilaoapp.chat.util.LogUtil;
 import com.example.yilaoapp.chat.widget.SetPermissionDialog;
 import com.example.yilaoapp.databinding.FragmentMyMessageBinding;
-import com.example.yilaoapp.ui.bulletin.Share;
-import com.example.yilaoapp.ui.bulletin.ShareAdapter;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import io.reactivex.functions.Consumer;
 
@@ -81,6 +74,7 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                 new Handler(new Handler.Callback() {
                     @Override
                     public boolean handleMessage(@NonNull android.os.Message msg) {
+
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -99,7 +93,7 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private void initMessages() {
-        for (int i = 0; i < 2; i++) {
+       /* for (int i = 0; i < 2; i++) {
             Message m1 = new Message("Lisa","在吗","下午 6:00", R.drawable.head1);
             messageList.add(m1);
             Message m2 = new Message("Jack","你好","上午 12:00", R.drawable.head2);
@@ -107,7 +101,7 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
             Message m3 = new Message("Rose","明天和我一起去天文博物馆参观吗",
                     "下午14:00", R.drawable.head3);
             messageList.add(m3);
-        }
+        }*/
     }
     private void requestPermisson(View view){
         RxPermissions rxPermission = new RxPermissions(this);
