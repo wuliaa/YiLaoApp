@@ -81,7 +81,7 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
                 public void onClick(View v) {
                     //此处回传点击监听事件
                     if(onItemClickListener!=null){
-                        onItemClickListener.OnItemClick(v, mErrandList.get(getLayoutPosition()));
+                        onItemClickListener.OnItemClick(v, mErrandList.get(getLayoutPosition()),getLayoutPosition());
                     }
                 }
             });
@@ -95,7 +95,8 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
         /**
          * 接口中的点击每一项的实现方法，参数自己定义
          */
-        public void OnItemClick(View view, All_orders data);
+        public void OnItemClick(View view, All_orders data,int position);
+
     }
     //需要外部访问，所以需要设置set方法，方便调用
     private ErrandAdapter.OnItemClickListener onItemClickListener;

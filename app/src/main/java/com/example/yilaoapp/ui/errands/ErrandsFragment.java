@@ -138,7 +138,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         //RecyclerView中没有item的监听事件，需要自己在适配器中写一个监听事件的接口。参数根据自定义
         adapter.setOnItemClickListener(new ErrandAdapter.OnItemClickListener() {
             @Override
-            public void OnItemClick(View view, All_orders data) {
+            public void OnItemClick(View view, All_orders data,int position) {
                 SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                 String mobile=pre.getString("mobile","");
                 String token=pre.getString("token","");
@@ -169,6 +169,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
                     }
                 });
+                adapter.notifyItemRemoved(position);
                 new Handler(new Handler.Callback() {
                     @Override
                     public boolean handleMessage(@NonNull android.os.Message msg) {
