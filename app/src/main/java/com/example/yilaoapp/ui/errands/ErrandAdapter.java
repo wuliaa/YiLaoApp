@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
@@ -22,6 +23,8 @@ import com.robertlevonyan.views.chip.Chip;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.internal.cache.DiskLruCache;
 
 public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandViewHolder> {
     private List<All_orders> mErrandList = new ArrayList<>();
@@ -44,7 +47,9 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
                 "/resources/"+errand.getId_photo();
         Glide.with(MyApplication.getContext())
                 .load(url)
-                .error(R.drawable.head1)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.head1)
+                .error(R.drawable.head2)
                 .into(holder.head);
         holder.address.setText(errand.getDestination().getName());
         holder.content.setText(errand.getDetail());

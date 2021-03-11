@@ -80,11 +80,10 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     private ErrandsViewModel mViewModel;
     private DrawerLayout mDrawerLayout;
-    private List<All_orders> errandList = new ArrayList<>();
-    InputStream inputStream = null;
+    private List<All_orders> errandList;
     FragmentErrandsBinding binding;
-    List<All_orders> all = new LinkedList<>();
-    List<Integer> task_id = new LinkedList<>();
+    List<All_orders> all  ;
+    List<Integer> task_id ;
 
     public ErrandsFragment() {
     }
@@ -93,6 +92,9 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        errandList = new ArrayList<>();
+        all = new LinkedList<>();
+        task_id = new LinkedList<>();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -143,14 +145,16 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
             }
         });
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyDataSetChanged();
-            }
-        }, 1000);
-        binding.errandRecyclerview.requestLayout();
+//        Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+////                adapter.notifyDataSetChanged();
+//                adapter.notifyItemInserted(adapter.getItemCount());
+//            }
+//        },  1000);
+        adapter.notifyItemInserted(adapter.getItemCount());
+//        binding.errandRecyclerview.requestLayout();
         return binding.getRoot();
     }
 
@@ -180,47 +184,20 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     }.getType();
                     all = gson.fromJson(str, type);
                     for (int i = 0; i < all.size(); i++) {
-                        String uid = all.get(i).getId_photo();
-                        BigInteger mobile = all.get(i).getFrom_user();
-                        image_service load = new RetrofitUser().get().create(image_service.class);
-                        Call<ResponseBody> load_back = load.load_photo(mobile, uid, "df3b72a07a0a4fa1854a48b543690eab");
-                        int finalI = i;
                         if (!task_id.contains(all.get(i).getId())) {
                             task_id.add(all.get(i).getId());
-                            load_back.enqueue(new Callback<ResponseBody>() {
-                                @SuppressLint("HandlerLeak")
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    assert response.body() != null;
-                                    inputStream = response.body().byteStream();
-                                    Log.d("initerrand", "onResponse: " + inputStream);
-                                    //订单信息
-                                    PhotoOperation operation = new PhotoOperation();
-                                    Bitmap head = null;
-                                    try {
-                                        head = operation.ByteArray2Bitmap(PhotoOperation.read(inputStream));
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    String content = all.get(finalI).getDetail();
-                                    Point_address address = all.get(finalI).getDestination();
-                                    String money = String.valueOf(all.get(finalI).getReward());
-                                    String time = all.get(finalI).getCreate_at();
-                                    BigInteger phone = all.get(finalI).getPhone();
-                                    String protected_info = all.get(finalI).getProtected_info();
-                                    String uuid = all.get(finalI).getId_photo();
-                                    All_orders errand1 = new All_orders(phone, address, time, task_id.get(finalI),
-                                            content, Float.parseFloat(money), protected_info, uuid);
-                                    errandList.add(errand1);
-                                    Log.d("initerrand", "message: " + content + "1" + address + "2" + money + "3" + time);
-                                    // photo.add()
-                                }
-
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                }
-                            });   //头像请求结束
+                            String content = all.get(i).getDetail();
+                            Point_address address = all.get(i).getDestination();
+                            String money = String.valueOf(all.get(i).getReward());
+                            String time = all.get(i).getCreate_at();
+                            BigInteger phone = all.get(i).getFrom_user();
+                            String protected_info = all.get(i).getProtected_info();
+                            String uuid = all.get(i).getId_photo();
+                            All_orders errand1 = new All_orders(phone, address, time, task_id.get(i),
+                                    content, Float.parseFloat(money), protected_info, uuid);
+                            errandList.add(errand1);
+                            Log.d("errand", "message: " + content + "1" + address + "2" + money + "3" + time);
+                            // photo.add()
                         }
                     }
                 } catch (IOException e) {
