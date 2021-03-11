@@ -45,9 +45,11 @@ import android.widget.Toast;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.All_orders;
 import com.example.yilaoapp.bean.Point_address;
+import com.example.yilaoapp.bean.chat_task;
 import com.example.yilaoapp.databinding.FragmentErrandsBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.accept_service;
+import com.example.yilaoapp.service.chat_service;
 import com.example.yilaoapp.service.errand_service;
 import com.example.yilaoapp.service.image_service;
 import com.example.yilaoapp.ui.bulletin.BullentinViewModel;
@@ -146,6 +148,20 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
+                        chat_task ch=new chat_task("您的任务我已领取，订单信息如下:"+data.getDetail(),data.getFrom_user());
+                        chat_service send=new RetrofitUser().get().create(chat_service.class);
+                        Call<ResponseBody> sen_mes=send.send_message(mobile,token,"df3b72a07a0a4fa1854a48b543690eab",ch);
+                        sen_mes.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                Toast.makeText(getContext(),"信息已success",Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                            }
+                        });
                     }
 
                     @Override
