@@ -57,6 +57,7 @@ import com.example.yilaoapp.ui.bulletin.Share;
 import com.example.yilaoapp.ui.bulletin.ShareAdapter;
 import com.example.yilaoapp.ui.bulletin.Team;
 //import com.example.yilaoapp.utils.LruCacheImageLoader;
+import com.example.yilaoapp.utils.ConfigUtil;
 import com.example.yilaoapp.utils.PhotoOperation;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -66,6 +67,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -87,8 +89,11 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private DrawerLayout mDrawerLayout;
     private List<All_orders> errandList;
     FragmentErrandsBinding binding;
-    List<All_orders> all  ;
-    List<Integer> task_id ;
+    List<All_orders> all;
+    List<Integer> task_id;
+    Date date=new Date();   //获取当前的时间
+    int timeGap=0;   //时间间隔的大小
+
 
     public ErrandsFragment() {
     }
@@ -100,6 +105,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         errandList = new ArrayList<>();
         all = new LinkedList<>();
         task_id = new LinkedList<>();
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -125,7 +131,12 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         });
         setHasOptionsMenu(true);
 
-        initErrands();
+        if (mViewModel.getFlag() == 1) {
+            initErrands();
+            mViewModel.changeFlag();
+            date.setTime(new Date(System.currentTimeMillis()).getTime());
+        }
+
         binding.swipeErrands.setOnRefreshListener(this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -133,28 +144,32 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         ErrandAdapter adapter = new ErrandAdapter(errandList);
         binding.errandRecyclerview.setHasFixedSize(true);
         binding.errandRecyclerview.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        Log.d("ErrandList", "onCreateView: timeGap "+ConfigUtil.GetTime(date));
+
+        timeGap= ConfigUtil.GetTime(date);    //获取时间间隔
 
 
         //RecyclerView中没有item的监听事件，需要自己在适配器中写一个监听事件的接口。参数根据自定义
         adapter.setOnItemClickListener(new ErrandAdapter.OnItemClickListener() {
             @Override
-            public void OnItemClick(View view, All_orders data,int position) {
-                SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                String mobile=pre.getString("mobile","");
-                String token=pre.getString("token","");
-                accept_service ac=new RetrofitUser().get().create(accept_service.class);
-                Call<ResponseBody> act=ac.accept_order(mobile,data.getId(),token,"df3b72a07a0a4fa1854a48b543690eab","true");
+            public void OnItemClick(View view, All_orders data, int position) {
+                SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                String mobile = pre.getString("mobile", "");
+                String token = pre.getString("token", "");
+                accept_service ac = new RetrofitUser().get().create(accept_service.class);
+                Call<ResponseBody> act = ac.accept_order(mobile, data.getId(), token, "df3b72a07a0a4fa1854a48b543690eab", "true");
                 act.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
-                        chat_task ch=new chat_task("您的任务我已领取，订单信息如下:"+data.getDetail(),data.getFrom_user());
-                        chat_service send=new RetrofitUser().get().create(chat_service.class);
-                        Call<ResponseBody> sen_mes=send.send_message(mobile,token,"df3b72a07a0a4fa1854a48b543690eab",ch);
+                        Toast.makeText(getContext(), "success", Toast.LENGTH_LONG).show();
+                        chat_task ch = new chat_task("您的任务我已领取，订单信息如下:" + data.getDetail(), data.getFrom_user());
+                        chat_service send = new RetrofitUser().get().create(chat_service.class);
+                        Call<ResponseBody> sen_mes = send.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", ch);
                         sen_mes.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                Toast.makeText(getContext(),"信息已success",Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(), "信息已success", Toast.LENGTH_LONG).show();
                             }
 
                             @Override
@@ -172,7 +187,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
                 errandList.remove(position);
                 adapter.notifyItemRemoved(position);
-                if(position != errandList.size()){ // 如果移除的是最后一个，忽略
+                if (position != errandList.size()) { // 如果移除的是最后一个，忽略
                     adapter.notifyItemRangeChanged(position, errandList.size() - position);
                 }
 
@@ -187,14 +202,14 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
             }
         });
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
+//        Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
 //                adapter.notifyDataSetChanged();
-                adapter.notifyItemInserted(adapter.getItemCount());
-            }
-        },  1000);
+//                adapter.notifyItemInserted(adapter.getItemCount());
+//            }
+//        },  10);
 
 //        binding.errandRecyclerview.requestLayout();
         return binding.getRoot();
@@ -226,8 +241,8 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     }.getType();
                     all = gson.fromJson(str, type);
                     for (int i = 0; i < all.size(); i++) {
-                        if (!task_id.contains(all.get(i).getId())&&all.get(i).getExecutor()==null) {
-                            Log.d("executor", "onResponse"+i+": "+all.get(i).getExecutor());
+                        if (!task_id.contains(all.get(i).getId()) && all.get(i).getExecutor() == null) {
+                            Log.d("executor", "onResponse" + i + ": " + all.get(i).getExecutor());
                             task_id.add(all.get(i).getId());
                             String content = all.get(i).getDetail();
                             Point_address address = all.get(i).getDestination();
@@ -258,6 +273,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
     @Override
     public void onRefresh() {
         initErrands();
+        date.setTime(new Date(System.currentTimeMillis()).getTime());
         binding.swipeErrands.postDelayed(new Runnable() { // 发送延迟消息到消息队列
             @Override
             public void run() {

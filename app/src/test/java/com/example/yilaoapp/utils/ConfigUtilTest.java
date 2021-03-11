@@ -15,4 +15,6 @@ public class ConfigUtilTest {
         assertFalse(ConfigUtil.isPhoneNum("12345678910"));
         assertFalse(ConfigUtil.isPhoneNum("11227643210"));
     }
+
+ 
 }

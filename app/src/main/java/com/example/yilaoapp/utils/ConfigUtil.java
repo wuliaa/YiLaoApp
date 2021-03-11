@@ -1,5 +1,6 @@
 package com.example.yilaoapp.utils;
 
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,4 +35,16 @@ public class ConfigUtil {
         return time;
     }
 
+    /**
+     * 计算距离上次获得页面的时间是多少秒
+     * @param before
+     * @return
+     */
+    public static int GetTime(Date before)
+    {
+        Date curDate = new Date(System.currentTimeMillis());
+        long beforeTime=before.getTime();
+        long curTime=curDate.getTime();
+        return (int) ((curTime-beforeTime)/1000);
+    }
 }
