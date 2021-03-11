@@ -1,6 +1,8 @@
 package com.example.yilaoapp.ui.errands;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -45,6 +47,7 @@ import com.example.yilaoapp.bean.All_orders;
 import com.example.yilaoapp.bean.Point_address;
 import com.example.yilaoapp.databinding.FragmentErrandsBinding;
 import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.accept_service;
 import com.example.yilaoapp.service.errand_service;
 import com.example.yilaoapp.service.image_service;
 import com.example.yilaoapp.ui.bulletin.BullentinViewModel;
@@ -134,6 +137,22 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         adapter.setOnItemClickListener(new ErrandAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(View view, All_orders data) {
+                SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                String mobile=pre.getString("mobile","");
+                String token=pre.getString("token","");
+                accept_service ac=new RetrofitUser().get().create(accept_service.class);
+                Call<ResponseBody> act=ac.accept_order(mobile,data.getId(),token,"df3b72a07a0a4fa1854a48b543690eab","true");
+                act.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
                 new Handler(new Handler.Callback() {
                     @Override
                     public boolean handleMessage(@NonNull android.os.Message msg) {
