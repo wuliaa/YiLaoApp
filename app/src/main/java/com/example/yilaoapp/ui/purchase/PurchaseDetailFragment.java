@@ -1,14 +1,13 @@
 package com.example.yilaoapp.ui.purchase;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,38 +17,62 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.databinding.FragmentPurchaseDetailBinding;
-import com.github.siyamed.shapeimageview.RoundedImageView;
+import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.UserService;
+import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
+import okhttp3.ResponseBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PurchaseDetailFragment extends Fragment implements EasyPermissions.PermissionCallbacks, BGANinePhotoLayout.Delegate{
+public class PurchaseDetailFragment extends Fragment
+        implements EasyPermissions.PermissionCallbacks, BGANinePhotoLayout.Delegate {
 
     private static final int PRC_PHOTO_PREVIEW = 1;
+    String uuid ;
+    ArrayList<String> photosUrl;
+    String nickName ;
 
-    public PurchaseDetailFragment() {}
+    public PurchaseDetailFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        uuid="";
+        nickName="";
+        photosUrl =new ArrayList<String>();
     }
+
     FragmentPurchaseDetailBinding binding;
+
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_purchase_detail,container,false);
-        PurchaseViewModel viewModel = ViewModelProviders.of(requireActivity()).get( PurchaseViewModel.class);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_purchase_detail, container, false);
+        PurchaseViewModel viewModel = ViewModelProviders.of(requireActivity()).get(PurchaseViewModel.class);
         binding.setData(viewModel);
         binding.setLifecycleOwner(requireActivity());
         binding.toolbar.setNavigationIcon(R.drawable.ic_baseline_chevron_left_24);
@@ -61,15 +84,54 @@ public class PurchaseDetailFragment extends Fragment implements EasyPermissions.
             }
         });
         viewModel.getPurchase().observe(getViewLifecycleOwner(), item -> {
-            binding.purchasedcontent.setText(item.getContent());
-            binding.purchasedmoney.setText("金额："+item.getMoney());
-            binding.purchasedchip.setText(item.getIsPurchase() );
-            binding.PurchaseninePhoto.setDelegate(this);
-            binding.PurchaseninePhoto.setData(item.getPhotos());
+            String headurl = "http://api.yilao.tk:15000/v1.0/users/" + item.getPhone() +
+                    "/resources/" + item.getId_photo();
+            Glide.with(MyApplication.getContext())
+                    .load(headurl)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.head1)
+                    .error(R.drawable.head2)
+                    .into(binding.purchasedHead);
+            //获得昵称
+            UserService userService=new RetrofitUser().get(getContext()).create(UserService.class);
+            Call<ResponseBody> user=userService.get_user(String.valueOf(item.getPhone()));
+            user.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() / 100 == 4) {
+                        Toast.makeText(getContext(),"用户不存在",Toast.LENGTH_SHORT).show();
+                    }else{
+                        String info = "";
+                        try {
+                            info = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Gson gson = new Gson();
+                        User user = gson.fromJson(info, User.class);
+                        nickName=user.getId_name();
+                        binding.purchasedname.setText(nickName);
+                    }
+                }
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
 
+                }
+            });
+            binding.purchasedcontent.setText(item.getDetail());
+            binding.purchasedmoney.setText("金额：" + item.getReward());
+            binding.purchasedchip.setText(item.getCategory());
+            binding.PurchaseninePhoto.setDelegate(this);
+            StringTokenizer st = new StringTokenizer(item.getPhotos(), ",");
+            while (st.hasMoreTokens()) {
+                uuid = st.nextToken();
+                String url = "http://api.yilao.tk:15000/v1.0/users/" + item.getPhone() +
+                        "/resources/" + uuid;
+                photosUrl.add(url);
+            }
+            binding.PurchaseninePhoto.setData(photosUrl);
         });
         return binding.getRoot();
-        //return inflater.inflate(R.layout.fragment_purchase_detail, container, false);
     }
 
     /**

@@ -1,8 +1,13 @@
 package com.example.yilaoapp.ui.purchase;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -13,10 +18,12 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -28,13 +35,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.All_orders;
+import com.example.yilaoapp.bean.Point_address;
+import com.example.yilaoapp.bean.chat_task;
 import com.example.yilaoapp.databinding.FragmentPurchaseBinding;
 import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.accept_service;
+import com.example.yilaoapp.service.chat_service;
 import com.example.yilaoapp.service.image_service;
 import com.example.yilaoapp.service.pur_service;
+import com.example.yilaoapp.ui.errands.AdapterDiffCallback;
+import com.example.yilaoapp.ui.errands.ErrandAdapter;
 import com.example.yilaoapp.ui.errands.ErrandsViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
@@ -48,6 +62,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -67,7 +82,12 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
     FragmentPurchaseBinding binding;
     private DrawerLayout mDrawerLayout;
     private PurchaseViewModel mViewModel;
-    private List<Purchase> purchaseList = new ArrayList<>();
+    private List<All_orders> purchaseList ;
+    List<Integer> task_id;   //订单id
+    PurchaseAdapter adapter;
+    Handler handler;
+
+
 
     public PurchaseFragment() {}
 
@@ -75,8 +95,13 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        purchaseList = new ArrayList<>();
+        task_id = new LinkedList<>();
     }
 
+
+    @SuppressLint("HandlerLeak")
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,35 +122,44 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                 mDrawerLayout.openDrawer(GravityCompat.START);
             }
         });
-        setHasOptionsMenu(true);
 
+        Log.d("PurchaseList", "onCreateView:");
+        setHasOptionsMenu(true);
         binding.swipePurchasess.setOnRefreshListener(this);
         initContents();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        binding.purchasesRecyclerview.setLayoutManager(layoutManager);
-        PurchaseAdapter adapter = new PurchaseAdapter(purchaseList);
-        binding.purchasesRecyclerview.setAdapter(adapter);
-
-        //RecyclerView中没有item的监听事件，需要自己在适配器中写一个监听事件的接口。参数根据自定义
-        adapter.setOnItemClickListener(new PurchaseAdapter.OnItemClickListener() {
+        handler = new Handler() {
             @Override
-            public void OnItemClick(View view, Purchase data) {
-                new Handler(new Handler.Callback() {
-                    @Override
-                    public boolean handleMessage(@NonNull android.os.Message msg) {
-//                        Toast.makeText(getActivity(),"我是item",Toast.LENGTH_SHORT).show();
-                        NavController controller = Navigation.findNavController(view);
-                        controller.navigate(R.id.action_purchaseFragment_to_purchaseDetailFragment);
-                         mViewModel.setPurchase(data);
-                        return false;
-                    }
-                }).sendEmptyMessageDelayed(0, 500);
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == 1) {
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+                    layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                    binding.purchasesRecyclerview.setLayoutManager(layoutManager);
+                    Log.d("PurchaseList", "onCreateView: ListSize " + purchaseList.size());
+                    adapter = new PurchaseAdapter(purchaseList);
+                    binding.purchasesRecyclerview.setHasFixedSize(true);
+                    binding.purchasesRecyclerview.setAdapter(adapter);
+                    //RecyclerView中没有item的监听事件，需要自己在适配器中写一个监听事件的接口。参数根据自定义
+                    adapter.setOnItemClickListener(new PurchaseAdapter.OnItemClickListener() {
+                        @Override
+                        public void OnItemClick(View view, All_orders data) {
+                            new Handler(new Handler.Callback() {
+                                @Override
+                                public boolean handleMessage(@NonNull android.os.Message msg) {
+                                    Toast.makeText(getActivity(),"我是item",Toast.LENGTH_SHORT).show();
+                                    NavController controller = Navigation.findNavController(view);
+                                    controller.navigate(R.id.action_purchaseFragment_to_purchaseDetailFragment);
+                                    mViewModel.setPurchase(data);
+                                    return false;
+                                }
+                            }).sendEmptyMessageDelayed(0, 500);
+                        }
+                    });
+                }
             }
-        });
+        };
 
         return binding.getRoot();
-        //return inflater.inflate(R.layout.fragment_purchase, container, false);
     }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -140,115 +174,74 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     private void initContents() {
-        ArrayList<String> photos = new ArrayList<>();
-        for (int i = 0; i <9; i++) {
-            photos.add("http://bgashare.bingoogolapple.cn/refreshlayout/images/staggered2.png");
-//            photos.add("/storage/emulated/0/sina/weibo/storage/photoalbum_save/weibo/img-ebc3581e69b48d8c1bc1365971f12d90.jpg");
-//            photos.add("http://api.yilao.tk:15000/v1.0/users/13060887368/resources/2f5a0fff-5f37-4bb9-8667-2c3beb00dfe8");
-        }
-        for (int i = 0; i < 2; i++) {
-            Purchase l1 = new Purchase("口红","2020年12月3日 下午6:00前，可以在日本买到免税的MAC口红",
-                    "￥90/一个", "代购",photos,R.drawable.head2);
-            purchaseList.add(l1);
-            Purchase l2 = new Purchase("眼影","希望买一个3CE的眼影盘","￥150/一盘",
-                    "找代购",photos,R.drawable.head2);
-            purchaseList.add(l2);
-            Purchase l3 = new Purchase("面膜","2020年12月1日前，可以在欧洲买到La Prairie蓓丽鱼子精华睡眠面膜",
-                    "￥2800/50ml", "代购",photos,R.drawable.head2);
-            purchaseList.add(l3);
-        }
+        Log.d("PurchaseList", "intiContents: ListSize " + purchaseList.size());
+        new Thread(){
+           @Override
+           public void run() {
+               purchaseList.clear();
+               task_id.clear();
+               pur_service pur=new RetrofitUser().get(getContext()).create(pur_service.class);
+               Call<ResponseBody> get_errand=pur.get_orders("代购");
+               get_errand.enqueue(new Callback<ResponseBody>() {
+                   @Override
+                   public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                       String str="";
+                       try {
+                           str=response.body().string();
+                           Gson gson=new Gson();
+                           Type type=new TypeToken<List<All_orders>>(){}.getType();
+                           List<All_orders> all=gson.fromJson(str,type);
+                           SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                           String mobile = pre.getString("mobile", "");
+                           //获取每个用户的照片的字节流
+                           for (int i = 0; i < all.size(); i++) {
+                               if (!task_id.contains(all.get(i).getId()) &&
+                                       all.get(i).getExecutor() == null
+                               ) {
+                                   task_id.add(all.get(i).getId());
+                                   String content = all.get(i).getDetail();                       //详情
+                                   Point_address address = all.get(i).getDestination();          //地址
+                                   String money = String.valueOf(all.get(i).getReward());       //订单酬劳
+                                   String time = all.get(i).getCreate_at();                     //订单创建时间
+                                   BigInteger phone = all.get(i).getFrom_user();               //发布订单的电话号码
+                                   String protected_info = all.get(i).getProtected_info();    //隐藏信息
+                                   String uuid = all.get(i).getId_photo();                   //头像的uuid
+                                   String photos=all.get(i).getPhotos();                     //订单的图片
+                                   String category=all.get(i).getCategory();                //订单分类
+                                   String name=all.get(i).getName();                       //订单名字
+                                   All_orders purchase1 = new All_orders(phone,address,time,task_id.get(i),content
+                                           ,Float.parseFloat(money),protected_info,category,photos,uuid,name);
+                                   purchaseList.add(purchase1);
+                                   Log.d(" PurchaseList", "message: " + content + "1" +
+                                           address + "2" + money + "3" + time);
+                                   Message message = new Message();
+                                   message.what = 1;
+                                   //然后将消息发送出去
+                                   handler.sendMessage(message);
+                               }
+                           }
+                       } catch (IOException e) {
+                           e.printStackTrace();
+                       }
+                   }
+                   @Override
+                   public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                   }
+               });
+           }
+       }.start();
     }
 
     @Override
     public void onRefresh() {
-        pur_service pur=new RetrofitUser().get(getContext()).create(pur_service.class);
-        Call<ResponseBody> get_errand=pur.get_orders("代购");
-        List<InputStream> photo=new LinkedList<>();//用户照片
-        List<List<InputStream>> order_photos=new LinkedList<>();//订单照片
-        List<InputStream> photos=new LinkedList<>();
-        get_errand.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                String str="";
-                try {
-                    str=response.body().string();
-                    Gson gson=new Gson();
-                    Type type=new TypeToken<List<All_orders>>(){}.getType();
-                    List<All_orders> all=gson.fromJson(str,type);
-                    String uid="";
-                    BigInteger mobile;
-                    image_service load=new RetrofitUser().get(getContext()).create(image_service.class);
-                    //获取每个用户的照片的字节流
-                    for(int i=0;i<all.size();i++){
-                        uid=all.get(i).getId_photo();
-                        mobile=all.get(i).getFrom_user();
-                        Call<ResponseBody> load_back=load.load_photo(mobile,uid,"df3b72a07a0a4fa1854a48b543690eab");
-                        load_back.enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                assert response.body() != null;
-                                photo.add(response.body().byteStream());
-                                try {
-                                    response.body().byteStream().close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                // photo.add()
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                            }
-                        });
-                        //获取用户订单图片
-                        String ids=all.get(0).getPhotos();
-                        StringTokenizer st=new StringTokenizer(ids,",");
-                        while(st.hasMoreTokens() ){
-                            uid=st.nextToken();
-                            load_back=load.load_photo(mobile,uid,"df3b72a07a0a4fa1854a48b543690eab");
-                            load_back.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    assert response.body() != null;
-                                    photos.add(response.body().byteStream());
-                                    //order_photos.get(j).add(response.body().byteStream());
-                                    try {
-                                        response.body().byteStream().close();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    // photo.add()
-                                }
-
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                }
-                            });
-                            System.out.println(uid);
-                        }
-                        order_photos.add(photos);
-                        photos.clear();
-                    }
-
-                    //System.out.println(all.get(0).getDetail());
-                    //System.out.println(response.body().string());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
+        initContents();
+        Log.d("PurchaseList", "onRefresh: ListSize  " + purchaseList.size());
         binding.swipePurchasess.postDelayed(new Runnable() { // 发送延迟消息到消息队列
             @Override
             public void run() {
                 binding.swipePurchasess.setRefreshing(false); // 是否显示刷新进度;false:不显示
             }
-        },3000);
+        },1000);
     }
 }

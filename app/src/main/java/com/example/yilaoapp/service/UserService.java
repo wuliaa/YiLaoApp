@@ -55,6 +55,8 @@ public interface UserService {
     //获取个人信息
     @GET("users/{mobile}")
     Call<ResponseBody> get_user(@Path("mobile")String mobile, @Query("appid")String app,@Query("token") String token);
+    @GET("users/{mobile}")
+    Call<ResponseBody> get_user(@Path("mobile")String mobile);
     @GET("users/{mobile}/orders")
     Call<ResponseBody> get_myorder(@Path("mobile")String mobil,@Query("token")String token,@Query("appid")String app);
 }

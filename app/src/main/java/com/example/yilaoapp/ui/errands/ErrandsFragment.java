@@ -84,7 +84,6 @@ import retrofit2.Response;
  */
 public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private ErrandsViewModel mViewModel;
     private DrawerLayout mDrawerLayout;
     private List<All_orders> errandList;
     FragmentErrandsBinding binding;
@@ -106,13 +105,13 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         task_id = new LinkedList<>();
     }
 
+    @SuppressLint("HandlerLeak")
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_errands, container, false);
-        mViewModel = ViewModelProviders.of(requireActivity()).get(ErrandsViewModel.class);
+        ErrandsViewModel mViewModel = ViewModelProviders.of(requireActivity()).get(ErrandsViewModel.class);
         binding.setData(mViewModel);
         binding.setLifecycleOwner(requireActivity());
         ((AppCompatActivity) requireActivity()).setSupportActionBar(binding.toolbar);
@@ -132,7 +131,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         binding.swipeErrands.setOnRefreshListener(this);
         handler = new Handler() {
             @Override
-            public void handleMessage(Message msg) {
+            public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
                 if (msg.what == 1) {
                     LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -153,26 +152,26 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                             Call<ResponseBody> act = ac.accept_order(mobile, data.getId(), token, "df3b72a07a0a4fa1854a48b543690eab", "true");
                             act.enqueue(callback=new retrofit2.Callback<ResponseBody>() {
                                 @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                                     Toast.makeText(getContext(), "success", Toast.LENGTH_LONG).show();
                                     chat_task ch = new chat_task("您的任务我已领取，订单信息如下:" + data.getDetail(), data.getFrom_user());
                                     chat_service send = new RetrofitUser().get(getContext()).create(chat_service.class);
                                     Call<ResponseBody> sen_mes = send.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", ch);
                                     sen_mes.enqueue(callback=new retrofit2.Callback<ResponseBody>()  {
                                         @Override
-                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                                             Toast.makeText(getContext(), "信息已success", Toast.LENGTH_LONG).show();
                                         }
 
                                         @Override
-                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
 
                                         }
                                     });
                                 }
 
                                 @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
 
                                 }
                             });
@@ -180,7 +179,6 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                             errandList.remove(position);
                             adapter.notifyItemRemoved(position);
                             if (position != errandList.size()) { // 如果移除的是最后一个，忽略
-                                //adapter.notifyItemRangeChanged(position, errandList.size() - position);
                                 DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new AdapterDiffCallback(oldDatas, errandList), true);
                                 diffResult.dispatchUpdatesTo(adapter);
                             }
@@ -196,12 +194,12 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         NavigationUI.onNavDestinationSelected(item,
                 Navigation.findNavController(requireActivity(), R.id.nav_host_fragment));
         return true;
@@ -216,7 +214,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 Call<ResponseBody> get_errand = errand.get_orders("跑腿");
                 get_errand.enqueue(new Callback<ResponseBody>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                         String str = "";
                         try {
                             str = response.body().string();
@@ -251,7 +249,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
 
                     }
                 });
@@ -267,6 +265,6 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
             public void run() {
                 binding.swipeErrands.setRefreshing(false); // 是否显示刷新进度;false:不显示
             }
-        }, 3000);
+        }, 1000);
     }
 }

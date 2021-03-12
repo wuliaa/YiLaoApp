@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.PurchaseViewHolder> {
-    private List<Purchase> mpurchaseList = new ArrayList<>();
-    public PurchaseAdapter(List<Purchase> PurchaseList) {
+    private List<All_orders> mpurchaseList = new ArrayList<>();
+    public PurchaseAdapter(List<All_orders> PurchaseList) {
         mpurchaseList = PurchaseList;
     }
     @NonNull
@@ -35,20 +35,19 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.Purcha
 
     @Override
     public void onBindViewHolder(@NonNull PurchaseAdapter.PurchaseViewHolder holder, int position) {
-//        All_orders purchase = mpurchaseList.get(position);
-//        String url="http://api.yilao.tk:15000/v1.0/users/"+purchase.getPhone()+
-//                "/resources/"+purchase.getId_photo();
-//        Glide.with(MyApplication.getContext())
-//                .load(url)
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .placeholder(R.drawable.head1)
-//                .error(R.drawable.head2)
-//                .into(holder.photo);
-        Purchase  purchase=mpurchaseList.get(position);
-        holder.objectName.setText(purchase.getObjectName());
-        holder.content.setText(purchase.getContent());
-        holder.money.setText(String.valueOf(purchase.getMoney()));
-        holder.isPurchase.setText(purchase.getIsPurchase());
+        All_orders purchase = mpurchaseList.get(position);
+        String url="http://api.yilao.tk:15000/v1.0/users/"+purchase.getPhone()+
+                "/resources/"+purchase.getId_photo();
+        Glide.with(MyApplication.getContext())
+                .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.head1)
+                .error(R.drawable.head2)
+                .into(holder.photo);
+        holder.objectName.setText(purchase.getName());
+        holder.content.setText(purchase.getDetail());
+        holder.money.setText(String.valueOf(purchase.getReward()));
+        holder.isPurchase.setText(purchase.getCategory());
     }
 
     @Override
@@ -86,7 +85,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.Purcha
         /**
          * 接口中的点击每一项的实现方法，参数自己定义
          */
-        public void OnItemClick(View view, Purchase data);
+        public void OnItemClick(View view, All_orders data);
     }
     //需要外部访问，所以需要设置set方法，方便调用
     private PurchaseAdapter.OnItemClickListener onItemClickListener;
