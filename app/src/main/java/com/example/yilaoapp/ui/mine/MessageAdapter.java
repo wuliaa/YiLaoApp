@@ -35,8 +35,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = mMessageList.get(position);
-        String url="http://api.yilao.tk:15000/v1.0/users/"+message.getMobile()+
-                "/resources/"+message.getUuid();
+        StringBuilder stringBuilder=new StringBuilder();
+        stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
+                .append(message.getMobile())
+                .append("/resources/")
+                .append(message.getUuid());
+        String url=stringBuilder.toString();
         Glide.with(MyApplication.getContext())
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

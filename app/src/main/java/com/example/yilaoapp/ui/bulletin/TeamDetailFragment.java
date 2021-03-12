@@ -64,8 +64,12 @@ public class TeamDetailFragment extends Fragment {
             controller.popBackStack();
         });
         viewModel.getTeam().observe(getViewLifecycleOwner(), item -> {
-            String headurl = "http://api.yilao.tk:15000/v1.0/users/" + item.getPhone() +
-                    "/resources/" + item.getId_photo();
+            StringBuilder stringBuilder=new StringBuilder();
+            stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
+                    .append(item.getPhone())
+                    .append("/resources/")
+                    .append(item.getId_photo());
+            String headurl = stringBuilder.toString();
             Glide.with(MyApplication.getContext())
                     .load(headurl)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)

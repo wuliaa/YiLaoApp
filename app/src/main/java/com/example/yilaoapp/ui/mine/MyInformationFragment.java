@@ -212,8 +212,12 @@ public class MyInformationFragment extends Fragment {
                     }
                     if (user.getId_photo() != null) {
                         BigInteger mobile = user.getMobile();
-                        String url = "http://api.yilao.tk:15000/v1.0/users/" + mobile + "/resources/" +
-                                user.getId_photo();
+                        StringBuilder stringBuilder=new StringBuilder();
+                        stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
+                                .append(mobile)
+                                .append("/resources/")
+                                .append(user.getId_photo());
+                        String url = stringBuilder.toString();
                         Glide.with(getContext())
                                 .load(url)
                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -384,8 +388,12 @@ public class MyInformationFragment extends Fragment {
         else if (sex.equals("male"))
             binding.informationTextView13.setText("男");
         else binding.informationTextView13.setText("女");
-        String url = "http://api.yilao.tk:15000/v1.0/users/" + pre.getString("mobile", "") + "/resources/" +
-                pre.getString("id_photo", "");
+        StringBuilder stringBuilder=new StringBuilder();
+        stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
+                .append(pre.getString("mobile", ""))
+                .append("/resources/")
+                .append(pre.getString("id_photo", ""));
+        String url = stringBuilder.toString();
         Glide.with(getContext())
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

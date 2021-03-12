@@ -39,8 +39,12 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.Purcha
         All_orders purchase = mpurchaseList.get(position);
         StringTokenizer st = new StringTokenizer(purchase.getPhotos(), ",");
         String photourl=st.nextToken();
-        String url="http://api.yilao.tk:15000/v1.0/users/"+purchase.getPhone()+
-                "/resources/"+photourl;
+        StringBuilder stringBuilder=new StringBuilder();
+        stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
+                .append(purchase.getPhone())
+                .append("/resources/")
+                .append(photourl);
+        String url=stringBuilder.toString();
         Glide.with(MyApplication.getContext())
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

@@ -37,8 +37,12 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
     @Override
     public void onBindViewHolder(@NonNull TeamViewHolder holder, int position) {
         All_orders team = mTeamList.get(position);
-        String url="http://api.yilao.tk:15000/v1.0/users/"+team.getPhone()+
-                "/resources/"+ team.getId_photo();
+        StringBuilder stringBuilder=new StringBuilder();
+        stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
+                .append(team.getPhone())
+                .append("/resources/")
+                .append(team.getId_photo());
+        String url=stringBuilder.toString();
         Glide.with(MyApplication.getContext())
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

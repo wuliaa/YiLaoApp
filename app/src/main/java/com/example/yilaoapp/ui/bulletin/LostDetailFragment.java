@@ -79,8 +79,12 @@ public class LostDetailFragment extends Fragment implements EasyPermissions.Perm
             }
         });
         viewModel.getLost().observe(getViewLifecycleOwner(), item -> {
-            String headurl = "http://api.yilao.tk:15000/v1.0/users/" + item.getPhone() +
-                    "/resources/" + item.getId_photo();
+            StringBuilder stringBuilder=new StringBuilder();
+            stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
+                    .append(item.getPhone())
+                    .append("/resources/")
+                    .append(item.getId_photo());
+            String headurl = stringBuilder.toString();
             Glide.with(MyApplication.getContext())
                     .load(headurl)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -120,8 +124,12 @@ public class LostDetailFragment extends Fragment implements EasyPermissions.Perm
             StringTokenizer st = new StringTokenizer(item.getPhotos(), ",");
             while (st.hasMoreTokens()) {
                 uuid = st.nextToken();
-                String url = "http://api.yilao.tk:15000/v1.0/users/" + item.getPhone() +
-                        "/resources/" + uuid;
+                StringBuilder stringBuilder1=new StringBuilder();
+                stringBuilder1.append("http://api.yilao.tk:15000/v1.0/users/")
+                        .append(item.getPhone())
+                        .append("/resources/")
+                        .append(uuid);
+                String url = stringBuilder1.toString();
                 photosUrl.add(url);
             }
             binding.LostninePhoto.setData(photosUrl);

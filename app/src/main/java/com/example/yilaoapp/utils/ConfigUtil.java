@@ -26,16 +26,6 @@ public class ConfigUtil {
     }
 
     /**
-     *
-     * 修改时间格式
-     * @param time
-     * @return String
-     */
-    public static String cutTimeFormat(String time){
-        return time;
-    }
-
-    /**
      * 计算距离上次获得页面的时间是多少秒
      * @param before
      * @return

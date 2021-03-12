@@ -140,7 +140,7 @@ public class BullentinMessageFragment extends Fragment implements EasyPermission
                             String address = binding.lostAddress.getText().toString();
                             BigInteger phone = new BigInteger(binding.telephoneText.getText().toString());
                             Point_address des = new Point_address(0, 0, address);
-                            String name=binding.bullentinObjectName.getText().toString();
+                            String name = binding.bullentinObjectName.getText().toString();
                             String category = "";
                             if (binding.radioButton.isChecked())
                                 category = "失物招领";
@@ -148,7 +148,7 @@ public class BullentinMessageFragment extends Fragment implements EasyPermission
                                 category = "组队学习";
                             else
                                 category = "共享工具";
-                            bul_order order = new bul_order(phone, "公告", detail, des, category, u.getUuid(),name);
+                            bul_order order = new bul_order(phone, "公告", detail, des, category, u.getUuid(), name);
                             bur_service pur = new RetrofitUser().get(getContext()).create(bur_service.class);
                             Call<ResponseBody> new_order = pur.new_order(mobile2, token2, "df3b72a07a0a4fa1854a48b543690eab", order);
                             new_order.enqueue(new Callback<ResponseBody>() {

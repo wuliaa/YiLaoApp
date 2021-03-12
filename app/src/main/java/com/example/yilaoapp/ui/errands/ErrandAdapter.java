@@ -46,8 +46,12 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
     @Override
     public void onBindViewHolder(@NonNull ErrandViewHolder holder, int position) {
         All_orders errand = mErrandList.get(position);
-        String url="http://api.yilao.tk:15000/v1.0/users/"+errand.getPhone()+
-                "/resources/"+errand.getId_photo();
+        StringBuilder stringBuilder=new StringBuilder();
+        stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
+                .append(errand.getPhone())
+                .append("/resources/")
+                .append(errand.getId_photo());
+        String url=stringBuilder.toString();
         Glide.with(MyApplication.getContext())
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

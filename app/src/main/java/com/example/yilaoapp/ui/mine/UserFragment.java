@@ -315,7 +315,6 @@ public class UserFragment extends Fragment {
         if (imagePath != null) {
             FileInputStream fis = new FileInputStream(imagePath);
             Bitmap bitmap  = BitmapFactory.decodeStream(fis);
-            //Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
             binding.userImage2.setImageBitmap(bitmap);
             Log.d("UserFagment", "displayImage: " + imagePath);
         } else {

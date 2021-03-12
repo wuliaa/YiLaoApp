@@ -89,7 +89,7 @@ public class ChangePsdFragment extends Fragment {
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     SharedPreferences.Editor e = pre.edit();
                                     e.putString("password", password);
-                                    e.commit();
+                                    e.apply();
                                     NavController controller = Navigation.findNavController(v);
                                     controller.popBackStack();
                                 }
