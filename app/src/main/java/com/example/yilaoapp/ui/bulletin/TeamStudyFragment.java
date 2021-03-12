@@ -26,6 +26,7 @@ import com.example.yilaoapp.bean.All_orders;
 import com.example.yilaoapp.bean.Point_address;
 import com.example.yilaoapp.databinding.FragmentTeamStudyBinding;
 import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.bur_service;
 import com.example.yilaoapp.service.pur_service;
 import com.example.yilaoapp.ui.purchase.PurchaseAdapter;
 import com.google.gson.Gson;
@@ -54,6 +55,7 @@ public class TeamStudyFragment extends Fragment implements SwipeRefreshLayout.On
     List<Integer> task_id;   //订单id
     TeamAdapter adapter;
     Handler handler;
+    int number;
 
     public TeamStudyFragment() {
     }
@@ -119,8 +121,9 @@ public class TeamStudyFragment extends Fragment implements SwipeRefreshLayout.On
             public void run() {
                 teamList.clear();
                 task_id.clear();
-                pur_service pur = new RetrofitUser().get(getContext()).create(pur_service.class);
-                Call<ResponseBody> get_team = pur.get_orders("代购");
+                number=0;
+                bur_service bur = new RetrofitUser().get(getContext()).create(bur_service.class);
+                Call<ResponseBody> get_team = bur.get_orders("公告");
                 get_team.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -134,7 +137,8 @@ public class TeamStudyFragment extends Fragment implements SwipeRefreshLayout.On
                             //获取每个用户的照片的字节流
                             for (int i = 0; i < all.size(); i++) {
                                 if (!task_id.contains(all.get(i).getId()) &&
-                                        all.get(i).getExecutor() == null
+                                        all.get(i).getExecutor() == null &&
+                                        all.get(i).getCategory().equals("组队学习")
                                 ) {
                                     task_id.add(all.get(i).getId());
                                     String content = all.get(i).getDetail();                       //详情
@@ -147,7 +151,7 @@ public class TeamStudyFragment extends Fragment implements SwipeRefreshLayout.On
                                     String photos = all.get(i).getPhotos();                     //订单的图片
                                     String category = all.get(i).getCategory();                //订单分类
                                     String name = all.get(i).getName();                       //订单名字
-                                    All_orders purchase1 = new All_orders(phone, address, time, task_id.get(i), content
+                                    All_orders purchase1 = new All_orders(phone, address, time, task_id.get(number++), content
                                             , Float.parseFloat(money), protected_info, category, photos, uuid, name);
                                     teamList.add(purchase1);
                                     Message message = new Message();

@@ -18,6 +18,7 @@ import com.lcodecore.extextview.ExpandTextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder> {
     private List<All_orders> mTeamList = new ArrayList<All_orders>();
@@ -37,7 +38,7 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
     public void onBindViewHolder(@NonNull TeamViewHolder holder, int position) {
         All_orders team = mTeamList.get(position);
         String url="http://api.yilao.tk:15000/v1.0/users/"+team.getPhone()+
-                "/resources/"+team.getId_photo();
+                "/resources/"+ team.getId_photo();
         Glide.with(MyApplication.getContext())
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

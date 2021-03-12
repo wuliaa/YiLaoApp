@@ -19,6 +19,7 @@ import com.lcodecore.extextview.ExpandTextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class ShareAdapter extends RecyclerView.Adapter<ShareAdapter.ShareViewHolder> {
 
@@ -38,8 +39,10 @@ public class ShareAdapter extends RecyclerView.Adapter<ShareAdapter.ShareViewHol
     @Override
     public void onBindViewHolder(@NonNull ShareViewHolder holder, int position) {
         All_orders share = mShareList.get(position);
+        StringTokenizer st = new StringTokenizer(share.getPhotos(), ",");
+        String photourl=st.nextToken();
         String url="http://api.yilao.tk:15000/v1.0/users/"+share.getPhone()+
-                "/resources/"+share.getId_photo();
+                "/resources/"+photourl;
         Glide.with(MyApplication.getContext())
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

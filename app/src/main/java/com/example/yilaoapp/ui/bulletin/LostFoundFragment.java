@@ -58,6 +58,8 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
     List<Integer> task_id;   //订单id
     LostAdapter adapter;
     Handler handler;
+    int number;
+
     private BullentinViewModel mviewModel;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -117,6 +119,7 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
             public void run() {
                 LostList.clear();
                 task_id.clear();
+                number=0;
                 bur_service bur=new RetrofitUser().get(getContext()).create(bur_service.class);
                 Call<ResponseBody> get_lost=bur.get_orders("公告");
                 get_lost.enqueue(new Callback<ResponseBody>() {
@@ -131,7 +134,8 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
                             //获取每个用户的照片的字节流
                             for (int i = 0; i < all.size(); i++) {
                                 if (!task_id.contains(all.get(i).getId()) &&
-                                        all.get(i).getExecutor() == null
+                                        all.get(i).getExecutor() == null &&
+                                        all.get(i).getCategory().equals("失物招领")
                                 ) {
                                     task_id.add(all.get(i).getId());
                                     String content = all.get(i).getDetail();                       //详情
@@ -144,7 +148,7 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
                                     String photos=all.get(i).getPhotos();                     //订单的图片
                                     String category=all.get(i).getCategory();                //订单分类
                                     String name=all.get(i).getName();                       //订单名字
-                                    All_orders lost = new All_orders(phone,address,time,task_id.get(i),content
+                                    All_orders lost = new All_orders(phone,address,time,task_id.get(number++),content
                                             ,Float.parseFloat(money),protected_info,category,photos,uuid,name);
                                     LostList.add(lost);
                                     Message message = new Message();

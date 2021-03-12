@@ -52,28 +52,17 @@ import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.accept_service;
 import com.example.yilaoapp.service.chat_service;
 import com.example.yilaoapp.service.errand_service;
-import com.example.yilaoapp.service.image_service;
-import com.example.yilaoapp.ui.bulletin.BullentinViewModel;
-import com.example.yilaoapp.ui.bulletin.Share;
-import com.example.yilaoapp.ui.bulletin.ShareAdapter;
-import com.example.yilaoapp.ui.bulletin.Team;
-//import com.example.yilaoapp.utils.LruCacheImageLoader;
 import com.example.yilaoapp.utils.AdapterDiffCallback;
-import com.example.yilaoapp.utils.PhotoOperation;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;

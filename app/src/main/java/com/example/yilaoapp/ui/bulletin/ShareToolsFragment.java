@@ -29,6 +29,7 @@ import com.example.yilaoapp.bean.All_orders;
 import com.example.yilaoapp.bean.Point_address;
 import com.example.yilaoapp.databinding.FragmentShareToolsBinding;
 import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.bur_service;
 import com.example.yilaoapp.service.pur_service;
 import com.example.yilaoapp.ui.purchase.PurchaseAdapter;
 import com.google.gson.Gson;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -51,11 +53,12 @@ import retrofit2.Response;
 public class ShareToolsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     FragmentShareToolsBinding binding;
-    private List<All_orders> shareList = new ArrayList<>();
+    private List<All_orders> shareList;
     private BullentinViewModel viewModel;
     List<Integer> task_id;   //订单id
     ShareAdapter adapter;
     Handler handler;
+    int number;
 
     public ShareToolsFragment() {
     }
@@ -63,6 +66,9 @@ public class ShareToolsFragment extends Fragment implements SwipeRefreshLayout.O
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        shareList = new ArrayList<>();
+        shareList = new ArrayList<>();
+        task_id = new LinkedList<>();
     }
 
 
@@ -119,8 +125,9 @@ public class ShareToolsFragment extends Fragment implements SwipeRefreshLayout.O
             public void run() {
                 shareList.clear();
                 task_id.clear();
-                pur_service pur = new RetrofitUser().get(getContext()).create(pur_service.class);
-                Call<ResponseBody> get_share = pur.get_orders("代购");
+                number=0;
+                bur_service bur = new RetrofitUser().get(getContext()).create(bur_service.class);
+                Call<ResponseBody> get_share = bur.get_orders("公告");
                 get_share.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -134,7 +141,8 @@ public class ShareToolsFragment extends Fragment implements SwipeRefreshLayout.O
                             //获取每个用户的照片的字节流
                             for (int i = 0; i < all.size(); i++) {
                                 if (!task_id.contains(all.get(i).getId()) &&
-                                        all.get(i).getExecutor() == null
+                                        all.get(i).getExecutor() == null &&
+                                        all.get(i).getCategory().equals("共享工具")
                                 ) {
                                     task_id.add(all.get(i).getId());
                                     String content = all.get(i).getDetail();                       //详情
@@ -147,9 +155,9 @@ public class ShareToolsFragment extends Fragment implements SwipeRefreshLayout.O
                                     String photos = all.get(i).getPhotos();                     //订单的图片
                                     String category = all.get(i).getCategory();                //订单分类
                                     String name = all.get(i).getName();                       //订单名字
-                                    All_orders purchase1 = new All_orders(phone, address, time, task_id.get(i), content
+                                    All_orders share = new All_orders(phone, address, time, task_id.get(number++), content
                                             , Float.parseFloat(money), protected_info, category, photos, uuid, name);
-                                    shareList.add(purchase1);
+                                    shareList.add(share);
                                     Log.d(" PurchaseList", "message: " + content + "1" +
                                             address + "2" + money + "3" + time);
                                     Message message = new Message();
