@@ -50,17 +50,20 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    public LostFoundFragment() {}
+    public LostFoundFragment() {
+    }
+
     FragmentLostFoundBinding binding;
-    private List<All_orders> LostList ;
+    private List<All_orders> LostList;
     List<Integer> task_id;   //订单id
     LostAdapter adapter;
     Handler handler;
     int number;
 
     private BullentinViewModel mviewModel;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +77,7 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_lost_found,container,false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_lost_found, container, false);
         mviewModel = ViewModelProviders.of(requireActivity()).get(BullentinViewModel.class);
         binding.setData(mviewModel);
         binding.setLifecycleOwner(requireActivity());
@@ -115,49 +118,55 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
         return binding.getRoot();
         //return inflater.inflate(R.layout.fragment_lost_found, container, false);
     }
+
     private void initLosts() {
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 LostList.clear();
                 task_id.clear();
-                number=0;
-                bur_service bur=new RetrofitUser().get(getContext()).create(bur_service.class);
-                Call<ResponseBody> get_lost=bur.get_orders("公告");
+                number = 0;
+                bur_service bur = new RetrofitUser().get(getContext()).create(bur_service.class);
+                Call<ResponseBody> get_lost = bur.get_orders("公告");
                 get_lost.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                        String str="";
+                        String str = "";
                         try {
-                            assert response.body() != null;
-                            str=response.body().string();
-                            Gson gson=new Gson();
-                            Type type=new TypeToken<List<All_orders>>(){}.getType();
-                            List<All_orders> all=gson.fromJson(str,type);
-                            //获取每个用户的照片的字节流
-                            for (int i = 0; i < all.size(); i++) {
-                                if (!task_id.contains(all.get(i).getId()) &&
-                                        all.get(i).getExecutor() == null &&
-                                        all.get(i).getCategory().equals("失物招领")
-                                ) {
-                                    task_id.add(all.get(i).getId());
-                                    String content = all.get(i).getDetail();                       //详情
-                                    Point_address address = all.get(i).getDestination();          //地址
-                                    String money = String.valueOf(all.get(i).getReward());       //订单酬劳
-                                    String time = all.get(i).getCreate_at();                     //订单创建时间
-                                    BigInteger phone = all.get(i).getFrom_user();               //发布订单的电话号码
-                                    String protected_info = all.get(i).getProtected_info();    //隐藏信息
-                                    String uuid = all.get(i).getId_photo();                   //头像的uuid
-                                    String photos=all.get(i).getPhotos();                     //订单的图片
-                                    String category=all.get(i).getCategory();                //订单分类
-                                    String name=all.get(i).getName();                       //订单名字
-                                    All_orders lost = new All_orders(phone,address,time,task_id.get(number++),content
-                                            ,Float.parseFloat(money),protected_info,category,photos,uuid,name);
-                                    LostList.add(lost);
-                                    Message message = new Message();
-                                    message.what = 1;
-                                    //然后将消息发送出去
-                                    handler.sendMessage(message);
+                            // assert response.body() != null;
+                            if (response.body() == null)
+                                Toast.makeText(getContext(), "网络延迟", Toast.LENGTH_SHORT).show();
+                            else {
+                                str = response.body().string();
+                                Gson gson = new Gson();
+                                Type type = new TypeToken<List<All_orders>>() {
+                                }.getType();
+                                List<All_orders> all = gson.fromJson(str, type);
+                                //获取每个用户的照片的字节流
+                                for (int i = 0; i < all.size(); i++) {
+                                    if (!task_id.contains(all.get(i).getId()) &&
+                                            all.get(i).getExecutor() == null &&
+                                            all.get(i).getCategory().equals("失物招领")
+                                    ) {
+                                        task_id.add(all.get(i).getId());
+                                        String content = all.get(i).getDetail();                       //详情
+                                        Point_address address = all.get(i).getDestination();          //地址
+                                        String money = String.valueOf(all.get(i).getReward());       //订单酬劳
+                                        String time = all.get(i).getCreate_at();                     //订单创建时间
+                                        BigInteger phone = all.get(i).getFrom_user();               //发布订单的电话号码
+                                        String protected_info = all.get(i).getProtected_info();    //隐藏信息
+                                        String uuid = all.get(i).getId_photo();                   //头像的uuid
+                                        String photos = all.get(i).getPhotos();                     //订单的图片
+                                        String category = all.get(i).getCategory();                //订单分类
+                                        String name = all.get(i).getName();                       //订单名字
+                                        All_orders lost = new All_orders(phone, address, time, task_id.get(number++), content
+                                                , Float.parseFloat(money), protected_info, category, photos, uuid, name);
+                                        LostList.add(lost);
+                                        Message message = new Message();
+                                        message.what = 1;
+                                        //然后将消息发送出去
+                                        handler.sendMessage(message);
+                                    }
                                 }
                             }
                         } catch (IOException e) {
@@ -181,6 +190,6 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
             public void run() {
                 binding.swipeLost.setRefreshing(false); // 是否显示刷新进度;false:不显示
             }
-        },3000);
+        }, 3000);
     }
 }

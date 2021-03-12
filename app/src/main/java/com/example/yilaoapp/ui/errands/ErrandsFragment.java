@@ -140,14 +140,14 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                             String token = pre.getString("token", "");
                             accept_service ac = new RetrofitUser().get(getContext()).create(accept_service.class);
                             Call<ResponseBody> act = ac.accept_order(mobile, data.getId(), token, "df3b72a07a0a4fa1854a48b543690eab", "true");
-                            act.enqueue(callback=new retrofit2.Callback<ResponseBody>() {
+                            act.enqueue(callback = new retrofit2.Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                                     Toast.makeText(getContext(), "success", Toast.LENGTH_LONG).show();
                                     chat_task ch = new chat_task("您的任务我已领取，订单信息如下:" + data.getDetail(), data.getFrom_user());
                                     chat_service send = new RetrofitUser().get(getContext()).create(chat_service.class);
                                     Call<ResponseBody> sen_mes = send.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", ch);
-                                    sen_mes.enqueue(callback=new retrofit2.Callback<ResponseBody>()  {
+                                    sen_mes.enqueue(callback = new retrofit2.Callback<ResponseBody>() {
                                         @Override
                                         public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                                             Toast.makeText(getContext(), "信息已success", Toast.LENGTH_LONG).show();
@@ -165,7 +165,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
                                 }
                             });
-                            List<All_orders> oldDatas=errandList;
+                            List<All_orders> oldDatas = errandList;
                             errandList.remove(position);
                             adapter.notifyItemRemoved(position);
                             if (position != errandList.size()) { // 如果移除的是最后一个，忽略
@@ -207,37 +207,40 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                         String str = "";
                         try {
-                            str = response.body().string();
-                            Gson gson = new Gson();
-                            Type type = new TypeToken<List<All_orders>>() {
-                            }.getType();
-                            all = gson.fromJson(str, type);
-                            for (int i = 0; i < all.size(); i++) {
-                                if (!task_id.contains(all.get(i).getId()) && all.get(i).getExecutor() == null) {
-                                    Log.d("executor", "onResponse" + i + ": " + all.get(i).getExecutor());
-                                    task_id.add(all.get(i).getId());
-                                    String content = all.get(i).getDetail();
-                                    Point_address address = all.get(i).getDestination();
-                                    String money = String.valueOf(all.get(i).getReward());
-                                    String time = all.get(i).getCreate_at();
-                                    BigInteger phone = all.get(i).getFrom_user();
-                                    String protected_info = all.get(i).getProtected_info();
-                                    String uuid = all.get(i).getId_photo();
-                                    All_orders errand1 = new All_orders(phone, address, time, task_id.get(i),
-                                            content, Float.parseFloat(money), protected_info, uuid);
-                                    errandList.add(errand1);
-                                    Message message = new Message();
-                                    message.what = 1;
-                                    //然后将消息发送出去
-                                    handler.sendMessage(message);
-                                    Log.d("errand", "message: " + content + "1" + address + "2" + money + "3" + time);
+                            if (response.body() == null)
+                                Toast.makeText(getContext(), "网络延迟", Toast.LENGTH_SHORT).show();
+                            else {
+                                str = response.body().string();
+                                Gson gson = new Gson();
+                                Type type = new TypeToken<List<All_orders>>() {
+                                }.getType();
+                                all = gson.fromJson(str, type);
+                                for (int i = 0; i < all.size(); i++) {
+                                    if (!task_id.contains(all.get(i).getId()) && all.get(i).getExecutor() == null) {
+                                        Log.d("executor", "onResponse" + i + ": " + all.get(i).getExecutor());
+                                        task_id.add(all.get(i).getId());
+                                        String content = all.get(i).getDetail();
+                                        Point_address address = all.get(i).getDestination();
+                                        String money = String.valueOf(all.get(i).getReward());
+                                        String time = all.get(i).getCreate_at();
+                                        BigInteger phone = all.get(i).getFrom_user();
+                                        String protected_info = all.get(i).getProtected_info();
+                                        String uuid = all.get(i).getId_photo();
+                                        All_orders errand1 = new All_orders(phone, address, time, task_id.get(i),
+                                                content, Float.parseFloat(money), protected_info, uuid);
+                                        errandList.add(errand1);
+                                        Message message = new Message();
+                                        message.what = 1;
+                                        //然后将消息发送出去
+                                        handler.sendMessage(message);
+                                        Log.d("errand", "message: " + content + "1" + address + "2" + money + "3" + time);
+                                    }
                                 }
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
-
                     @Override
                     public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
 

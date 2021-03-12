@@ -77,19 +77,19 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     FragmentPurchaseBinding binding;
     private DrawerLayout mDrawerLayout;
     private PurchaseViewModel mViewModel;
-    private List<All_orders> purchaseList ;
+    private List<All_orders> purchaseList;
     List<Integer> task_id;   //订单id
     PurchaseAdapter adapter;
     Handler handler;
 
 
-
-    public PurchaseFragment() {}
+    public PurchaseFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,8 +106,8 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for t his fragment
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_purchase,container,false);
-        mViewModel = ViewModelProviders.of(requireActivity()).get( PurchaseViewModel.class);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_purchase, container, false);
+        mViewModel = ViewModelProviders.of(requireActivity()).get(PurchaseViewModel.class);
         binding.setData(mViewModel);
         binding.setLifecycleOwner(requireActivity());
         ((AppCompatActivity) requireActivity()).setSupportActionBar(binding.toolbar);
@@ -115,7 +115,7 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setDisplayShowTitleEnabled(false);
         binding.toolbar.inflateMenu(R.menu.menu_main);
         binding.toolbar.setNavigationIcon(R.drawable.ic_baseline_dehaze_24);
-        mDrawerLayout=requireActivity().findViewById(R.id.drawer_layout);
+        mDrawerLayout = requireActivity().findViewById(R.id.drawer_layout);
         binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,7 +146,7 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                             new Handler(new Handler.Callback() {
                                 @Override
                                 public boolean handleMessage(@NonNull android.os.Message msg) {
-                                    Toast.makeText(getActivity(),"我是item",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), "我是item", Toast.LENGTH_SHORT).show();
                                     NavController controller = Navigation.findNavController(view);
                                     controller.navigate(R.id.action_purchaseFragment_to_purchaseDetailFragment);
                                     mViewModel.setPurchase(data);
@@ -161,9 +161,10 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         return binding.getRoot();
     }
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main,menu);
+        inflater.inflate(R.menu.menu_main, menu);
     }
 
     @Override
@@ -175,61 +176,67 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private void initContents() {
         Log.d("PurchaseList", "intiContents: ListSize " + purchaseList.size());
-        new Thread(){
-           @Override
-           public void run() {
-               purchaseList.clear();
-               task_id.clear();
-               pur_service pur=new RetrofitUser().get(getContext()).create(pur_service.class);
-               Call<ResponseBody> get_purchase=pur.get_orders("代购");
-               get_purchase.enqueue(new Callback<ResponseBody>() {
-                   @Override
-                   public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                       String str="";
-                       try {
-                           assert response.body() != null;
-                           str=response.body().string();
-                           Gson gson=new Gson();
-                           Type type=new TypeToken<List<All_orders>>(){}.getType();
-                           List<All_orders> all=gson.fromJson(str,type);
-                           //获取每个用户的照片的字节流
-                           for (int i = 0; i < all.size(); i++) {
-                               if (!task_id.contains(all.get(i).getId()) &&
-                                       all.get(i).getExecutor() == null
-                               ) {
-                                   task_id.add(all.get(i).getId());
-                                   String content = all.get(i).getDetail();                       //详情
-                                   Point_address address = all.get(i).getDestination();          //地址
-                                   String money = String.valueOf(all.get(i).getReward());       //订单酬劳
-                                   String time = all.get(i).getCreate_at();                     //订单创建时间
-                                   BigInteger phone = all.get(i).getFrom_user();               //发布订单的电话号码
-                                   String protected_info = all.get(i).getProtected_info();    //隐藏信息
-                                   String uuid = all.get(i).getId_photo();                   //头像的uuid
-                                   String photos=all.get(i).getPhotos();                     //订单的图片
-                                   String category=all.get(i).getCategory();                //订单分类
-                                   String name=all.get(i).getName();                       //订单名字
-                                   All_orders purchase1 = new All_orders(phone,address,time,task_id.get(i),content
-                                           ,Float.parseFloat(money),protected_info,category,photos,uuid,name);
-                                   purchaseList.add(purchase1);
-                                   Log.d(" PurchaseList", "message: " + content + "1" +
-                                           address + "2" + money + "3" + time);
-                                   Message message = new Message();
-                                   message.what = 1;
-                                   //然后将消息发送出去
-                                   handler.sendMessage(message);
-                               }
-                           }
-                       } catch (IOException e) {
-                           e.printStackTrace();
-                       }
-                   }
-                   @Override
-                   public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+        new Thread() {
+            @Override
+            public void run() {
+                purchaseList.clear();
+                task_id.clear();
+                pur_service pur = new RetrofitUser().get(getContext()).create(pur_service.class);
+                Call<ResponseBody> get_purchase = pur.get_orders("代购");
+                get_purchase.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                        String str = "";
+                        try {
+//                            assert response.body() != null;
+                            if (response.body() == null)
+                                Toast.makeText(getContext(), "网络延迟", Toast.LENGTH_SHORT).show();
+                            else {
+                                str = response.body().string();
+                                Gson gson = new Gson();
+                                Type type = new TypeToken<List<All_orders>>() {
+                                }.getType();
+                                List<All_orders> all = gson.fromJson(str, type);
+                                //获取每个用户的照片的字节流
+                                for (int i = 0; i < all.size(); i++) {
+                                    if (!task_id.contains(all.get(i).getId()) &&
+                                            all.get(i).getExecutor() == null
+                                    ) {
+                                        task_id.add(all.get(i).getId());
+                                        String content = all.get(i).getDetail();                       //详情
+                                        Point_address address = all.get(i).getDestination();          //地址
+                                        String money = String.valueOf(all.get(i).getReward());       //订单酬劳
+                                        String time = all.get(i).getCreate_at();                     //订单创建时间
+                                        BigInteger phone = all.get(i).getFrom_user();               //发布订单的电话号码
+                                        String protected_info = all.get(i).getProtected_info();    //隐藏信息
+                                        String uuid = all.get(i).getId_photo();                   //头像的uuid
+                                        String photos = all.get(i).getPhotos();                     //订单的图片
+                                        String category = all.get(i).getCategory();                //订单分类
+                                        String name = all.get(i).getName();                       //订单名字
+                                        All_orders purchase1 = new All_orders(phone, address, time, task_id.get(i), content
+                                                , Float.parseFloat(money), protected_info, category, photos, uuid, name);
+                                        purchaseList.add(purchase1);
+                                        Log.d(" PurchaseList", "message: " + content + "1" +
+                                                address + "2" + money + "3" + time);
+                                        Message message = new Message();
+                                        message.what = 1;
+                                        //然后将消息发送出去
+                                        handler.sendMessage(message);
+                                    }
+                                }
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-                   }
-               });
-           }
-       }.start();
+                    @Override
+                    public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+
+                    }
+                });
+            }
+        }.start();
     }
 
     @Override
@@ -241,6 +248,6 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
             public void run() {
                 binding.swipePurchasess.setRefreshing(false); // 是否显示刷新进度;false:不显示
             }
-        },1000);
+        }, 1000);
     }
 }
