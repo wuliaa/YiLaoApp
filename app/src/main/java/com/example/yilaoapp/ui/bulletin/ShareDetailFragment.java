@@ -60,22 +60,22 @@ public class ShareDetailFragment extends Fragment implements EasyPermissions.Per
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_share_detail,container,false);
-        BullentinViewModel viewModel = ViewModelProviders.of(requireActivity()).get(BullentinViewModel.class);
-        binding.setData(viewModel);
-        binding.setLifecycleOwner(requireActivity());
-        binding.toolbar.setNavigationIcon(R.drawable.ic_baseline_chevron_left_24);
-        binding.toolbar.setNavigationOnClickListener(v -> {
-            NavController controller = Navigation.findNavController(v);
-            controller.popBackStack();
-        });
-        viewModel.getSelected().observe(getViewLifecycleOwner(), item -> {
-            binding.sharedcontent.setText(item.getContent());
-            binding.sharedtime.setText(item.getTime());
-            binding.ShareninePhotoLayout.setDelegate(this);
-            binding.ShareninePhotoLayout.setData(item.getPhotos());
-        });
+//        // Inflate the layout for this fragment
+//        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_share_detail,container,false);
+//        BullentinViewModel viewModel = ViewModelProviders.of(requireActivity()).get(BullentinViewModel.class);
+//        binding.setData(viewModel);
+//        binding.setLifecycleOwner(requireActivity());
+//        binding.toolbar.setNavigationIcon(R.drawable.ic_baseline_chevron_left_24);
+//        binding.toolbar.setNavigationOnClickListener(v -> {
+//            NavController controller = Navigation.findNavController(v);
+//            controller.popBackStack();
+//        });
+//        viewModel.getSelected().observe(getViewLifecycleOwner(), item -> {
+//            binding.sharedcontent.setText(item.getContent());
+//            binding.sharedtime.setText(item.getTime());
+//            binding.ShareninePhotoLayout.setDelegate(this);
+//            binding.ShareninePhotoLayout.setData(item.getPhotos());
+//        });
         return binding.getRoot();
         //return inflater.inflate(R.layout.fragment_share_detail, container, false);
     }

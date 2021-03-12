@@ -8,7 +8,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.All_orders;
 import com.lcodecore.extextview.ExpandTextView;
 
 
@@ -17,8 +22,8 @@ import java.util.List;
 
 public class ShareAdapter extends RecyclerView.Adapter<ShareAdapter.ShareViewHolder> {
 
-    private List<Share> mShareList = new ArrayList<>();
-    public ShareAdapter(List<Share> shareList) {
+    private List<All_orders> mShareList = new ArrayList<>();
+    public ShareAdapter(List<All_orders> shareList) {
         mShareList = shareList;
     }
 
@@ -32,11 +37,18 @@ public class ShareAdapter extends RecyclerView.Adapter<ShareAdapter.ShareViewHol
 
     @Override
     public void onBindViewHolder(@NonNull ShareViewHolder holder, int position) {
-        Share share = mShareList.get(position);
-        holder.photo.setImageResource(share.getImageId());
-        holder.objectName.setText(share.getObjectName());
-        holder.content.setText(share.getContent());
-        holder.time.setText(share.getTime());
+        All_orders share = mShareList.get(position);
+        String url="http://api.yilao.tk:15000/v1.0/users/"+share.getPhone()+
+                "/resources/"+share.getId_photo();
+        Glide.with(MyApplication.getContext())
+                .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.head1)
+                .error(R.drawable.head2)
+                .into(holder.photo);
+        holder.objectName.setText(share.getName());
+        holder.content.setText(share.getDetail());
+        holder.time.setText(share.getCreate_at());
     }
 
     @Override
@@ -72,7 +84,7 @@ public class ShareAdapter extends RecyclerView.Adapter<ShareAdapter.ShareViewHol
         /**
          * 接口中的点击每一项的实现方法，参数自己定义
          */
-        public void OnItemClick(View view, Share data);
+        public void OnItemClick(View view, All_orders data);
     }
     //需要外部访问，所以需要设置set方法，方便调用
     private OnItemClickListener onItemClickListener;

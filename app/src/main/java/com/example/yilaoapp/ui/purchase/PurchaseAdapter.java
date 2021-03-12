@@ -19,6 +19,7 @@ import com.robertlevonyan.views.chip.Chip;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.PurchaseViewHolder> {
     private List<All_orders> mpurchaseList = new ArrayList<>();
@@ -36,8 +37,10 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.Purcha
     @Override
     public void onBindViewHolder(@NonNull PurchaseAdapter.PurchaseViewHolder holder, int position) {
         All_orders purchase = mpurchaseList.get(position);
+        StringTokenizer st = new StringTokenizer(purchase.getPhotos(), ",");
+        String photourl=st.nextToken();
         String url="http://api.yilao.tk:15000/v1.0/users/"+purchase.getPhone()+
-                "/resources/"+purchase.getId_photo();
+                "/resources/"+photourl;
         Glide.with(MyApplication.getContext())
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
