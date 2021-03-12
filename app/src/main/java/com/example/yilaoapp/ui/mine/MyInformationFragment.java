@@ -172,7 +172,7 @@ public class MyInformationFragment extends Fragment {
     }
 
     public void getInfo() {
-        UserService service = new RetrofitUser().get().create(UserService.class);
+        UserService service = new RetrofitUser().get(getContext()).create(UserService.class);
         SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
         String mobile = pre.getString("mobile", "");
         String token = pre.getString("token", "");
@@ -238,7 +238,7 @@ public class MyInformationFragment extends Fragment {
         SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
         String mobile2 = pre2.getString("mobile", "");
         String token2 = pre2.getString("token", "");
-        image_service img = new RetrofitUser().get().create(image_service.class);
+        image_service img = new RetrofitUser().get(getContext()).create(image_service.class);
         Call<ResponseBody> image_call = img.send_photo(mobile2, token2, "df3b72a07a0a4fa1854a48b543690eab", map);
         image_call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -268,7 +268,7 @@ public class MyInformationFragment extends Fragment {
     }
 
     public void updateInfo(String photo, String name, String sex, String address, Uuid u) {
-        UserService messservice = new RetrofitUser().get().create(UserService.class);
+        UserService messservice = new RetrofitUser().get(getContext()).create(UserService.class);
         messbean mess = new messbean(photo, name, sex, address);
         SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
         String mobile = pre.getString("mobile", "");

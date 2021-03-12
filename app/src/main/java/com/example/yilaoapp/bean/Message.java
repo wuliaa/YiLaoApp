@@ -1,13 +1,15 @@
 package com.example.yilaoapp.bean;
 
+import java.math.BigInteger;
+
 public class Message {
     private String nick;
     private String content;
     private String time;
     private String uuid;
-    private String mobile;
+    private BigInteger mobile;
 
-    public Message(String nick, String content, String time, String uuid, String mobile) {
+    public Message(String nick, String content, String time, String uuid, BigInteger mobile) {
         this.nick = nick;
         this.content = content;
         this.time = time;
@@ -47,11 +49,11 @@ public class Message {
         this.uuid = uuid;
     }
 
-    public String getMobile() {
+    public BigInteger getMobile() {
         return mobile;
     }
 
-    public void setMobile(String mobile) {
+    public void setMobile(BigInteger mobile) {
         this.mobile = mobile;
     }
 }

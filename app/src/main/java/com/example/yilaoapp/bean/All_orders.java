@@ -24,12 +24,15 @@ public class All_orders {
     String out_at;
     int count;
     String id_photo;
+    String name;
+
+
 
     public All_orders(String receive_at, String close_at, BigInteger phone, BigInteger executor,
                       BigInteger from_user, Point_address destination, String emergency_level,
                       String close_state, String create_at, int id, String detail, String type,
                       String category, String photos, String in_at, float reward, String protected_info,
-                      String out_at, int count,String id_photo) {
+                      String out_at, int count, String id_photo,String name) {
         this.receive_at = receive_at;
         this.close_at = close_at;
         this.phone = phone;
@@ -50,6 +53,7 @@ public class All_orders {
         this.out_at = out_at;
         this.count = count;
         this.id_photo=id_photo;
+        this.name=name;
     }
 
     //针对跑腿的初始化函数
@@ -80,7 +84,7 @@ public class All_orders {
     //针对代购和公告的初始化函数
     public All_orders(BigInteger phone, Point_address destination, String create_at,
                       int id, String detail,  float reward,
-                      String protected_info, String category, String photos,String id_photo) {
+                      String protected_info, String category, String photos,String id_photo,String name) {
         this.receive_at = "";
         this.close_at = "";
         this.phone = phone;   //发布的任务的联系电话
@@ -100,6 +104,7 @@ public class All_orders {
         this.out_at = "";
         this.count = 0;
         this.id_photo=id_photo;     //发布订单的人的头像
+        this.name=name;
     }
 
 
@@ -261,6 +266,13 @@ public class All_orders {
 
     public void setCount(int count) {
         this.count = count;
+    }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

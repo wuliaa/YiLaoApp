@@ -123,7 +123,7 @@ public class SigninFragment extends Fragment {
     }
 
     public void GetCode(String phone){
-        Verify_service yzmservice=new RetrofitUser().get().create(Verify_service.class);
+        Verify_service yzmservice=new RetrofitUser().get(getContext()).create(Verify_service.class);
         Verify yz=new Verify("df3b72a07a0a4fa1854a48b543690eab",phone,"PUT","/v1.0/users/"+phone);
         Call<ResponseBody> callback=yzmservice.send_code(yz);
         callback.enqueue(new Callback<ResponseBody>() {
@@ -141,7 +141,7 @@ public class SigninFragment extends Fragment {
     }
 
     public void Signin(String phone,String code,Password pass,View v){
-        UserService xybservice=new RetrofitUser().get().create(UserService.class);
+        UserService xybservice=new RetrofitUser().get(getContext()).create(UserService.class);
         Call<ResponseBody> xybback=xybservice.sigin(phone,"df3b72a07a0a4fa1854a48b543690eab",code,pass);
         xybback.enqueue(new Callback<ResponseBody>() {
             @Override

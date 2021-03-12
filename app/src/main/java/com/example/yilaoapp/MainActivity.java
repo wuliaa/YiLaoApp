@@ -125,7 +125,7 @@ public class  MainActivity extends AppCompatActivity {
     }
 
     public void getNickAddPortrait(ImageView portrait,TextView nick){
-        UserService service = new RetrofitUser().get().create(UserService.class);
+        UserService service = new RetrofitUser().get(getContext()).create(UserService.class);
         SharedPreferences pre = this.getSharedPreferences("login", Context.MODE_PRIVATE);
         String mobile = pre.getString("mobile", "");
         String token = pre.getString("token", "");

@@ -24,9 +24,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.yilaoapp.MyApplication.getContext;
+
 public class ServiceHelp {
     public static void UserUpdate(Context context, String key, String value, boolean flag, View v) {
-        UserService service = new RetrofitUser().get().create(UserService.class);
+        UserService service = new RetrofitUser().get(getContext()).create(UserService.class);
         SharedPreferences pre = context.getSharedPreferences("login", Context.MODE_PRIVATE);
         String mobile = pre.getString("mobile", "");
         String token = pre.getString("token", "");
@@ -56,7 +58,7 @@ public class ServiceHelp {
     }
 
     public static void GetToken(Context context,String mobile,String password){
-        UserService loginservice = new RetrofitUser().get().create(UserService.class);
+        UserService loginservice = new RetrofitUser().get(getContext()).create(UserService.class);
         Call<ResponseBody> loginback = loginservice.login_password(mobile, "df3b72a07a0a4fa1854a48b543690eab", password);
         loginback.enqueue(new Callback<ResponseBody>() {
             @Override

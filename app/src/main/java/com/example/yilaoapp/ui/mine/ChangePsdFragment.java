@@ -75,7 +75,7 @@ public class ChangePsdFragment extends Fragment {
                 }
                 else{
                     String password=binding.editText9.getText().toString();
-                    UserService service = new RetrofitUser().get().create(UserService.class);
+                    UserService service = new RetrofitUser().get(getContext()).create(UserService.class);
                     Call<ResponseBody> back = service.login_password(mobile, "df3b72a07a0a4fa1854a48b543690eab", password);
                     back.enqueue(new Callback<ResponseBody>() {
                         @Override
