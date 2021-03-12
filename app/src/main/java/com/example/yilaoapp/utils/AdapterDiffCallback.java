@@ -1,4 +1,4 @@
-package com.example.yilaoapp.ui.errands;
+package com.example.yilaoapp.utils;
 
 import androidx.recyclerview.widget.DiffUtil;
 
@@ -6,11 +6,11 @@ import com.example.yilaoapp.bean.All_orders;
 
 import java.util.List;
 
-public class AdapterDiffCallback extends DiffUtil.Callback {
-    List<All_orders> news;
-    List<All_orders> olds;
+public class AdapterDiffCallback<T> extends DiffUtil.Callback {
+    List<T> news;
+    List<T> olds;
 
-    public AdapterDiffCallback(List<All_orders> news, List<All_orders> olds) {
+    public AdapterDiffCallback(List<T> news, List<T> olds) {
         this.news = news;
         this.olds = olds;
     }
@@ -32,8 +32,8 @@ public class AdapterDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        All_orders old = olds.get(oldItemPosition);
-        All_orders New = news.get(newItemPosition);
+        T old = olds.get(oldItemPosition);
+        T New = news.get(newItemPosition);
         return old.equals(New);
     }
 }

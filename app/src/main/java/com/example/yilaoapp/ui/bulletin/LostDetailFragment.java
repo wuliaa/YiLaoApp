@@ -18,16 +18,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.databinding.FragmentLostDetailBinding;
+import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.UserService;
+import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
+import okhttp3.ResponseBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,12 +49,17 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class LostDetailFragment extends Fragment implements EasyPermissions.PermissionCallbacks, BGANinePhotoLayout.Delegate{
 
     private static final int PRC_PHOTO_PREVIEW = 1;
-
+    String uuid ;
+    ArrayList<String> photosUrl;
+    String nickName ;
     public LostDetailFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        uuid="";
+        nickName="";
+        photosUrl =new ArrayList<String>();
     }
     FragmentLostDetailBinding binding;
     @Override
@@ -60,11 +79,52 @@ public class LostDetailFragment extends Fragment implements EasyPermissions.Perm
             }
         });
         viewModel.getLost().observe(getViewLifecycleOwner(), item -> {
-            binding.lostdcontent.setText(item.getContent());
-            binding.lostdtime.setText(item.getTime());
-            binding.lostdchip.setText(item.getAddress());
+            String headurl = "http://api.yilao.tk:15000/v1.0/users/" + item.getPhone() +
+                    "/resources/" + item.getId_photo();
+            Glide.with(MyApplication.getContext())
+                    .load(headurl)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.head1)
+                    .error(R.drawable.head2)
+                    .into(binding.lostdHead);
+            //获得昵称
+            UserService userService=new RetrofitUser().get(getContext()).create(UserService.class);
+            Call<ResponseBody> user=userService.get_user(String.valueOf(item.getPhone()));
+            user.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() / 100 == 4) {
+                        Toast.makeText(getContext(),"用户不存在",Toast.LENGTH_SHORT).show();
+                    }else{
+                        String info = "";
+                        try {
+                            info = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Gson gson = new Gson();
+                        User user = gson.fromJson(info, User.class);
+                        nickName=user.getId_name();
+                        binding.lostdname.setText(nickName);
+                    }
+                }
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                }
+            });
+            binding.lostdcontent.setText(item.getDetail());
+            binding.lostdtime.setText(item.getCreate_at());
+            binding.lostdchip.setText(item.getDestination().getName());
             binding.LostninePhoto.setDelegate(this);
-            binding.LostninePhoto.setData(item.getPhotos());
+            StringTokenizer st = new StringTokenizer(item.getPhotos(), ",");
+            while (st.hasMoreTokens()) {
+                uuid = st.nextToken();
+                String url = "http://api.yilao.tk:15000/v1.0/users/" + item.getPhone() +
+                        "/resources/" + uuid;
+                photosUrl.add(url);
+            }
+            binding.LostninePhoto.setData(photosUrl);
         });
         return binding.getRoot();
         //return inflater.inflate(R.layout.fragment_lost_detail, container, false);

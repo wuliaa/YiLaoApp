@@ -84,7 +84,6 @@ public class BullentinMessageFragment extends Fragment implements EasyPermission
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_bullentin_message, container, false);
         //binding.setData(BullentinViewModel);
         binding.setLifecycleOwner(requireActivity());

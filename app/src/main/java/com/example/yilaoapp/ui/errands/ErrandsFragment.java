@@ -3,32 +3,44 @@ package com.example.yilaoapp.ui.errands;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yilaoapp.R;
@@ -40,17 +52,28 @@ import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.accept_service;
 import com.example.yilaoapp.service.chat_service;
 import com.example.yilaoapp.service.errand_service;
+import com.example.yilaoapp.service.image_service;
+import com.example.yilaoapp.ui.bulletin.BullentinViewModel;
+import com.example.yilaoapp.ui.bulletin.Share;
+import com.example.yilaoapp.ui.bulletin.ShareAdapter;
+import com.example.yilaoapp.ui.bulletin.Team;
 //import com.example.yilaoapp.utils.LruCacheImageLoader;
+import com.example.yilaoapp.utils.AdapterDiffCallback;
+import com.example.yilaoapp.utils.PhotoOperation;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -157,7 +180,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                             errandList.remove(position);
                             adapter.notifyItemRemoved(position);
                             if (position != errandList.size()) { // 如果移除的是最后一个，忽略
-                                DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new AdapterDiffCallback(oldDatas, errandList), true);
+                                DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new AdapterDiffCallback<>(oldDatas, errandList), true);
                                 diffResult.dispatchUpdatesTo(adapter);
                             }
                         }

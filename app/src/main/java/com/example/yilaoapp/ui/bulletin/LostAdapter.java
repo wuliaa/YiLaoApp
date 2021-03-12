@@ -9,16 +9,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.All_orders;
 import com.lcodecore.extextview.ExpandTextView;
 import com.robertlevonyan.views.chip.Chip;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class LostAdapter extends RecyclerView.Adapter<LostAdapter.LostViewHolder> {
-    private List<Lost> mLostList = new ArrayList<>();
-    public LostAdapter(List<Lost> LostList) {
+    private List<All_orders> mLostList = new ArrayList<>();
+    public LostAdapter(List<All_orders> LostList) {
         mLostList = LostList;
     }
     @NonNull
@@ -31,12 +36,21 @@ public class LostAdapter extends RecyclerView.Adapter<LostAdapter.LostViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull LostViewHolder holder, int position) {
-        Lost lost = mLostList.get(position);
-        holder.photo.setImageResource(lost.getImageId());
-        holder.objectName.setText(lost.getObjectName());
-        holder.content.setText(lost.getContent());
-        holder.time.setText(lost.getTime());
-        holder.address.setText(lost.getAddress());
+        All_orders lost = mLostList.get(position);
+        StringTokenizer st = new StringTokenizer(lost.getPhotos(), ",");
+        String photourl=st.nextToken();
+        String url="http://api.yilao.tk:15000/v1.0/users/"+lost.getPhone()+
+                "/resources/"+photourl;
+        Glide.with(MyApplication.getContext())
+                .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.head1)
+                .error(R.drawable.head2)
+                .into(holder.photo);
+        holder.objectName.setText(lost.getName());
+        holder.content.setText(lost.getDetail());
+        holder.time.setText(lost.getCreate_at());
+        holder.address.setText(lost.getDestination().getName());
     }
 
     @Override
@@ -74,7 +88,7 @@ public class LostAdapter extends RecyclerView.Adapter<LostAdapter.LostViewHolder
         /**
          * 接口中的点击每一项的实现方法，参数自己定义
          */
-        public void OnItemClick(View view, Lost data);
+        public void OnItemClick(View view, All_orders data);
     }
     //需要外部访问，所以需要设置set方法，方便调用
     private LostAdapter.OnItemClickListener onItemClickListener;

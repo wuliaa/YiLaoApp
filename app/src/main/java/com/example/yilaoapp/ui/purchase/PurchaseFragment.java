@@ -47,7 +47,7 @@ import com.example.yilaoapp.service.accept_service;
 import com.example.yilaoapp.service.chat_service;
 import com.example.yilaoapp.service.image_service;
 import com.example.yilaoapp.service.pur_service;
-import com.example.yilaoapp.ui.errands.AdapterDiffCallback;
+import com.example.yilaoapp.utils.AdapterDiffCallback;
 import com.example.yilaoapp.ui.errands.ErrandAdapter;
 import com.example.yilaoapp.ui.errands.ErrandsViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

@@ -24,7 +24,7 @@ public class All_orders {
     String out_at;
     int count;
     String id_photo;
-    String name;
+    String name;//物品名称
 
 
 
