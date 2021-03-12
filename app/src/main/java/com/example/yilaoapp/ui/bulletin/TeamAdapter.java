@@ -9,15 +9,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.All_orders;
 import com.lcodecore.extextview.ExpandTextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder> {
-    private List<Team> mTeamList = new ArrayList<>();
-    public TeamAdapter(List<Team> TeamList) {
+    private List<All_orders> mTeamList = new ArrayList<All_orders>();
+    public TeamAdapter(List<All_orders> TeamList) {
         mTeamList = TeamList;
     }
 
@@ -31,11 +35,18 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull TeamViewHolder holder, int position) {
-        Team team = mTeamList.get(position);
-        holder.photo.setImageResource(team.getImageId());
-        holder.activityName.setText(team.getActivityName());
-        holder.content.setText(team.getContent());
-        holder.time.setText(team.getTime());
+        All_orders team = mTeamList.get(position);
+        String url="http://api.yilao.tk:15000/v1.0/users/"+team.getPhone()+
+                "/resources/"+team.getId_photo();
+        Glide.with(MyApplication.getContext())
+                .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.head1)
+                .error(R.drawable.head2)
+                .into(holder.photo);
+        holder.activityName.setText(team.getName());
+        holder.content.setText(team.getDetail());
+        holder.time.setText(team.getCreate_at());
     }
 
     @Override
@@ -71,7 +82,7 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
         /**
          * 接口中的点击每一项的实现方法，参数自己定义
          */
-        public void OnItemClick(View view, Team data);
+        public void OnItemClick(View view, All_orders data);
     }
     //需要外部访问，所以需要设置set方法，方便调用
     private TeamAdapter.OnItemClickListener onItemClickListener;

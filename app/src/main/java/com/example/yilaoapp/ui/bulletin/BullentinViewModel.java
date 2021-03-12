@@ -7,17 +7,17 @@ import androidx.lifecycle.ViewModel;
 import com.example.yilaoapp.bean.All_orders;
 
 public class BullentinViewModel extends ViewModel {
-    private final MutableLiveData<Share> selected = new MutableLiveData<Share>();
-    private final MutableLiveData<Lost> lost=new MutableLiveData<Lost>();
-    private final MutableLiveData<Team> team=new MutableLiveData<Team>();
-    public void select(Share item) {
+    private final MutableLiveData<All_orders> selected = new MutableLiveData<All_orders>();
+    private final MutableLiveData<All_orders> lost=new MutableLiveData<All_orders>();
+    private final MutableLiveData<All_orders> team=new MutableLiveData<All_orders>();
+    public void select(All_orders item) {
         selected.setValue(item);
     }
-    public LiveData<Share> getSelected() {
+    public LiveData<All_orders> getSelected() {
         return selected;
     }
-    public void setLost(Lost item){lost.setValue(item);}
-    public LiveData<Lost> getLost(){return lost;}
-    public void setTeam(Team item){team.setValue(item);}
-    public LiveData<Team> getTeam(){return team;}
+    public void setLost(All_orders item){lost.setValue(item);}
+    public LiveData<All_orders> getLost(){return lost;}
+    public void setTeam(All_orders item){team.setValue(item);}
+    public LiveData<All_orders> getTeam(){return team;}
 }
