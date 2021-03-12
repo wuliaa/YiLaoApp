@@ -21,18 +21,25 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.All_orders;
 import com.example.yilaoapp.bean.Message;
 import com.example.yilaoapp.bean.chat_task;
+import com.example.yilaoapp.bean.chat_user;
 import com.example.yilaoapp.chat.activity.ChatActivity;
 import com.example.yilaoapp.chat.util.LogUtil;
 import com.example.yilaoapp.chat.widget.SetPermissionDialog;
 import com.example.yilaoapp.databinding.FragmentMyMessageBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.chat_service;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import io.reactivex.functions.Consumer;
@@ -46,6 +53,8 @@ import retrofit2.Response;
  */
 public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
+    static boolean chat_flag=true;
+    List<chat_user> all_chat=new LinkedList<>();
     public MyMessageFragment() {
         // Required empty public constructor
     }
@@ -72,7 +81,8 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
             }
         });
         binding.swipeMymessage.setOnRefreshListener(this);
-        initMessages();
+        //initMessages();
+            init();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.messageRecyclerview.setLayoutManager(layoutManager);
@@ -106,11 +116,11 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                requestPermisson(view);
+                                requestPermisson(view,data);
                             }
                         }, 100);
                         LogUtil.d(new String(Character.toChars(0x1F60E)));
-                        //viewModel.select(data);
+                        //viewModel.select(d1ata);
                         return false;
                     }
                 }).sendEmptyMessageDelayed(0, 500);
@@ -130,11 +140,57 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                     "下午14:00", R.drawable.head3);
             messageList.add(m3);
         }*/
+        BigInteger m1=new BigInteger("13412101248");
         BigInteger m2=new BigInteger("13060887368");
         Message m=new Message("jgq","hello","16:30","b8caed0f-48ce-4aa2-b98d-1500c6e42998",m2);
+        Message m3=new Message("jgq1","hello","16:30","b8caed0f-48ce-4aa2-b98d-1500c6e42998",m1);
         messageList.add(m);
+        messageList.add(m3);
     }
-    private void requestPermisson(View view){
+    //获取所有聊天用户
+    public void init(){
+        SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+        String mobile=pre.getString("mobile","");
+        String token=pre.getString("token","");
+        chat_service chat_us=new RetrofitUser().get(getContext()).create(chat_service.class);
+        Call<ResponseBody> ch_back=chat_us.get_chatuser(mobile,token,"df3b72a07a0a4fa1854a48b543690eab");
+        ch_back.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String str="";
+                try {
+                    str=response.body().string();
+                    Gson gson = new Gson();
+                    Type type = new TypeToken<List<chat_user>>() {
+                    }.getType();
+                    all_chat=gson.fromJson(str,type);
+                    for(int i=0;i<all_chat.size();i++){
+                        Message mm=new Message(all_chat.get(i).getId_name(),all_chat.get(i).getLast_content(),all_chat.get(i).getLast_send_at(),
+                                all_chat.get(i).getId_photo(),new BigInteger(all_chat.get(i).getMobile()));
+                        messageList.add(mm);
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+
+
+     /*
+                         Gson gson = new Gson();
+                    Type type = new TypeToken<List<All_orders>>() {
+                  }.getType();
+
+     */
+    }
+    private void requestPermisson(View view,Message message){
         RxPermissions rxPermission = new RxPermissions(this);
         rxPermission
                 .request(
@@ -147,7 +203,10 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {
                         if (aBoolean) {
+
                             Intent intent = new Intent(requireActivity(), ChatActivity.class);
+                            intent.putExtra("mobile",message.getMobile().toString());
+                            intent.putExtra("uuid",message.getUuid());
                             startActivity(intent);
                         } else {
                             SetPermissionDialog mSetPermissionDialog = new SetPermissionDialog(getContext());

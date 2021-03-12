@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaMetadataRetriever;
@@ -23,6 +25,7 @@ import android.widget.RelativeLayout;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.chat_task;
 import com.example.yilaoapp.chat.adapter.ChatAdapter;
 import com.example.yilaoapp.chat.bean.AudioMsgBody;
 import com.example.yilaoapp.chat.bean.FileMsgBody;
@@ -39,12 +42,15 @@ import com.example.yilaoapp.chat.util.PictureFileUtil;
 import com.example.yilaoapp.chat.widget.MediaManager;
 import com.example.yilaoapp.chat.widget.RecordButton;
 import com.example.yilaoapp.chat.widget.StateButton;
+import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.chat_service;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -53,6 +59,10 @@ import java.util.UUID;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     @BindView(R.id.llContent)
@@ -280,9 +290,29 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         mTextMsgBody.setMessage(hello);
         mMessgae.setBody(mTextMsgBody);
         //开始发送
-        mAdapter.addData( mMessgae);
+
+        Bundle bundle=this.getIntent().getExtras();
+        String mob=bundle.getString("mobile");
+        BigInteger phone=new BigInteger(mob);
+        SharedPreferences pre=getApplicationContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+        String mobile=pre.getString("mobile","");
+        String token=pre.getString("token","");
+        chat_service chat=new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
+        Call<ResponseBody> chat_back=chat.send_message(mobile,token,"df3b72a07a0a4fa1854a48b543690eab",new chat_task(hello,phone));
+        chat_back.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                //success
+                mAdapter.addData( mMessgae);
+                updateMsg(mMessgae);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
         //模拟两秒后发送成功
-        updateMsg(mMessgae);
     }
 
 

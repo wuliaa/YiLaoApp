@@ -15,4 +15,6 @@ public interface chat_service {
     Call<ResponseBody> send_message(@Path("mobile")String mobile, @Query("token")String token, @Query("appid")String app, @Body chat_task chat);
    @GET("users/{mobile}/dialogs_with/{another_user}")
     Call<ResponseBody> get_message(@Path("mobile")String mobile,@Path("another_user")String user, @Query("token")String token,@Query("appid")String app);
+   @GET("users/{mobile}/dialogs_users")
+    Call<ResponseBody> get_chatuser(@Path("mobile")String mobile,@Query("token")String token,@Query("appid")String app);
 }
