@@ -103,7 +103,7 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
     @SuppressLint("HandlerLeak")
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for t his fragment
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_purchase,container,false);
@@ -162,12 +162,12 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
         return binding.getRoot();
     }
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main,menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         NavigationUI.onNavDestinationSelected(item,
                 Navigation.findNavController(requireActivity(), R.id.nav_host_fragment));
         return true;
@@ -184,9 +184,10 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                Call<ResponseBody> get_purchase=pur.get_orders("代购");
                get_purchase.enqueue(new Callback<ResponseBody>() {
                    @Override
-                   public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                   public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                        String str="";
                        try {
+                           assert response.body() != null;
                            str=response.body().string();
                            Gson gson=new Gson();
                            Type type=new TypeToken<List<All_orders>>(){}.getType();
@@ -223,7 +224,7 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                        }
                    }
                    @Override
-                   public void onFailure(Call<ResponseBody> call, Throwable t) {
+                   public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
 
                    }
                });

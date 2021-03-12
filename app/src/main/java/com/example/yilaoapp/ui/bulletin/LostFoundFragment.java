@@ -71,7 +71,7 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
     @SuppressLint("HandlerLeak")
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_lost_found,container,false);
@@ -92,6 +92,8 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
                     adapter = new LostAdapter(LostList);
                     binding.lostrecyclerview.setHasFixedSize(true);
                     binding.lostrecyclerview.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+
                     //RecyclerView中没有item的监听事件，需要自己在适配器中写一个监听事件的接口。参数根据自定义
                     adapter.setOnItemClickListener(new LostAdapter.OnItemClickListener() {
                         @Override
@@ -124,9 +126,10 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
                 Call<ResponseBody> get_lost=bur.get_orders("公告");
                 get_lost.enqueue(new Callback<ResponseBody>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                         String str="";
                         try {
+                            assert response.body() != null;
                             str=response.body().string();
                             Gson gson=new Gson();
                             Type type=new TypeToken<List<All_orders>>(){}.getType();
@@ -162,7 +165,7 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
                         }
                     }
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
 
                     }
                 });
