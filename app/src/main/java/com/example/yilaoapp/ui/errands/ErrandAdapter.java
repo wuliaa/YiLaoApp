@@ -1,6 +1,9 @@
 package com.example.yilaoapp.ui.errands;
 
 import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +65,10 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
         return mErrandList.size();
     }
 
+    public List<All_orders> getItems() {
+        return mErrandList;
+    }
+
     class ErrandViewHolder extends RecyclerView.ViewHolder{
         ImageView head;
         TextView address,time;
@@ -88,6 +95,7 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
 
         }
     }
+
     /**
      * 设置item的监听事件的接口
      */

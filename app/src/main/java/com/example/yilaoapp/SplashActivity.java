@@ -61,18 +61,16 @@ public class SplashActivity extends AppCompatActivity {
                                 SharedPreferences.Editor e = pre.edit();
                                 e.putString("token", token.getToken());
                                 e.apply(); //apply()比commit()更快
-                                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
                             }
                         }
-
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
                             Toast.makeText(getApplicationContext(), "网络连接失败", Toast.LENGTH_SHORT).show();
-
                         }
                     });
+                    Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
                 } else {
                     Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                     startActivity(intent);
