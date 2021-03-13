@@ -2,6 +2,7 @@ package com.example.yilaoapp.ui.mine;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,19 +27,37 @@ import androidx.navigation.Navigation;
 
 import com.baoyachi.stepview.HorizontalStepView;
 import com.baoyachi.stepview.bean.StepBean;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.databinding.FragmentMyErrandsDetailBinding;
+import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.UserService;
 import com.github.siyamed.shapeimageview.RoundedImageView;
+import com.google.gson.Gson;
 import com.kongzue.dialog.v3.TipDialog;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MyErrandsDetailFragment extends Fragment {
+
+    FragmentMyErrandsDetailBinding binding;
+    String status;
+    String label;
+    String NickName;
 
     public MyErrandsDetailFragment() {
         // Required empty public constructor
@@ -47,14 +66,14 @@ public class MyErrandsDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        status="";
+        label="";
+        NickName="";
     }
-
-    FragmentMyErrandsDetailBinding binding;
-    String status="";
 
     @SuppressLint({"SetTextI18n", "ShowToast"})
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_errands_detail, container, false);
@@ -76,24 +95,40 @@ public class MyErrandsDetailFragment extends Fragment {
         wm.getDefaultDisplay().getSize(p);
         int screenWidth = p.x; // 屏幕宽度
         binding.toolbar.setTitleMarginStart(screenWidth / 3);
-        AtomicReference<String> label = new AtomicReference<>("");
 
         viewModel.getErrands().observe(getViewLifecycleOwner(), item -> {
-            binding.MyErrandscontent.setText("详情："+item.getContent());
-            binding.MyErrandsphoneNumber.setText("联系电话："+item.getPhoneNumber());
-            binding.MyErrandsAddress.setText("地址："+item.getAddress());
-            binding.MyErrandsmoney.setText("金额："+item.getMoney());
-            binding.chip1.setText(item.getIsPublish());
+            StringBuilder stringBuilder=new StringBuilder();
+            stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
+                    .append(item.getPhone())
+                    .append("/resources/")
+                    .append(item.getId_photo());
+            String headurl = stringBuilder.toString();
+            Glide.with(MyApplication.getContext())
+                    .load(headurl)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.head1)
+                    .error(R.drawable.head2)
+                    .into(binding.myErrandsHead);
+            //获得昵称
+            binding.MyErrandsname.setText(item.getId_name());
+            binding.MyErrandscontent.setText("详情："+item.getDetail());
+            binding.MyErrandsphoneNumber.setText("联系电话："+item.getPhone());
+            binding.MyErrandsAddress.setText("联系地址："+item.getDestination().getName());
+            binding.MyErrandsmoney.setText("金额："+item.getReward()+"元");
             //设置完成按钮
-            label.set(item.getIsPublish());
-            status=item.getIsPublish();
-            Log.d("MyErrandDetail", "labelMessage1: " + label.toString());
-            if (label.toString().equals("发布的任务")) {
-                //Toast.makeText(getContext(),label.toString(),Toast.LENGTH_SHORT).show();
+            SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+            String mobile2 = pre2.getString("mobile", "");
+            if(mobile2.equals(String.valueOf(item.getPhone())))
+                 label="发布的任务";
+            else
+               label="领取的任务";
+            status=label;
+            binding.chip1.setText(label);
+            Log.d("MyErrandDetail", "labelMessage1: " + label);
+            if (label.equals("发布的任务")) {
                 binding.compeleteButtonErrands.setVisibility(View.VISIBLE);
                 binding.cancelButtonErrands.setVisibility(View.VISIBLE);
             } else {
-                //Toast.makeText(getContext(),label.toString(),Toast.LENGTH_SHORT).show();
                 binding.compeleteButtonErrands.setVisibility(View.GONE);
                 binding.cancelButtonErrands.setVisibility(View.GONE);
             }
@@ -128,8 +163,6 @@ public class MyErrandsDetailFragment extends Fragment {
                     stepsBeanList.get(0).setState(-1);
                     TipDialog.show((AppCompatActivity) getActivity(), "取消成功", TipDialog.TYPE.SUCCESS);
                     setStepStytle(setpview5,stepsBeanList);
-//                    NavController controller = Navigation.findNavController(v);
-//                    controller.navigate(R.id.action_myErrandsDetailFragment_to_myTaskFragment);
                 }
             }
         });

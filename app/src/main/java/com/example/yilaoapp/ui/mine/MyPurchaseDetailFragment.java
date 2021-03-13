@@ -3,6 +3,7 @@ package com.example.yilaoapp.ui.mine;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
@@ -26,22 +27,35 @@ import androidx.navigation.Navigation;
 
 import com.baoyachi.stepview.HorizontalStepView;
 import com.baoyachi.stepview.bean.StepBean;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.databinding.FragmentMyPurchaseDetailBinding;
+import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.UserService;
 import com.github.siyamed.shapeimageview.RoundedImageView;
+import com.google.gson.Gson;
 import com.kongzue.dialog.v3.TipDialog;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicReference;
 
 import cn.bingoogolapple.baseadapter.BGAOnRVItemClickListener;
 import cn.bingoogolapple.baseadapter.BGAOnRVItemLongClickListener;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
+import okhttp3.ResponseBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -50,7 +64,11 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MyPurchaseDetailFragment extends Fragment implements EasyPermissions.PermissionCallbacks, BGANinePhotoLayout.Delegate {
 
     private static final int PRC_PHOTO_PREVIEW = 1;
-    String status="";
+    String status ;
+    String uuid ;
+    ArrayList<String> photosUrl;
+    String nickName ;
+    String label;
 
     FragmentMyPurchaseDetailBinding binding;
 
@@ -61,6 +79,11 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        status="";
+        uuid="";
+        photosUrl=new ArrayList<>();
+        nickName="";
+        label="";
     }
 
     @SuppressLint("SetTextI18n")
@@ -86,18 +109,36 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
         wm.getDefaultDisplay().getSize(p);
         int screenWidth = p.x; // 屏幕宽度
         binding.toolbar.setTitleMarginStart(screenWidth/3);
-        AtomicReference<String> label= new AtomicReference<>("");
 
         viewModel.getPurchase().observe(getViewLifecycleOwner(), item -> {
-            binding.MyPurchasescontent.setText("详情："+item.getContent());
-            binding.MyPurchasesphoneNumber.setText("联系电话："+item.getPhoneNumber());
-            binding.MyPurchasesAddress.setText("地址："+item.getAddress());
-            binding.MyPurchasesmoney.setText("金额："+item.getMoney());
-            binding.chip1.setText(item.getIsPublish());
+            StringBuilder stringBuilder=new StringBuilder();
+            stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
+                    .append(item.getPhone())
+                    .append("/resources/")
+                    .append(item.getId_photo());
+            String headurl = stringBuilder.toString();
+            Glide.with(MyApplication.getContext())
+                    .load(headurl)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.head1)
+                    .error(R.drawable.head2)
+                    .into(binding.myPurchaseHead);
+            //获得昵称
+            binding.Mypurchasedname.setText(item.getId_name());
+            binding.MyPurchasescontent.setText("详情："+item.getDetail());
+            binding.MyPurchasesphoneNumber.setText("联系电话："+item.getPhone());
+            binding.MyPurchasesAddress.setText("联系地址："+item.getDestination().getName());
+            binding.MyPurchasesmoney.setText("金额："+item.getReward()+"元");
+            binding.chip1.setText(item.getCategory());
             //设置完成按钮
-            label.set(item.getIsPublish());
-            status=item.getIsPublish();
-            if(label.toString().equals("发布的任务"))
+            SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+            String mobile2 = pre2.getString("mobile", "");
+            if(mobile2.equals(String.valueOf(item.getPhone())))
+                label="发布的任务";
+            else
+                label="领取的任务";
+            status=label;
+            if(label.equals("发布的任务"))
             {
                 //Toast.makeText(getContext(),label.toString(),Toast.LENGTH_SHORT).show();
                 binding.cancelButtonPurchases.setVisibility(View.VISIBLE);
@@ -110,7 +151,18 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
             }
             //添加对图片的代码
             binding.ninePhotoLayout.setDelegate(this);
-            binding.ninePhotoLayout.setData(item.getPhotos());
+            StringTokenizer st = new StringTokenizer(item.getPhotos(), ",");
+            while (st.hasMoreTokens()) {
+                uuid = st.nextToken();
+                StringBuilder stringBuilder1=new StringBuilder();
+                stringBuilder1.append("http://api.yilao.tk:15000/v1.0/users/")
+                        .append(item.getPhone())
+                        .append("/resources/")
+                        .append(uuid);
+                String url = stringBuilder1.toString();
+                photosUrl.add(url);
+            }
+            binding.ninePhotoLayout.setData(photosUrl);
         });
 
         HorizontalStepView setpview5 =(HorizontalStepView) binding.stepView;

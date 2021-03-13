@@ -26,6 +26,9 @@ public class All_orders {
     String id_photo;
     String name;//物品名称
     String id_name;
+    String id_photo2;
+    String id_name2;
+
 
 
 
