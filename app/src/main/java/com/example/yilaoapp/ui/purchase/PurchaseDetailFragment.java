@@ -145,10 +145,10 @@ public class PurchaseDetailFragment extends Fragment
         binding.button6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (phone != null && uuid != null) {
+                if (String.valueOf(phone) != null && id_photo!= null) {
                     Intent intent = new Intent(requireActivity(), ChatActivity.class);
-                    intent.putExtra("mobile", phone);
-                    intent.putExtra("uuid", uuid);
+                    intent.putExtra("mobile", String.valueOf(phone));
+                    intent.putExtra("uuid", id_photo);
                     startActivity(intent);
                 }
             }
