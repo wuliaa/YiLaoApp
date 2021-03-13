@@ -1,5 +1,6 @@
 package com.example.yilaoapp.ui.bulletin;
 
+import android.Manifest;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,7 +10,9 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +28,17 @@ import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
 import com.google.gson.Gson;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
+import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
+import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
 import okhttp3.ResponseBody;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,11 +46,13 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TeamDetailFragment extends Fragment {
+public class TeamDetailFragment extends Fragment implements EasyPermissions.PermissionCallbacks,BGANinePhotoLayout.Delegate{
 
+    private static final int PRC_PHOTO_PREVIEW = 1;
     FragmentTeamDetailBinding binding;
     String uuid ;
     String nickName ;
+    ArrayList<String> photosUrl;
 
     public TeamDetailFragment() {}
 
@@ -48,6 +61,7 @@ public class TeamDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         uuid="";
         nickName="";
+        photosUrl =new ArrayList<String>();
     }
 
     @Override
@@ -105,7 +119,80 @@ public class TeamDetailFragment extends Fragment {
             binding.teamdcontent.setText(item.getDetail());
             binding.teamdtime.setText(item.getCreate_at());
             binding.teamdactivityname.setText(item.getName());
+            binding.TeamStudyPhoto.setDelegate(this);
+            StringTokenizer st = new StringTokenizer(item.getPhotos(), ",");
+            while (st.hasMoreTokens()) {
+                uuid = st.nextToken();
+                StringBuilder stringBuilder1=new StringBuilder();
+                stringBuilder1.append("http://api.yilao.tk:15000/v1.0/users/")
+                        .append(item.getPhone())
+                        .append("/resources/")
+                        .append(uuid);
+                String url = stringBuilder1.toString();
+                photosUrl.add(url);
+            }
+            binding.TeamStudyPhoto.setData(photosUrl);
         });
         return binding.getRoot();
+    }
+
+    /**
+     * 图片预览，兼容6.0动态权限
+     */
+    @AfterPermissionGranted(PRC_PHOTO_PREVIEW)
+    private void photoPreviewWrapper() {
+        if (binding.TeamStudyPhoto == null) {
+            Log.d("ninePhotoLayout", "ninePhotoLayout: IsNull");
+            return;
+        }
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(requireContext(), perms)) {
+            File downloadDir = new File(Environment.getExternalStorageDirectory(), "BGAPhotoPickerDownload");
+            BGAPhotoPreviewActivity.IntentBuilder photoPreviewIntentBuilder = new BGAPhotoPreviewActivity.IntentBuilder(requireContext());
+
+            // 保存图片的目录，如果传 null，则没有保存图片功能
+            photoPreviewIntentBuilder.saveImgDir(downloadDir);
+
+            if (binding.TeamStudyPhoto.getItemCount() == 1) {
+                // 预览单张图片
+                photoPreviewIntentBuilder.previewPhoto(binding.TeamStudyPhoto.getCurrentClickItem());
+            } else if (binding.TeamStudyPhoto.getItemCount() > 1) {
+                // 预览多张图片
+                photoPreviewIntentBuilder.previewPhotos(binding.TeamStudyPhoto.getData())
+                        .currentPosition(binding.TeamStudyPhoto.getCurrentClickItemPosition()); // 当前预览图片的索引
+
+            }
+            startActivity(photoPreviewIntentBuilder.build());
+        } else {
+            EasyPermissions.requestPermissions(this, "图片预览需要以下权限:\n\n1.访问设备上的照片", PRC_PHOTO_PREVIEW, perms);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        if (requestCode == PRC_PHOTO_PREVIEW) {
+            Toast.makeText(requireContext(), "您拒绝了「图片预览」所需要的相关权限!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onClickNinePhotoItem(BGANinePhotoLayout ninePhotoLayout, View view, int position, String model, List<String> models) {
+        photoPreviewWrapper();
+    }
+
+    @Override
+    public void onClickExpand(BGANinePhotoLayout ninePhotoLayout, View view, int position, String model, List<String> models) {
+        ninePhotoLayout.setIsExpand(true);
+        ninePhotoLayout.flushItems();
     }
 }
