@@ -86,8 +86,8 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
             }
         });
         binding.swipeMymessage.setOnRefreshListener(this);
-        //initMessages();
-        init();
+        initMessages();
+        //init();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.messageRecyclerview.setLayoutManager(layoutManager);
@@ -154,7 +154,7 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     //获取所有聊天用户
-    public void init() {
+   /* public void init() {
         SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
         String mobile = pre.getString("mobile", "");
         String token = pre.getString("token", "");
@@ -202,8 +202,8 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                     Type type = new TypeToken<List<All_orders>>() {
                   }.getType();
 
-     */
-    }
+
+    }*/
 
     private void requestPermisson(View view, Message message) {
         RxPermissions rxPermission = new RxPermissions(this);
@@ -220,8 +220,8 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                         if (aBoolean) {
 
                             Intent intent = new Intent(requireActivity(), ChatActivity.class);
-                            intent.putExtra("mobile", message.getMobile().toString());
-                            intent.putExtra("uuid", message.getUuid());
+                            //intent.putExtra("mobile", message.getMobile().toString());
+                            //intent.putExtra("uuid", message.getUuid());
                             startActivity(intent);
                         } else {
                             SetPermissionDialog mSetPermissionDialog = new SetPermissionDialog(getContext());

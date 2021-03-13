@@ -295,7 +295,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         mMessgae.setBody(mTextMsgBody);
         //开始发送
 
-        Bundle bundle=this.getIntent().getExtras();
+       /* Bundle bundle=this.getIntent().getExtras();
         String mob=bundle.getString("mobile");
         BigInteger phone=new BigInteger(mob);
         SharedPreferences pre=getApplicationContext().getSharedPreferences("login", Context.MODE_PRIVATE);
@@ -315,7 +315,9 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void onFailure(Call<ResponseBody> call, Throwable t) {
 
             }
-        });
+        });*/
+        mAdapter.addData( mMessgae);
+        updateMsg(mMessgae);
         //模拟两秒后发送成功
     }
 
