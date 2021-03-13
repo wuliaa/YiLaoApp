@@ -1,6 +1,8 @@
 package com.example.yilaoapp.ui.bulletin;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -127,7 +129,9 @@ public class TeamStudyFragment extends Fragment implements SwipeRefreshLayout.On
                 task_id.clear();
                 number = 0;
                 bur_service bur = new RetrofitUser().get(getContext()).create(bur_service.class);
-                Call<ResponseBody> get_team = bur.get_orders("公告");
+                SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                String mobile = pre.getString("mobile", "");
+                Call<ResponseBody> get_team = bur.get_orders(mobile,"公告","组队学习");
                 get_team.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {

@@ -184,7 +184,9 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                 purchaseList.clear();
                 task_id.clear();
                 pur_service pur = new RetrofitUser().get(getContext()).create(pur_service.class);
-                Call<ResponseBody> get_purchase = pur.get_orders("代购");
+                SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                String mobile = pre.getString("mobile", "");
+                Call<ResponseBody> get_purchase = pur.get_orders(mobile,"代购");
                 get_purchase.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
@@ -222,6 +224,7 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                                         String name = all.get(i).getName();                       //订单名字
                                         All_orders purchase1 = new All_orders(phone, address, time, task_id.get(i), content
                                                 , Float.parseFloat(money), protected_info, category, photos, uuid, name);
+
                                         purchaseList.add(purchase1);
                                         Log.d(" PurchaseList", "message: " + content + "1" +
                                                 address + "2" + money + "3" + time);
@@ -235,11 +238,14 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        System.out.println(response.code());
+                        System.out.println(str);
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
 
+                        System.out.println("pur_error:" + t.getMessage() + " "+t.getClass().getName());
                     }
                 });
             }

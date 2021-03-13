@@ -210,7 +210,9 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 errandList.clear();
                 task_id.clear();
                 errand_service errand = new RetrofitUser().get(getContext()).create(errand_service.class);
-                Call<ResponseBody> get_errand = errand.get_orders("跑腿");
+                SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                String mobile = pre.getString("mobile", "");
+                Call<ResponseBody> get_errand = errand.get_orders(mobile,"跑腿");
                 get_errand.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {

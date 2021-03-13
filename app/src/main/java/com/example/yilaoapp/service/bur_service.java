@@ -14,5 +14,5 @@ public interface bur_service {
     @POST("users/{mobile}/orders")
     Call<ResponseBody> new_order(@Path("mobile")String mobile, @Query("token")String token, @Query("appid")String app, @Body bul_order order);
     @GET("public_orders")
-    Call<ResponseBody> get_orders(@Query("type")String type);
+    Call<ResponseBody> get_orders(@Query("mobile")String mobile,@Query("type")String type,@Query("category")String category);
 }
