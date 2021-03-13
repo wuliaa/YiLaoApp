@@ -25,6 +25,7 @@ public class All_orders {
     int count;
     String id_photo;
     String name;//物品名称
+    String id_name;
 
 
 
@@ -32,7 +33,7 @@ public class All_orders {
                       BigInteger from_user, Point_address destination, String emergency_level,
                       String close_state, String create_at, int id, String detail, String type,
                       String category, String photos, String in_at, float reward, String protected_info,
-                      String out_at, int count, String id_photo,String name) {
+                      String out_at, int count, String id_photo,String name,String id_name) {
         this.receive_at = receive_at;
         this.close_at = close_at;
         this.phone = phone;
@@ -54,12 +55,13 @@ public class All_orders {
         this.count = count;
         this.id_photo=id_photo;
         this.name=name;
+        this.id_name=id_name;
     }
 
     //针对跑腿的初始化函数
     public All_orders(BigInteger phone, Point_address destination, String create_at,
                       int id, String detail,  float reward,
-                      String protected_info, String id_photo) {
+                      String protected_info, String id_photo,String id_name) {
         this.receive_at = "";
         this.close_at = "";
         this.phone = phone;   //发布的任务的联系电话
@@ -79,12 +81,13 @@ public class All_orders {
         this.out_at = "";
         this.count = 0;
         this.id_photo=id_photo;     //发布订单的人的头像
+        this.id_name=id_name;
     }
 
     //针对代购和公告的初始化函数
     public All_orders(BigInteger phone, Point_address destination, String create_at,
                       int id, String detail,  float reward,
-                      String protected_info, String category, String photos,String id_photo,String name) {
+                      String protected_info, String category, String photos,String id_photo,String name,String id_name) {
         this.receive_at = "";
         this.close_at = "";
         this.phone = phone;   //发布的任务的联系电话
@@ -105,6 +108,7 @@ public class All_orders {
         this.count = 0;
         this.id_photo=id_photo;     //发布订单的人的头像
         this.name=name;
+        this.id_name=id_name;
     }
 
 
@@ -275,4 +279,11 @@ public class All_orders {
         this.name = name;
     }
 
+    public String getId_name() {
+        return id_name;
+    }
+
+    public void setId_name(String id_name) {
+        this.id_name = id_name;
+    }
 }

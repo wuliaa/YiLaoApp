@@ -2,9 +2,12 @@ package com.example.yilaoapp.ui.purchase;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -24,14 +28,19 @@ import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.Message;
 import com.example.yilaoapp.bean.User;
+import com.example.yilaoapp.bean.chat_task;
 import com.example.yilaoapp.chat.activity.ChatActivity;
 import com.example.yilaoapp.databinding.FragmentPurchaseDetailBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
+import com.example.yilaoapp.service.accept_service;
+import com.example.yilaoapp.service.chat_service;
 import com.google.gson.Gson;
+import com.kongzue.dialog.v3.TipDialog;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -54,19 +63,23 @@ public class PurchaseDetailFragment extends Fragment
         implements EasyPermissions.PermissionCallbacks, BGANinePhotoLayout.Delegate {
 
     private static final int PRC_PHOTO_PREVIEW = 1;
+    int id;
     String uuid;
     ArrayList<String> photosUrl;
     String nickName;
     String phone;
-
+    String id_photo;
+    String detail;
     public PurchaseDetailFragment() {
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        id=-1;
         uuid = "";
         nickName = "";
+        id_photo="";
+        detail="";
         photosUrl = new ArrayList<String>();
     }
 
@@ -95,6 +108,7 @@ public class PurchaseDetailFragment extends Fragment
                     .append(item.getPhone())
                     .append("/resources/")
                     .append(item.getId_photo());
+            id=item.getId();
             String headurl = stringBuilder.toString();
             Glide.with(MyApplication.getContext())
                     .load(headurl)
@@ -102,39 +116,14 @@ public class PurchaseDetailFragment extends Fragment
                     .placeholder(R.drawable.head1)
                     .error(R.drawable.head2)
                     .into(binding.purchasedHead);
-            //获得昵称
-            UserService userService = new RetrofitUser().get(getContext()).create(UserService.class);
-            Call<ResponseBody> user = userService.get_user(String.valueOf(item.getPhone()));
-            user.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.code() / 100 == 4) {
-                        Toast.makeText(getContext(), "4错误", Toast.LENGTH_SHORT).show();
-                    } else if (response.code() / 100 == 5) {
-                        Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
-                    } else if (response.code() / 100 == 1 ||
-                            response.code() / 100 == 3) {
-                        Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
-                    } else {
-                        String info = "";
-                        try {
-                            info = response.body().string();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Gson gson = new Gson();
-                        User user = gson.fromJson(info, User.class);
-                        phone = user.getMobile().toString();
-                        nickName = user.getId_name();
-                        binding.purchasedname.setText(nickName);
-                    }
-                }
+            id_photo=item.getId_photo();
+            phone =item.getFrom_user().toString();
+            nickName = item.getId_name();
+            detail=item.getDetail();
+            binding.purchasedname.setText(nickName);
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                }
-            });
+
             binding.purchasedcontent.setText(item.getDetail());
             binding.purchasedmoney.setText("金额：" + item.getReward());
             binding.purchasedchip.setText(item.getCategory());
@@ -168,7 +157,42 @@ public class PurchaseDetailFragment extends Fragment
         binding.button7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                String mobile = pre.getString("mobile", "");
+                String token = pre.getString("token", "");
+                accept_service ac = new RetrofitUser().get(getContext()).create(accept_service.class);
+                Call<ResponseBody> act = ac.accept_order(mobile,id, token, "df3b72a07a0a4fa1854a48b543690eab", "true");
+                act.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        TipDialog.show((AppCompatActivity) getActivity(), "领取成功", TipDialog.TYPE.SUCCESS);
+                        new Handler(new Handler.Callback() {
+                            @Override
+                            public boolean handleMessage(@NonNull android.os.Message msg) {
+                                return false;
+                            }
+                        }).sendEmptyMessageDelayed(0, 3000);
+                        chat_task ch = new chat_task("您的任务我已领取，订单信息如下:" + detail,new BigInteger(phone));
+                        chat_service send = new RetrofitUser().get(getContext()).create(chat_service.class);
+                        Call<ResponseBody> sen_mes = send.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", ch);
+                        sen_mes.enqueue(new Callback<ResponseBody>() {
+                           @Override
+                           public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
+                           }
 
+                           @Override
+                           public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                           }
+                       });
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
             }
         });
 
@@ -176,6 +200,7 @@ public class PurchaseDetailFragment extends Fragment
     }
 
     /**
+
      * 图片预览，兼容6.0动态权限
      */
     @AfterPermissionGranted(PRC_PHOTO_PREVIEW)

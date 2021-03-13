@@ -222,8 +222,9 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                                         String photos = all.get(i).getPhotos();                     //订单的图片
                                         String category = all.get(i).getCategory();                //订单分类
                                         String name = all.get(i).getName();                       //订单名字
+                                        String id_name=all.get(i).getId_name();
                                         All_orders purchase1 = new All_orders(phone, address, time, task_id.get(i), content
-                                                , Float.parseFloat(money), protected_info, category, photos, uuid, name);
+                                                , Float.parseFloat(money), protected_info, category, photos, uuid, name,id_name);
 
                                         purchaseList.add(purchase1);
                                         Log.d(" PurchaseList", "message: " + content + "1" +

@@ -167,8 +167,9 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
                                         String photos = all.get(i).getPhotos();                     //订单的图片
                                         String category = all.get(i).getCategory();                //订单分类
                                         String name = all.get(i).getName();                       //订单名字
+                                        String id_name=all.get(i).getId_name();
                                         All_orders lost = new All_orders(phone, address, time, task_id.get(number++), content
-                                                , Float.parseFloat(money), protected_info, category, photos, uuid, name);
+                                                , Float.parseFloat(money), protected_info, category, photos, uuid, name,id_name);
                                         LostList.add(lost);
                                         Message message = new Message();
                                         message.what = 1;

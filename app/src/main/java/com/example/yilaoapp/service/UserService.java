@@ -58,5 +58,5 @@ public interface UserService {
     @GET("users/{mobile}")
     Call<ResponseBody> get_user(@Path("mobile")String mobile);
     @GET("users/{mobile}/orders")
-    Call<ResponseBody> get_myorder(@Path("mobile")String mobil,@Query("token")String token,@Query("appid")String app);
+    Call<ResponseBody> get_myorder(@Path("mobile")String mobil,@Query("token")String token,@Query("appid")String app,@Query("type")String type);
 }
