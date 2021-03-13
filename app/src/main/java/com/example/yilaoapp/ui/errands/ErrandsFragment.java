@@ -55,6 +55,7 @@ import com.example.yilaoapp.service.errand_service;
 import com.example.yilaoapp.utils.AdapterDiffCallback;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.kongzue.dialog.v3.TipDialog;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -143,14 +144,20 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                             act.enqueue(callback = new retrofit2.Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                    Toast.makeText(getContext(), "success", Toast.LENGTH_LONG).show();
+                                    TipDialog.show((AppCompatActivity) getActivity(), "领取成功", TipDialog.TYPE.SUCCESS);
+                                    new Handler(new Handler.Callback() {
+                                        @Override
+                                        public boolean handleMessage(@NonNull android.os.Message msg) {
+                                            return false;
+                                        }
+                                    }).sendEmptyMessageDelayed(0, 3000);
                                     chat_task ch = new chat_task("您的任务我已领取，订单信息如下:" + data.getDetail(), data.getFrom_user());
                                     chat_service send = new RetrofitUser().get(getContext()).create(chat_service.class);
                                     Call<ResponseBody> sen_mes = send.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", ch);
                                     sen_mes.enqueue(callback = new retrofit2.Callback<ResponseBody>() {
                                         @Override
                                         public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                            Toast.makeText(getContext(), "信息已success", Toast.LENGTH_LONG).show();
+                                            Log.d("chat","信息已success");
                                         }
 
                                         @Override

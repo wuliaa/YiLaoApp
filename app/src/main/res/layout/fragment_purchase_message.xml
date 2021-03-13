@@ -203,7 +203,7 @@
                                 android:autofillHints=""
                                 android:ems="10"
                                 android:hint="@string/lrmb"
-                                android:inputType="textMultiLine"
+                                android:inputType="number|numberDecimal"
                                 android:textColor="@color/text_color"
                                 android:textSize="16sp"
                                 tools:targetApi="o" />
@@ -216,7 +216,7 @@
                                 android:autofillHints=""
                                 android:ems="10"
                                 android:hint="@string/phone"
-                                android:inputType="textMultiLine"
+                                android:inputType="number|phone"
                                 android:textColor="@color/text_color"
                                 android:textSize="16sp"
                                 tools:targetApi="o" />

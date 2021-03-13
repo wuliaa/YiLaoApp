@@ -16,6 +16,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.os.Environment;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ import com.example.yilaoapp.service.image_service;
 import com.example.yilaoapp.service.pur_service;
 import com.example.yilaoapp.utils.PhotoOperation;
 import com.google.gson.Gson;
+import com.kongzue.dialog.v3.TipDialog;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -154,7 +156,13 @@ public class BullentinMessageFragment extends Fragment implements EasyPermission
                             new_order.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    Toast.makeText(getContext(), "success", Toast.LENGTH_LONG).show();
+                                    TipDialog.show((AppCompatActivity) getActivity(), "发布成功", TipDialog.TYPE.SUCCESS);
+                                    new Handler(new Handler.Callback() {
+                                        @Override
+                                        public boolean handleMessage(@NonNull android.os.Message msg) {
+                                            return false;
+                                        }
+                                    }).sendEmptyMessageDelayed(0, 3000);
                                     NavController controller = Navigation.findNavController(v);
                                     controller.popBackStack();
                                 }

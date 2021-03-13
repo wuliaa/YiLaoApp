@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -24,6 +27,7 @@ import com.example.yilaoapp.bean.errand_task;
 import com.example.yilaoapp.databinding.FragmentErrandsMessageBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.errand_service;
+import com.kongzue.dialog.v3.TipDialog;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -81,9 +85,15 @@ public class ErrandsMessageFragment extends Fragment {
                 errand_back.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        TipDialog.show((AppCompatActivity) getActivity(), "发布成功", TipDialog.TYPE.SUCCESS);
+                        new Handler(new Handler.Callback() {
+                            @Override
+                            public boolean handleMessage(@NonNull android.os.Message msg) {
+                                return false;
+                            }
+                        }).sendEmptyMessageDelayed(0, 3000);
                         NavController controller = Navigation.findNavController(view);
                         controller.popBackStack();
-                        Toast.makeText(getContext(),"success",Toast.LENGTH_LONG).show();
                     }
 
                     @Override

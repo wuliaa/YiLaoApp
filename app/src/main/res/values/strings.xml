@@ -251,5 +251,6 @@
     <string name="can_purchase">能够代购</string>
     <string name="ObjectName">物品名称</string>
     <string name="inputObjectName">请输入物品名称</string>
+    <string name="relativeAddress">请填写联系地点</string>
 
 </resources>

@@ -159,10 +159,16 @@ public class PurchaseMessageFragment extends Fragment implements EasyPermissions
                             new_order.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    TipDialog.show((AppCompatActivity) getActivity(), "发布成功", TipDialog.TYPE.SUCCESS);
+                                    new Handler(new Handler.Callback() {
+                                        @Override
+                                        public boolean handleMessage(@NonNull android.os.Message msg) {
+                                            return false;
+                                        }
+                                    }).sendEmptyMessageDelayed(0, 3000);
                                     NavController controller = Navigation.findNavController(v);
                                     controller.popBackStack();
                                 }
-
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
 
