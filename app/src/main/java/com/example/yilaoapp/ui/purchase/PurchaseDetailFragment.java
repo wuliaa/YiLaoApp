@@ -67,7 +67,7 @@ public class PurchaseDetailFragment extends Fragment
     String uuid;
     ArrayList<String> photosUrl;
     String nickName;
-    String phone;
+    BigInteger phone;
     String id_photo;
     String detail;
     public PurchaseDetailFragment() {
@@ -117,7 +117,7 @@ public class PurchaseDetailFragment extends Fragment
                     .error(R.drawable.head2)
                     .into(binding.purchasedHead);
             id_photo=item.getId_photo();
-            phone =item.getFrom_user().toString();
+            phone =item.getFrom_user();
             nickName = item.getId_name();
             detail=item.getDetail();
             binding.purchasedname.setText(nickName);
@@ -172,7 +172,7 @@ public class PurchaseDetailFragment extends Fragment
                                 return false;
                             }
                         }).sendEmptyMessageDelayed(0, 3000);
-                        chat_task ch = new chat_task("您的任务我已领取，订单信息如下:" + detail,new BigInteger(phone));
+                        chat_task ch = new chat_task("您的任务我已领取，订单信息如下:" + detail,phone);
                         chat_service send = new RetrofitUser().get(getContext()).create(chat_service.class);
                         Call<ResponseBody> sen_mes = send.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", ch);
                         sen_mes.enqueue(new Callback<ResponseBody>() {
