@@ -39,7 +39,6 @@ public class ServiceHelp {
         updateInfo.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.d("1", "success");
                 SharedPreferences.Editor e = pre.edit();
                 e.putString(key, value);
                 e.apply();
@@ -51,7 +50,6 @@ public class ServiceHelp {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
                 Log.d("1", "failed");
             }
         });

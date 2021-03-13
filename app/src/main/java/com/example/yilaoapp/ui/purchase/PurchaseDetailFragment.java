@@ -42,6 +42,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.yilaoapp.MyApplication.getContext;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -103,8 +105,13 @@ public class PurchaseDetailFragment extends Fragment
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.code() / 100 == 4) {
-                        Toast.makeText(getContext(),"用户不存在",Toast.LENGTH_SHORT).show();
-                    }else{
+                        Toast.makeText(getContext(),"4错误",Toast.LENGTH_SHORT).show();
+                    } else if (response.code() / 100 == 5) {
+                        Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                    } else if (response.code() / 100 == 1 ||
+                            response.code() / 100 == 3) {
+                        Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                    } else{
                         String info = "";
                         try {
                             info = response.body().string();

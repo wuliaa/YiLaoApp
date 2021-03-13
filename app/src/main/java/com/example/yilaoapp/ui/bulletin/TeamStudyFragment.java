@@ -45,6 +45,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.yilaoapp.MyApplication.getContext;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -129,12 +131,16 @@ public class TeamStudyFragment extends Fragment implements SwipeRefreshLayout.On
                 get_team.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                        String str = "";
-                        try {
-//                            assert response.body() != null;
-                            if (response.body() == null)
-                                Toast.makeText(getContext(), "网络延迟", Toast.LENGTH_SHORT).show();
-                            else {
+                        if (response.code() / 100 == 4)
+                            Toast.makeText(getContext(), "网络延迟", Toast.LENGTH_SHORT).show();
+                        else if (response.code() / 100 == 5) {
+                            Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                        } else if (response.code() / 100 == 1 ||
+                                response.code() / 100 == 3) {
+                            Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                        } else {
+                            String str = "";
+                            try {
                                 str = response.body().string();
                                 Gson gson = new Gson();
                                 Type type = new TypeToken<List<All_orders>>() {
@@ -166,9 +172,9 @@ public class TeamStudyFragment extends Fragment implements SwipeRefreshLayout.On
                                         handler.sendMessage(message);
                                     }
                                 }
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
                     }
 

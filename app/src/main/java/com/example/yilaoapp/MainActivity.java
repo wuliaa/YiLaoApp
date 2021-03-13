@@ -138,9 +138,12 @@ public class  MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.code() / 100 == 4) {
-//                    ServiceHelp.GetToken(getApplicationContext(), mobile, password2);
-//                    onCreate(savedInstanceState);
-                    Toast.makeText(getApplicationContext(), "失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "4失败", Toast.LENGTH_SHORT).show();
+                } else if (response.code() / 100 == 5) {
+                    Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                } else if (response.code() / 100 == 1 ||
+                        response.code() / 100 == 3) {
+                    Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
                 } else {
                     String str = "";
                     try {

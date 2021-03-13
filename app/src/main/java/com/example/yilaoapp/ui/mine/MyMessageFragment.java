@@ -48,13 +48,16 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.yilaoapp.MyApplication.getContext;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    static boolean chat_flag=true;
-    List<chat_user> all_chat=new LinkedList<>();
+    static boolean chat_flag = true;
+    List<chat_user> all_chat = new LinkedList<>();
+
     public MyMessageFragment() {
         // Required empty public constructor
     }
@@ -63,13 +66,15 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
     FragmentMyMessageBinding binding;
     private List<Message> messageList = new ArrayList<>();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_my_message,container,false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_message, container, false);
         //binding.setData(MineViewModel);
         binding.setLifecycleOwner(requireActivity());
         binding.toolbar.setNavigationIcon(R.drawable.ic_baseline_chevron_left_24);
@@ -82,7 +87,7 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
         });
         binding.swipeMymessage.setOnRefreshListener(this);
         //initMessages();
-            init();
+        init();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.messageRecyclerview.setLayoutManager(layoutManager);
@@ -92,16 +97,16 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
         adapter.setOnItemClickListener(new MessageAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(View view, Message data) {
-                chat_task ch=new chat_task("您的任务我已领取，订单信息如下:"+data.getContent(),data.getMobile());
-                chat_service send=new RetrofitUser().get(getContext()).create(chat_service.class);
-                SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                String mobile=pre.getString("mobile","");
-                String token=pre.getString("token","");
-                Call<ResponseBody> sen_mes=send.send_message(mobile,token,"df3b72a07a0a4fa1854a48b543690eab",ch);
+                chat_task ch = new chat_task("您的任务我已领取，订单信息如下:" + data.getContent(), data.getMobile());
+                chat_service send = new RetrofitUser().get(getContext()).create(chat_service.class);
+                SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                String mobile = pre.getString("mobile", "");
+                String token = pre.getString("token", "");
+                Call<ResponseBody> sen_mes = send.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", ch);
                 sen_mes.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Toast.makeText(getContext(),"信息已success",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "信息已success", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -116,7 +121,7 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                requestPermisson(view,data);
+                                requestPermisson(view, data);
                             }
                         }, 100);
                         LogUtil.d(new String(Character.toChars(0x1F60E)));
@@ -140,40 +145,49 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                     "下午14:00", R.drawable.head3);
             messageList.add(m3);
         }*/
-        BigInteger m1=new BigInteger("13412101248");
-        BigInteger m2=new BigInteger("13060887368");
-        Message m=new Message("jgq","hello","16:30","b8caed0f-48ce-4aa2-b98d-1500c6e42998",m2);
-        Message m3=new Message("jgq1","hello","16:30","b8caed0f-48ce-4aa2-b98d-1500c6e42998",m1);
+        BigInteger m1 = new BigInteger("13412101248");
+        BigInteger m2 = new BigInteger("13060887368");
+        Message m = new Message("jgq", "hello", "16:30", "b8caed0f-48ce-4aa2-b98d-1500c6e42998", m2);
+        Message m3 = new Message("jgq1", "hello", "16:30", "b8caed0f-48ce-4aa2-b98d-1500c6e42998", m1);
         messageList.add(m);
         messageList.add(m3);
     }
+
     //获取所有聊天用户
-    public void init(){
-        SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-        String mobile=pre.getString("mobile","");
-        String token=pre.getString("token","");
-        chat_service chat_us=new RetrofitUser().get(getContext()).create(chat_service.class);
-        Call<ResponseBody> ch_back=chat_us.get_chatuser(mobile,token,"df3b72a07a0a4fa1854a48b543690eab");
+    public void init() {
+        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+        String mobile = pre.getString("mobile", "");
+        String token = pre.getString("token", "");
+        chat_service chat_us = new RetrofitUser().get(getContext()).create(chat_service.class);
+        Call<ResponseBody> ch_back = chat_us.get_chatuser(mobile, token, "df3b72a07a0a4fa1854a48b543690eab");
         ch_back.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                String str="";
-                try {
-                    str=response.body().string();
-                    Gson gson = new Gson();
-                    Type type = new TypeToken<List<chat_user>>() {
-                    }.getType();
-                    all_chat=gson.fromJson(str,type);
-                    for(int i=0;i<all_chat.size();i++){
-                        Message mm=new Message(all_chat.get(i).getId_name(),all_chat.get(i).getLast_content(),all_chat.get(i).getLast_send_at(),
-                                all_chat.get(i).getId_photo(),new BigInteger(all_chat.get(i).getMobile()));
-                        messageList.add(mm);
+                if (response.code() / 100 == 4) {
+                    Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                } else if (response.code() / 100 == 5) {
+                    Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                } else if (response.code() / 100 == 1 ||
+                        response.code() / 100 == 3) {
+                    Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                } else {
+                    String str = "";
+                    try {
+                        str = response.body().string();
+                        Gson gson = new Gson();
+                        Type type = new TypeToken<List<chat_user>>() {
+                        }.getType();
+                        all_chat = gson.fromJson(str, type);
+                        for (int i = 0; i < all_chat.size(); i++) {
+                            Message mm = new Message(all_chat.get(i).getId_name(), all_chat.get(i).getLast_content(), all_chat.get(i).getLast_send_at(),
+                                    all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getMobile()));
+                            messageList.add(mm);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
-
             }
 
             @Override
@@ -190,7 +204,8 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
 
      */
     }
-    private void requestPermisson(View view,Message message){
+
+    private void requestPermisson(View view, Message message) {
         RxPermissions rxPermission = new RxPermissions(this);
         rxPermission
                 .request(
@@ -205,8 +220,8 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                         if (aBoolean) {
 
                             Intent intent = new Intent(requireActivity(), ChatActivity.class);
-                            intent.putExtra("mobile",message.getMobile().toString());
-                            intent.putExtra("uuid",message.getUuid());
+                            intent.putExtra("mobile", message.getMobile().toString());
+                            intent.putExtra("uuid", message.getUuid());
                             startActivity(intent);
                         } else {
                             SetPermissionDialog mSetPermissionDialog = new SetPermissionDialog(getContext());
@@ -216,6 +231,7 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                                 public void onLeftClick() {
                                     //requireActivity().finish();
                                 }
+
                                 @Override
                                 public void onRightClick() {
                                     //requireActivity().finish();
@@ -225,6 +241,7 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                     }
                 });
     }
+
     @Override
     public void onRefresh() {
         binding.swipeMymessage.postDelayed(new Runnable() { // 发送延迟消息到消息队列
@@ -232,6 +249,6 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
             public void run() {
                 binding.swipeMymessage.setRefreshing(false); // 是否显示刷新进度;false:不显示
             }
-        },3000);
+        }, 3000);
     }
 }

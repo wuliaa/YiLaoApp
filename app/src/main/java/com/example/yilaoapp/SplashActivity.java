@@ -34,53 +34,54 @@ public class SplashActivity extends AppCompatActivity {
         //自动登录
         SharedPreferences pre1 = this.getSharedPreferences("login", Context.MODE_PRIVATE);
         String token1 = pre1.getString("token", "");
-        new Thread() {
-            public void run() {
-                if (!token1.equals("")) {
-                    String mob = pre1.getString("mobile", "");
-                    String pas = pre1.getString("password", "");
-                    UserService loginservice = new RetrofitUser().get(getContext()).create(UserService.class);
-                    Call<ResponseBody> loginback = loginservice.login_password(mob, "df3b72a07a0a4fa1854a48b543690eab", pas);
-                    loginback.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            if (response.code() / 100 == 4) {
-                                Toast.makeText(getContext(), "账号或密码错误", Toast.LENGTH_SHORT).show();
-                            } else if (response.code() / 100 == 5) {
-                                Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
-                            } else {
-                                String str = "";
-                                try {
-                                    str = response.body().string();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                Gson gson = new Gson();
-                                tok token = gson.fromJson(str, tok.class);
-                                SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor e = pre.edit();
-                                e.putString("token", token.getToken());
-                                e.apply(); //apply()比commit()更快
-                            }
+
+        if (!token1.equals("")) {
+            String mob = pre1.getString("mobile", "");
+            String pas = pre1.getString("password", "");
+            UserService loginservice = new RetrofitUser().get(getContext()).create(UserService.class);
+            Call<ResponseBody> loginback = loginservice.login_password(mob, "df3b72a07a0a4fa1854a48b543690eab", pas);
+            loginback.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() / 100 == 4) {
+                        Toast.makeText(getContext(), "账号或密码错误", Toast.LENGTH_SHORT).show();
+                    } else if (response.code() / 100 == 5) {
+                        Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                    } else if (response.code() / 100 == 1 ||
+                            response.code() / 100 == 3) {
+                        Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                    } else {
+                        String str = "";
+                        try {
+                            str = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            Toast.makeText(getApplicationContext(), "网络连接失败", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    });
-                    Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
+                        Gson gson = new Gson();
+                        tok token = gson.fromJson(str, tok.class);
+                        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor e = pre.edit();
+                        e.putString("token", token.getToken());
+                        e.apply(); //apply()比commit()更快
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), "网络连接失败", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
                 }
-            }
-        }.start();
+            });
+            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
         finish();
     }
 }

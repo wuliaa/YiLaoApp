@@ -70,6 +70,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.yilaoapp.MyApplication.getContext;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -157,7 +159,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                     sen_mes.enqueue(callback = new retrofit2.Callback<ResponseBody>() {
                                         @Override
                                         public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                            Log.d("chat","信息已success");
+                                            Log.d("chat", "信息已success");
                                         }
 
                                         @Override
@@ -212,11 +214,16 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 get_errand.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                        String str = "";
-                        try {
-                            if (response.body() == null)
-                                Toast.makeText(getContext(), "网络延迟", Toast.LENGTH_SHORT).show();
-                            else {
+                        if (response.code() / 100 == 4) {
+                            Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                        } else if (response.code() / 100 == 5) {
+                            Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                        } else if (response.code() / 100 == 1 ||
+                                response.code() / 100 == 3) {
+                            Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                        } else {
+                            String str = "";
+                            try {
                                 str = response.body().string();
                                 Gson gson = new Gson();
                                 Type type = new TypeToken<List<All_orders>>() {
@@ -243,11 +250,12 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                         Log.d("errand", "message: " + content + "1" + address + "2" + money + "3" + time);
                                     }
                                 }
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
                     }
+
                     @Override
                     public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
 
