@@ -213,7 +213,7 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.CAMERA,
                         Manifest.permission.RECORD_AUDIO
-                )
+                )//1
                 .subscribe(new Consumer<Boolean>() {
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {

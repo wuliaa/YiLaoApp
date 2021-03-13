@@ -197,6 +197,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 .bindAudioBtn(mBtnAudio)
                 .bindAudioIv(mIvAudio)
                 .bindEmojiData();
+        //1
         //底部布局弹出,聊天列表上滑
         mRvChat.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
             if (bottom < oldBottom) {
