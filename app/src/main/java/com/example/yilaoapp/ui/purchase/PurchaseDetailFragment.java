@@ -2,6 +2,7 @@ package com.example.yilaoapp.ui.purchase;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -21,7 +22,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.Message;
 import com.example.yilaoapp.bean.User;
+import com.example.yilaoapp.chat.activity.ChatActivity;
 import com.example.yilaoapp.databinding.FragmentPurchaseDetailBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
@@ -51,9 +54,10 @@ public class PurchaseDetailFragment extends Fragment
         implements EasyPermissions.PermissionCallbacks, BGANinePhotoLayout.Delegate {
 
     private static final int PRC_PHOTO_PREVIEW = 1;
-    String uuid ;
+    String uuid;
     ArrayList<String> photosUrl;
-    String nickName ;
+    String nickName;
+    String phone;
 
     public PurchaseDetailFragment() {
     }
@@ -61,9 +65,9 @@ public class PurchaseDetailFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        uuid="";
-        nickName="";
-        photosUrl =new ArrayList<String>();
+        uuid = "";
+        nickName = "";
+        photosUrl = new ArrayList<String>();
     }
 
     FragmentPurchaseDetailBinding binding;
@@ -86,7 +90,7 @@ public class PurchaseDetailFragment extends Fragment
             }
         });
         viewModel.getPurchase().observe(getViewLifecycleOwner(), item -> {
-            StringBuilder stringBuilder=new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
                     .append(item.getPhone())
                     .append("/resources/")
@@ -99,19 +103,19 @@ public class PurchaseDetailFragment extends Fragment
                     .error(R.drawable.head2)
                     .into(binding.purchasedHead);
             //获得昵称
-            UserService userService=new RetrofitUser().get(getContext()).create(UserService.class);
-            Call<ResponseBody> user=userService.get_user(String.valueOf(item.getPhone()));
+            UserService userService = new RetrofitUser().get(getContext()).create(UserService.class);
+            Call<ResponseBody> user = userService.get_user(String.valueOf(item.getPhone()));
             user.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.code() / 100 == 4) {
-                        Toast.makeText(getContext(),"4错误",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "4错误", Toast.LENGTH_SHORT).show();
                     } else if (response.code() / 100 == 5) {
                         Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
                     } else if (response.code() / 100 == 1 ||
                             response.code() / 100 == 3) {
                         Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
-                    } else{
+                    } else {
                         String info = "";
                         try {
                             info = response.body().string();
@@ -120,10 +124,12 @@ public class PurchaseDetailFragment extends Fragment
                         }
                         Gson gson = new Gson();
                         User user = gson.fromJson(info, User.class);
-                        nickName=user.getId_name();
+                        phone = user.getMobile().toString();
+                        nickName = user.getId_name();
                         binding.purchasedname.setText(nickName);
                     }
                 }
+
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
 
@@ -136,7 +142,7 @@ public class PurchaseDetailFragment extends Fragment
             StringTokenizer st = new StringTokenizer(item.getPhotos(), ",");
             while (st.hasMoreTokens()) {
                 uuid = st.nextToken();
-                StringBuilder stringBuilder1=new StringBuilder();
+                StringBuilder stringBuilder1 = new StringBuilder();
                 stringBuilder1.append("http://api.yilao.tk:15000/v1.0/users/")
                         .append(item.getPhone())
                         .append("/resources/")
@@ -146,6 +152,26 @@ public class PurchaseDetailFragment extends Fragment
             }
             binding.PurchaseninePhoto.setData(photosUrl);
         });
+        //联系对方
+        binding.button6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (phone != null && uuid != null) {
+                    Intent intent = new Intent(requireActivity(), ChatActivity.class);
+                    intent.putExtra("mobile", phone);
+                    intent.putExtra("uuid", uuid);
+                    startActivity(intent);
+                }
+            }
+        });
+        //加入任务
+        binding.button7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         return binding.getRoot();
     }
 

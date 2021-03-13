@@ -1,6 +1,7 @@
 package com.example.yilaoapp.ui.bulletin;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,6 +24,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.User;
+import com.example.yilaoapp.chat.activity.ChatActivity;
 import com.example.yilaoapp.databinding.FragmentTeamDetailBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
@@ -54,6 +56,7 @@ public class TeamDetailFragment extends Fragment implements EasyPermissions.Perm
     FragmentTeamDetailBinding binding;
     String uuid ;
     String nickName ;
+    String phone;
     ArrayList<String> photosUrl;
 
     public TeamDetailFragment() {}
@@ -114,6 +117,7 @@ public class TeamDetailFragment extends Fragment implements EasyPermissions.Perm
                         }
                         Gson gson = new Gson();
                         User user = gson.fromJson(info, User.class);
+                        phone=user.getMobile().toString();
                         nickName=user.getId_name();
                         binding.teamdname.setText(nickName);
                     }
@@ -139,6 +143,18 @@ public class TeamDetailFragment extends Fragment implements EasyPermissions.Perm
                 photosUrl.add(url);
             }
             binding.TeamStudyPhoto.setData(photosUrl);
+        });
+        //联系对方
+        binding.teamdbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (phone != null && uuid != null) {
+                    Intent intent = new Intent(requireActivity(), ChatActivity.class);
+                    intent.putExtra("mobile", phone);
+                    intent.putExtra("uuid", uuid);
+                    startActivity(intent);
+                }
+            }
         });
         return binding.getRoot();
     }

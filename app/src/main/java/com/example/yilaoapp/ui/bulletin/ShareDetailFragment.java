@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -33,6 +34,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.User;
+import com.example.yilaoapp.chat.activity.ChatActivity;
 import com.example.yilaoapp.databinding.FragmentShareDetailBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
@@ -68,6 +70,7 @@ public class ShareDetailFragment extends Fragment implements EasyPermissions.Per
     FragmentShareDetailBinding binding;
     String uuid ;
     String nickName ;
+    String phone;
     ArrayList<String> photosUrl;
 
     public ShareDetailFragment() {}
@@ -129,6 +132,7 @@ public class ShareDetailFragment extends Fragment implements EasyPermissions.Per
                         }
                         Gson gson = new Gson();
                         User user = gson.fromJson(info, User.class);
+                        phone=user.getMobile().toString();
                         nickName=user.getId_name();
                         binding.sharedname.setText(nickName);
                     }
@@ -153,6 +157,17 @@ public class ShareDetailFragment extends Fragment implements EasyPermissions.Per
                 photosUrl.add(url);
             }
             binding.ShareninePhotoLayout.setData(photosUrl);
+        });
+        binding.sharedbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (phone != null && uuid != null) {
+                    Intent intent = new Intent(requireActivity(), ChatActivity.class);
+                    intent.putExtra("mobile", phone);
+                    intent.putExtra("uuid", uuid);
+                    startActivity(intent);
+                }
+            }
         });
         return binding.getRoot();
         //return inflater.inflate(R.layout.fragment_share_detail, container, false);
