@@ -30,6 +30,8 @@ import com.example.yilaoapp.bean.Message;
 import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.bean.chat_task;
 import com.example.yilaoapp.chat.activity.ChatActivity;
+import com.example.yilaoapp.chat.util.LogUtil;
+import com.example.yilaoapp.chat.widget.SetPermissionDialog;
 import com.example.yilaoapp.databinding.FragmentPurchaseDetailBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
@@ -37,6 +39,7 @@ import com.example.yilaoapp.service.accept_service;
 import com.example.yilaoapp.service.chat_service;
 import com.google.gson.Gson;
 import com.kongzue.dialog.v3.TipDialog;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,6 +50,7 @@ import java.util.StringTokenizer;
 
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
+import io.reactivex.functions.Consumer;
 import okhttp3.ResponseBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -117,12 +121,12 @@ public class PurchaseDetailFragment extends Fragment
                     .error(R.drawable.head2)
                     .into(binding.purchasedHead);
             id_photo=item.getId_photo();
-            phone =item.getFrom_user();
+            phone =item.getPhone();
             nickName = item.getId_name();
             detail=item.getDetail();
             binding.purchasedname.setText(nickName);
             binding.purchasedcontent.setText(item.getDetail());
-            binding.purchasedmoney.setText("金额：" + item.getReward()+"元");
+            binding.purchasedmoney.setText("金额：" + item.getReward());
             binding.purchasedchip.setText(item.getCategory());
             binding.PurchaseninePhoto.setDelegate(this);
             StringTokenizer st = new StringTokenizer(item.getPhotos(), ",");
@@ -142,11 +146,21 @@ public class PurchaseDetailFragment extends Fragment
         binding.button6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (String.valueOf(phone) != null && id_photo!= null) {
-                    Intent intent = new Intent(requireActivity(), ChatActivity.class);
-                    intent.putExtra("mobile", String.valueOf(phone));
-                    intent.putExtra("uuid", id_photo);
-                    startActivity(intent);
+                if (!String.valueOf(phone).equals("") && !uuid.equals("")) {
+                    new Handler(new Handler.Callback() {
+                        @Override
+                        public boolean handleMessage(@NonNull android.os.Message msg) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    requestPermisson(v);
+                                }
+                            }, 100);
+                            LogUtil.d(new String(Character.toChars(0x1F60E)));
+                            //viewModel.select(d1ata);
+                            return false;
+                        }
+                    }).sendEmptyMessageDelayed(0, 500);
                 }
             }
         });
@@ -256,5 +270,41 @@ public class PurchaseDetailFragment extends Fragment
         ninePhotoLayout.setIsExpand(true);
         ninePhotoLayout.flushItems();
     }
+    private void requestPermisson(View view) {
+        RxPermissions rxPermission = new RxPermissions(this);
+        rxPermission
+                .request(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,//存储权限
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.RECORD_AUDIO
+                )
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+                        if (aBoolean) {
+                            Intent intent = new Intent(requireActivity(), ChatActivity.class);
+                            Bundle bundle=new Bundle();
+                            bundle.putString("mobile",String.valueOf(phone));
+                            bundle.putString("uuid",id_photo);
+                            intent.putExtra("bundle",bundle);
+                            startActivity(intent);
+                        } else {
+                            SetPermissionDialog mSetPermissionDialog = new SetPermissionDialog(getContext());
+                            mSetPermissionDialog.show();
+                            mSetPermissionDialog.setConfirmCancelListener(new SetPermissionDialog.OnConfirmCancelClickListener() {
+                                @Override
+                                public void onLeftClick() {
+                                    //requireActivity().finish();
+                                }
 
+                                @Override
+                                public void onRightClick() {
+                                    //requireActivity().finish();
+                                }
+                            });
+                        }
+                    }
+                });
+    }
 }

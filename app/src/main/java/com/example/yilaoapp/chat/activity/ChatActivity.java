@@ -197,7 +197,6 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 .bindAudioBtn(mBtnAudio)
                 .bindAudioIv(mIvAudio)
                 .bindEmojiData();
-        //1
         //底部布局弹出,聊天列表上滑
         mRvChat.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
             if (bottom < oldBottom) {
@@ -294,9 +293,9 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         TextMsgBody mTextMsgBody=new TextMsgBody();
         mTextMsgBody.setMessage(hello);
         mMessgae.setBody(mTextMsgBody);
-        //开始发送
 
-       /* Bundle bundle=this.getIntent().getExtras();
+        Intent intent=getIntent();
+        Bundle bundle=intent.getBundleExtra("bundle");
         String mob=bundle.getString("mobile");
         BigInteger phone=new BigInteger(mob);
         SharedPreferences pre=getApplicationContext().getSharedPreferences("login", Context.MODE_PRIVATE);
@@ -307,8 +306,9 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         chat_back.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                //success
+                //开始发送
                 mAdapter.addData( mMessgae);
+                //模拟两秒后发送成功
                 updateMsg(mMessgae);
             }
 
@@ -316,9 +316,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void onFailure(Call<ResponseBody> call, Throwable t) {
 
             }
-        });*/
-        mAdapter.addData( mMessgae);
-        updateMsg(mMessgae);
+        });
         //模拟两秒后发送成功
     }
 
