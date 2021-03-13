@@ -121,11 +121,8 @@ public class PurchaseDetailFragment extends Fragment
             nickName = item.getId_name();
             detail=item.getDetail();
             binding.purchasedname.setText(nickName);
-
-
-
             binding.purchasedcontent.setText(item.getDetail());
-            binding.purchasedmoney.setText("金额：" + item.getReward());
+            binding.purchasedmoney.setText("金额：" + item.getReward()+"元");
             binding.purchasedchip.setText(item.getCategory());
             binding.PurchaseninePhoto.setDelegate(this);
             StringTokenizer st = new StringTokenizer(item.getPhotos(), ",");

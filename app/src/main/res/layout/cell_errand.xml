@@ -76,6 +76,7 @@
                 android:id="@+id/errandTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="4dp"
                 android:text="@string/chattime"
                 android:textColor="#666666"
                 android:textSize="12sp"

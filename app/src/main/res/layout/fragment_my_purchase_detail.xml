@@ -158,8 +158,11 @@
                     <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
                         android:id="@+id/ninePhotoLayout"
                         style="@style/MatchWrap"
-                        android:layout_marginLeft="33dp"
+                        android:layout_gravity="center|center_vertical"
+                        android:layout_marginStart="20dp"
                         android:layout_marginTop="8dp"
+                        android:layout_marginEnd="20dp"
+                        android:foregroundGravity="center"
                         app:bga_npl_itemCornerRadius="0dp"
                         app:bga_npl_itemSpanCount="3"
                         app:bga_npl_itemWhiteSpacing="4dp"

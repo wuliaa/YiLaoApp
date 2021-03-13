@@ -25,24 +25,41 @@ import androidx.navigation.Navigation;
 
 import com.baoyachi.stepview.HorizontalStepView;
 import com.baoyachi.stepview.bean.StepBean;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.databinding.FragmentMyBulletinDetailBinding;
+import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.UserService;
 import com.github.siyamed.shapeimageview.RoundedImageView;
+import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
+import okhttp3.ResponseBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MyBulletinDetailFragment extends Fragment implements EasyPermissions.PermissionCallbacks, BGANinePhotoLayout.Delegate {
     private static final int PRC_PHOTO_PREVIEW = 1;
+    FragmentMyBulletinDetailBinding binding;
+    String uuid ;
+    String nickName ;
+    ArrayList<String> photosUrl;
 
     public MyBulletinDetailFragment() {
         // Required empty public constructor
@@ -50,12 +67,15 @@ public class MyBulletinDetailFragment extends Fragment implements EasyPermission
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        uuid="";
+        nickName="";
+        photosUrl =new ArrayList<String>();
     }
-    FragmentMyBulletinDetailBinding binding;
+
 
     @SuppressLint("SetTextI18n")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_bulletin_detail, container, false);
@@ -78,12 +98,37 @@ public class MyBulletinDetailFragment extends Fragment implements EasyPermission
         binding.toolbar.setTitleMarginStart(screenWidth / 3);
 
         viewModel.getBulletin().observe(getViewLifecycleOwner(), item -> {
-            binding.BulletinContent.setText(item.getContent());
-            binding.Bulletinaddress.setText("地址："+item.getAddress());
-            binding.Bulletintime.setText("时间："+item.getTime());
-            binding.chip1.setText(item.getWhatBulletin());
+            StringBuilder stringBuilder=new StringBuilder();
+            stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
+                    .append(item.getPhone())
+                    .append("/resources/")
+                    .append(item.getId_photo());
+            String headurl = stringBuilder.toString();
+            Glide.with(MyApplication.getContext())
+                    .load(headurl)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.head1)
+                    .error(R.drawable.head2)
+                    .into(binding.BulletinHead);
+            //获得昵称
+            binding.BulletinName.setText(item.getId_name());
+            binding.BulletinContent.setText(item.getDetail());
+            binding.Bulletinaddress.setText("联系地址："+item.getDestination().getName());
+            binding.Bulletintime.setText("发布时间："+item.getCreate_at());
+            binding.chip1.setText(item.getCategory());
             binding.MyBulletinninePhotoLayout.setDelegate(this);
-            binding.MyBulletinninePhotoLayout.setData(item.getPhotos());
+            StringTokenizer st = new StringTokenizer(item.getPhotos(), ",");
+            while (st.hasMoreTokens()) {
+                uuid = st.nextToken();
+                StringBuilder stringBuilder1=new StringBuilder();
+                stringBuilder1.append("http://api.yilao.tk:15000/v1.0/users/")
+                        .append(item.getPhone())
+                        .append("/resources/")
+                        .append(uuid);
+                String url = stringBuilder1.toString();
+                photosUrl.add(url);
+            }
+            binding.MyBulletinninePhotoLayout.setData(photosUrl);
         });
 
         return binding.getRoot();

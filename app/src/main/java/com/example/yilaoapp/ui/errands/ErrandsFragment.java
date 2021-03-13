@@ -187,7 +187,6 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
             }
         };
 
-
 //        binding.errandRecyclerview.requestLayout();
         return binding.getRoot();
     }
