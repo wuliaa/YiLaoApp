@@ -238,18 +238,19 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                         Point_address address = all.get(i).getDestination();
                                         String money = String.valueOf(all.get(i).getReward());
                                         String time = all.get(i).getCreate_at();
-                                        BigInteger phone = all.get(i).getFrom_user();
+                                        BigInteger getfromUser = all.get(i).getFrom_user();
+                                        BigInteger phone=all.get(i).getPhone();
                                         String protected_info = all.get(i).getProtected_info();
                                         String uuid = all.get(i).getId_photo();
                                         String id_name=all.get(i).getId_name();
-                                        All_orders errand1 = new All_orders(phone, address, time, task_id.get(i),
+                                        All_orders errand1 = new All_orders(getfromUser,phone, address, time, task_id.get(i),
                                                 content, Float.parseFloat(money), protected_info, uuid,id_name);
                                         errandList.add(errand1);
                                         Message message = new Message();
                                         message.what = 1;
                                         //然后将消息发送出去
                                         handler.sendMessage(message);
-                                        Log.d("errand", "message: " + content + "1" + address + "2" + money + "3" + time);
+                                        Log.d("errand", "message: " );
                                     }
                                 }
                             } catch (IOException e) {

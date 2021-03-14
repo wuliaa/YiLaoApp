@@ -150,11 +150,12 @@ public class MyErrandsFragment extends Fragment implements SwipeRefreshLayout.On
                                         Point_address address = all.get(i).getDestination();        //联系地址
                                         String money = String.valueOf(all.get(i).getReward());      //金额
                                         String time = all.get(i).getCreate_at();                   //订单创建时间
-                                        BigInteger phone = all.get(i).getFrom_user();             //订单人的电话
+                                        BigInteger getfromUser=all.get(i).getFrom_user();
+                                        BigInteger phone = all.get(i).getPhone();             //订单人的电话
                                         String protected_info = all.get(i).getProtected_info();   //保护信息
                                         String uuid = all.get(i).getId_photo();                 //订单人的头像
                                         String nickname=all.get(i).getId_name();
-                                        All_orders errand1 = new All_orders(phone, address, time, task_id.get(i),
+                                        All_orders errand1 = new All_orders(getfromUser,phone, address, time, task_id.get(i),
                                                 content, Float.parseFloat(money), protected_info, uuid,nickname);
                                         errandsList.add(errand1);
                                         Message message = new Message();
@@ -162,6 +163,7 @@ public class MyErrandsFragment extends Fragment implements SwipeRefreshLayout.On
                                         //然后将消息发送出去
                                         handler.sendMessage(message);
                                         Log.d("TaskFragmentErrand", "message: " +time+" 2  "+money);
+                                        Log.d("getClose_stateErrand", "onCreateView: "+all.get(i).getClose_state());
                                     }
                                 }
                             }
