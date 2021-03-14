@@ -287,6 +287,7 @@ public class PurchaseDetailFragment extends Fragment
                             Bundle bundle=new Bundle();
                             bundle.putString("mobile",String.valueOf(phone));
                             bundle.putString("uuid",id_photo);
+                            bundle.putString("id_name",nickName);
                             intent.putExtra("bundle",bundle);
                             startActivity(intent);
                         } else {

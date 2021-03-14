@@ -3,14 +3,14 @@ package com.example.yilaoapp.chat.bean;
 
 public  class Message {
 
-     private String uuid;
-      private String msgId;
-     private MsgType msgType;
-     private MsgBody body;
-     private MsgSendStatus sentStatus;
+     private String uuid;//发送消息者的uuid
+     private String msgId; //信息id
+     private MsgType msgType; //信息类型
+     private MsgBody body;  //信息body
+     private MsgSendStatus sentStatus; //信息发送状态
      private String senderId;
      private String targetId;
-     private long sentTime;
+     private long sentTime;  //发送时间
 
 
     public String getUuid() {

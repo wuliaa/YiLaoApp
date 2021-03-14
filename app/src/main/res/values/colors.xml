@@ -85,4 +85,5 @@
     <color name="bga_pp_eighteen_maskColor">#0FFFFFFF</color>
     <!-- ========================== 自定义 PhotoPicker 颜色 END ========================== -->
     <color name="gray">#FFFFFF</color>
+    <color name="color_f6">#f6f6f6</color>
 </resources>

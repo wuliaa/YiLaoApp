@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -23,6 +24,9 @@ public class SavePhoto {
     private Context context;
     public SavePhoto(View view, Context context) {
         this.view=view;
+        this.context=context;
+    }
+    public SavePhoto(Context context){
         this.context=context;
     }
     public void SaveBitmapFromView() {
@@ -64,5 +68,46 @@ public class SavePhoto {
         } catch (IOException e) { e.printStackTrace(); }
         // 发送广播，通知刷新图库的显示
         context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + fileName)));
+    }
+
+    /**
+     * 保存图片到相册
+     */
+    public void saveImageToGallery(Bitmap mBitmap) {
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+
+            //ToastUtils.showToast(CodeActivity.this, "sdcard未使用");
+            return;
+        }
+        // 首先保存图片
+        File appDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsoluteFile();
+        if (!appDir.exists()) {
+            appDir.mkdir();
+        }
+        String fileName = System.currentTimeMillis() + ".jpg";
+        File file = new File(appDir, fileName);
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        // 其次把文件插入到系统图库
+        try {
+            MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(), fileName, null);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } // 最后通知图库更新
+
+        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + "")));
+
+
     }
 }
