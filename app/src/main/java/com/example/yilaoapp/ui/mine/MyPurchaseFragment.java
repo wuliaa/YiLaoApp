@@ -156,14 +156,15 @@ public class MyPurchaseFragment extends Fragment implements SwipeRefreshLayout.O
                                         Point_address address = all.get(i).getDestination();          //地址
                                         String money = String.valueOf(all.get(i).getReward());       //订单酬劳
                                         String time = all.get(i).getCreate_at();                     //订单创建时间
-                                        BigInteger phone = all.get(i).getFrom_user();               //发布订单的电话号码
+                                        BigInteger getfromUser=all.get(i).getFrom_user();
+                                        BigInteger phone = all.get(i).getPhone();               //发布订单的电话号码
                                         String protected_info = all.get(i).getProtected_info();    //隐藏信息
                                         String uuid = all.get(i).getId_photo();                   //头像的uuid
                                         String photos = all.get(i).getPhotos();                     //订单的图片
                                         String category = all.get(i).getCategory();                //订单分类
                                         String name = all.get(i).getName();                       //订单名字
                                         String nickname=all.get(i).getId_name();               //昵称
-                                        All_orders purchase1 = new All_orders(phone, address, time,
+                                        All_orders purchase1 = new All_orders(getfromUser,phone, address, time,
                                                 task_id.get(i), content, Float.parseFloat(money),
                                                 protected_info, category, photos, uuid, name,nickname);
                                         purchaseList.add(purchase1);
@@ -174,6 +175,7 @@ public class MyPurchaseFragment extends Fragment implements SwipeRefreshLayout.O
                                         //然后将消息发送出去
                                         handler.sendMessage(message);
                                         Log.d("TaskFragmentPurchase", "message:"+time);
+                                        Log.d("getClose_statePurchase", "onCreateView: "+all.get(i).getClose_state());
                                     }
                                 }
                             }

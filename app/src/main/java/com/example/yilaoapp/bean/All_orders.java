@@ -62,20 +62,20 @@ public class All_orders {
     }
 
     //针对跑腿的初始化函数
-    public All_orders(BigInteger phone, Point_address destination, String create_at,
+    public All_orders(BigInteger getfrom_User,BigInteger phone, Point_address destination, String create_at,
                       int id, String detail,  float reward,
                       String protected_info, String id_photo,String id_name) {
         this.receive_at = "";
         this.close_at = "";
         this.phone = phone;   //发布的任务的联系电话
         this.executor = null; //接受任务的人的电话号码
-        this.from_user = null;   //发布的任务的人的电话号码
+        this.from_user = getfrom_User;   //发布的任务的人的电话号码
         this.destination = destination;   //收获地址
         this.close_state = "";
         this.create_at = create_at;   //任务创建时间
         this.id = id;                //订单id
         this.detail = detail;        //订单详情
-        this.type = type;            //订单种类
+        this.type = "";            //订单种类
         this.category = "";
         this.photos = "";        //图片
         this.in_at = "";
@@ -88,14 +88,15 @@ public class All_orders {
     }
 
     //针对代购和公告的初始化函数
-    public All_orders(BigInteger phone, Point_address destination, String create_at,
+    public All_orders(BigInteger getfrom_User, BigInteger phone, Point_address destination, String create_at,
                       int id, String detail,  float reward,
-                      String protected_info, String category, String photos,String id_photo,String name,String id_name) {
+                      String protected_info, String category, String photos,
+                      String id_photo,String name,String id_name) {
         this.receive_at = "";
         this.close_at = "";
         this.phone = phone;   //发布的任务的联系电话
         this.executor = null; //接受任务的人的电话号码
-        this.from_user = null;   //发布的任务的人的电话号码
+        this.from_user = getfrom_User;   //发布的任务的人的电话号码
         this.destination = destination;   //收获地址
         this.close_state = "";
         this.create_at = create_at;   //任务创建时间
