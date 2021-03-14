@@ -48,7 +48,7 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
         All_orders errand = mErrandList.get(position);
         StringBuilder stringBuilder=new StringBuilder();
         stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
-                .append(errand.getPhone())
+                .append(errand.getFrom_user())
                 .append("/resources/")
                 .append(errand.getId_photo());
         String url=stringBuilder.toString();

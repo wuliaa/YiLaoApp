@@ -43,7 +43,7 @@ public class ShareAdapter extends RecyclerView.Adapter<ShareAdapter.ShareViewHol
         String photourl=st.nextToken();
         StringBuilder stringBuilder=new StringBuilder();
         stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
-                .append(share.getPhone())
+                .append(share.getFrom_user())
                 .append("/resources/")
                 .append(photourl);
         String url=stringBuilder.toString();

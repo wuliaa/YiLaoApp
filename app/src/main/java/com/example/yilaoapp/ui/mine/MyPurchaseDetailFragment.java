@@ -111,7 +111,7 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
         viewModel.getPurchase().observe(getViewLifecycleOwner(), item -> {
             StringBuilder stringBuilder=new StringBuilder();
             stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
-                    .append(item.getPhone())
+                    .append(item.getFrom_user())
                     .append("/resources/")
                     .append(item.getId_photo());
             String headurl = stringBuilder.toString();

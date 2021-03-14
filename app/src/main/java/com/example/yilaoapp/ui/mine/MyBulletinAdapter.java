@@ -42,7 +42,7 @@ public class MyBulletinAdapter extends  RecyclerView.Adapter<MyBulletinAdapter.M
         String time="";
         StringBuilder stringBuilder=new StringBuilder();
         stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
-                .append(bulletin.getPhone())
+                .append(bulletin.getFrom_user())
                 .append("/resources/")
                 .append(bulletin.getId_photo());
         String url=stringBuilder.toString();

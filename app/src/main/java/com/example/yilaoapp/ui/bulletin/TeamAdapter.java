@@ -39,7 +39,7 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
         All_orders team = mTeamList.get(position);
         StringBuilder stringBuilder=new StringBuilder();
         stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
-                .append(team.getPhone())
+                .append(team.getFrom_user())
                 .append("/resources/")
                 .append(team.getId_photo());
         String url=stringBuilder.toString();

@@ -46,7 +46,7 @@ public class MyPurchaseAdapter extends RecyclerView.Adapter<MyPurchaseAdapter.My
         String photourl=st.nextToken();
         StringBuilder stringBuilder=new StringBuilder();
         stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
-                .append(purchase.getPhone())
+                .append(purchase.getFrom_user())
                 .append("/resources/")
                 .append(photourl);
         String url=stringBuilder.toString();

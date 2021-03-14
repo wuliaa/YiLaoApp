@@ -121,7 +121,7 @@ public class PurchaseDetailFragment extends Fragment
                     .error(R.drawable.head2)
                     .into(binding.purchasedHead);
             id_photo=item.getId_photo();
-            phone =item.getPhone();
+            phone =item.getFrom_user();
             nickName = item.getId_name();
             detail=item.getDetail();
             binding.purchasedname.setText(nickName);
@@ -134,7 +134,7 @@ public class PurchaseDetailFragment extends Fragment
                 uuid = st.nextToken();
                 StringBuilder stringBuilder1 = new StringBuilder();
                 stringBuilder1.append("http://api.yilao.tk:15000/v1.0/users/")
-                        .append(item.getPhone())
+                        .append(item.getFrom_user())
                         .append("/resources/")
                         .append(uuid);
                 String url = stringBuilder1.toString();

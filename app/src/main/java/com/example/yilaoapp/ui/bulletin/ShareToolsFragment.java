@@ -162,14 +162,15 @@ public class ShareToolsFragment extends Fragment implements SwipeRefreshLayout.O
                                         Point_address address = all.get(i).getDestination();          //地址
                                         String money = String.valueOf(all.get(i).getReward());       //订单酬劳
                                         String time = all.get(i).getCreate_at();                     //订单创建时间
-                                        BigInteger phone = all.get(i).getFrom_user();               //发布订单的电话号码
+                                        BigInteger getfromUser=all.get(i).getFrom_user();
+                                        BigInteger phone = all.get(i).getPhone();               //发布订单的电话号码
                                         String protected_info = all.get(i).getProtected_info();    //隐藏信息
                                         String uuid = all.get(i).getId_photo();                   //头像的uuid
                                         String photos = all.get(i).getPhotos();                     //订单的图片
                                         String category = all.get(i).getCategory();                //订单分类
                                         String name = all.get(i).getName();                       //订单名字
                                         String id_name=all.get(i).getId_name();
-                                        All_orders share = new All_orders(phone, address, time, task_id.get(number++), content
+                                        All_orders share = new All_orders(getfromUser,phone, address, time, task_id.get(number++), content
                                                 , Float.parseFloat(money), protected_info, category, photos, uuid, name,id_name);
                                         shareList.add(share);
                                         Log.d(" PurchaseList", "message: " + content + "1" +

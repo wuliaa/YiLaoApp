@@ -41,7 +41,7 @@ public class LostAdapter extends RecyclerView.Adapter<LostAdapter.LostViewHolder
         String photourl=st.nextToken();
         StringBuilder stringBuilder=new StringBuilder();
         stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
-                .append(lost.getPhone())
+                .append(lost.getFrom_user())
                 .append("/resources/")
                 .append(photourl);
         String url=stringBuilder.toString();
