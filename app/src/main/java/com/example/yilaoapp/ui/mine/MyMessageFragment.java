@@ -223,6 +223,7 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                             Bundle bundle=new Bundle();
                             bundle.putString("mobile",message.getMobile().toString());
                             bundle.putString("uuid",message.getUuid());
+                            bundle.putString("id_name",message.getNick());
                             intent.putExtra("bundle",bundle);
                             startActivity(intent);
                         } else {

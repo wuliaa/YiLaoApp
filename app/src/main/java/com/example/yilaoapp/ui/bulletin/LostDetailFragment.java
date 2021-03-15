@@ -151,8 +151,11 @@ public class LostDetailFragment extends Fragment implements EasyPermissions.Perm
             public void onClick(View v) {
                 if (phone != null && uuid != null) {
                     Intent intent = new Intent(requireActivity(), ChatActivity.class);
-                    intent.putExtra("mobile", phone);
-                    intent.putExtra("uuid", uuid);
+                    Bundle bundle=new Bundle();
+                    bundle.putString("mobile",phone);
+                    bundle.putString("uuid",uuid);
+                    bundle.putString("id_name",nickName);
+                    intent.putExtra("bundle",bundle);
                     startActivity(intent);
                 }
             }
