@@ -65,7 +65,7 @@ public class MyPurchaseAdapter extends RecyclerView.Adapter<MyPurchaseAdapter.My
         holder.time.setText("发布时间："+time);
         SharedPreferences pre2 = MyApplication.getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
         String mobile2 = pre2.getString("mobile", "");
-        if(mobile2.equals(String.valueOf(purchase.getPhone())))
+        if(mobile2.equals(String.valueOf(purchase.getFrom_user())))
             holder.isPublish.setText("发布的任务");
         else
             holder.isPublish.setText("领取的任务");

@@ -184,6 +184,34 @@
                             android:background="@drawable/purchase_contact_deepen"
                             android:text="@string/cancelTask"
                             android:textColor="#FFFFFF" />
+
+                        <Button
+                            android:id="@+id/acceptButton_errands"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="30dp"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginBottom="20dp"
+                            android:background="@drawable/accept_deepen"
+                            android:text="@string/accept_cancel_task"
+                            android:textColor="#FFFFFF"
+                            android:visibility="gone" />
+
+                        <Button
+                            android:id="@+id/refuseButton_errands"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="30dp"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginBottom="20dp"
+                            android:background="@drawable/purchase_contact_deepen"
+                            android:text="@string/refuse_accept_task"
+                            android:textColor="#FFFFFF"
+                            android:visibility="gone"
+                            />
+
                     </LinearLayout>
 
 

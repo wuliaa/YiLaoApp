@@ -211,7 +211,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 errand_service errand = new RetrofitUser().get(getContext()).create(errand_service.class);
                 SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                 String mobile = pre.getString("mobile", "");
-                Call<ResponseBody> get_errand = errand.get_orders(mobile,"跑腿");
+                Call<ResponseBody> get_errand = errand.get_orders(mobile, "跑腿");
                 get_errand.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
@@ -231,7 +231,10 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                 }.getType();
                                 all = gson.fromJson(str, type);
                                 for (int i = 0; i < all.size(); i++) {
-                                    if (!task_id.contains(all.get(i).getId()) && all.get(i).getExecutor() == null) {
+                                    if (!task_id.contains(all.get(i).getId()) &&
+                                            all.get(i).getExecutor() == null &&   //订单还未被领取
+                                            all.get(i).getClose_state() == null      //订单不是取消的或者是完成的
+                                    ) {
                                         Log.d("executor", "onResponse" + i + ": " + all.get(i).getExecutor());
                                         task_id.add(all.get(i).getId());
                                         String content = all.get(i).getDetail();
@@ -239,18 +242,20 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                         String money = String.valueOf(all.get(i).getReward());
                                         String time = all.get(i).getCreate_at();
                                         BigInteger getfromUser = all.get(i).getFrom_user();
-                                        BigInteger phone=all.get(i).getPhone();
+                                        BigInteger phone = all.get(i).getPhone();
                                         String protected_info = all.get(i).getProtected_info();
                                         String uuid = all.get(i).getId_photo();
-                                        String id_name=all.get(i).getId_name();
-                                        All_orders errand1 = new All_orders(getfromUser,phone, address, time, task_id.get(i),
-                                                content, Float.parseFloat(money), protected_info, uuid,id_name);
+                                        String id_name = all.get(i).getId_name();
+                                        String close_state = all.get(i).getClose_state();
+                                        All_orders errand1 = new All_orders(getfromUser, phone, address, time, task_id.get(i),
+                                                content, Float.parseFloat(money), close_state, "",
+                                                protected_info, uuid, id_name);
                                         errandList.add(errand1);
                                         Message message = new Message();
                                         message.what = 1;
                                         //然后将消息发送出去
                                         handler.sendMessage(message);
-                                        Log.d("errand", "message: " );
+                                        Log.d("errand", "message: ");
                                     }
                                 }
                             } catch (IOException e) {

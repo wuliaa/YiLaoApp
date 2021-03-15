@@ -153,7 +153,7 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
                                 //获取每个用户的照片的字节流
                                 for (int i = 0; i < all.size(); i++) {
                                     if (!task_id.contains(all.get(i).getId()) &&
-                                            all.get(i).getExecutor() == null &&
+                                            all.get(i).getReceive_at() == null &&
                                             all.get(i).getCategory().equals("失物招领")
                                     ) {
                                         task_id.add(all.get(i).getId());
@@ -168,9 +168,12 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
                                         String photos = all.get(i).getPhotos();                     //订单的图片
                                         String category = all.get(i).getCategory();                //订单分类
                                         String name = all.get(i).getName();                       //订单名字
-                                        String id_name=all.get(i).getId_name();
-                                        All_orders lost = new All_orders(getfromUser,phone, address, time, task_id.get(number++), content
-                                                , Float.parseFloat(money), protected_info, category, photos, uuid, name,id_name);
+                                        String id_name=all.get(i).getId_name();                 //订单人的昵称
+                                        String close_state=all.get(i).getClose_state();     //订单状态
+                                        All_orders lost = new All_orders(getfromUser,phone, address, time,
+                                                task_id.get(number++), content, Float.parseFloat(money),
+                                                close_state, "",protected_info,
+                                                category, photos, uuid, name,id_name);
                                         LostList.add(lost);
                                         Message message = new Message();
                                         message.what = 1;

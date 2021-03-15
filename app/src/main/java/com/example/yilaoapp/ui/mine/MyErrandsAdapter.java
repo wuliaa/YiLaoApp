@@ -63,7 +63,7 @@ public class MyErrandsAdapter extends  RecyclerView.Adapter<MyErrandsAdapter.MyE
         holder.time.setText("发布时间："+time);
         SharedPreferences pre2 = MyApplication.getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
         String mobile2 = pre2.getString("mobile", "");
-        if(mobile2.equals(String.valueOf(errands.getPhone())))
+        if(mobile2.equals(String.valueOf(errands.getFrom_user())))
             holder.isPublish.setText("发布的任务");
         else
             holder.isPublish.setText("领取的任务");

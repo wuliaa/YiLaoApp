@@ -132,18 +132,36 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
             //设置完成按钮
             SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
             String mobile2 = pre2.getString("mobile", "");
-            if(mobile2.equals(String.valueOf(item.getPhone())))
+            if(mobile2.equals(String.valueOf(item.getFrom_user())))
                 label="发布的任务";
             else
                 label="领取的任务";
             Log.d("MyPurchasedetail", "labelMessage: "+label);
-            if(label.equals("发布的任务"))
-            {
+
+            //设置底下的button的出现还是消失
+            //完成任务的button只能在“发布任务”中可以看见
+            if (label.equals("发布的任务")) {
                 binding.compeleteButtonPurchases.setVisibility(View.VISIBLE);
-            }
-            else {
+            } else {
                 binding.compeleteButtonPurchases.setVisibility(View.GONE);
             }
+            //如果任务是cancel或者finish，那么button都不可见
+            Log.d("getClose_stateErrand", item.getDetail() + " DetailFragment：" + item.getClose_state());
+            if (item.getClose_state() != null) {
+                if (item.getClose_state().equals("cancel") ||
+                        item.getClose_state().equals("finish") ||
+                        item.getClose_state().equals("canceling")) {
+                    binding.compeleteButtonPurchases.setVisibility(View.GONE);
+                    binding.cancelButtonPurchases.setVisibility(View.GONE);
+                }
+                if (item.getClose_state().equals("canceling") &&
+                        label.equals("领取的任务")) {
+                    binding.acceptButtonPurchases.setVisibility(View.VISIBLE);
+                    binding.refuseButtonPurchase.setVisibility(View.VISIBLE);
+                }
+            }
+
+
             //添加对图片的代码
             binding.ninePhotoLayout.setDelegate(this);
             StringTokenizer st = new StringTokenizer(item.getPhotos(), ",");
@@ -161,33 +179,101 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
 
             HorizontalStepView setpview5 =(HorizontalStepView) binding.stepView;
             List<StepBean> stepsBeanList = new ArrayList<>();
-            StepBean stepBean0 = new StepBean("发布",1);//1是完成，0是正在进行时，-1是还没有进行到
-            StepBean stepBean1 = new StepBean("领取",-1);
-            StepBean stepBean2 = new StepBean("进行中",-1);
-            StepBean stepBean3 = new StepBean("完成",-1);
+            StepBean stepBean0=new StepBean("取消",-1);
+            StepBean stepBean1 = new StepBean("发布", 1);//1是完成，0是正在进行时，-1是还没有进行到
+            StepBean stepBean2 = new StepBean("领取", -1);
+            StepBean stepBean3 = new StepBean("进行中", -1);
+            StepBean stepBean4 = new StepBean("完成", -1);
             stepsBeanList.add(stepBean0);
             stepsBeanList.add(stepBean1);
             stepsBeanList.add(stepBean2);
             stepsBeanList.add(stepBean3);
-            if(label.equals("领取的任务"))
-            {
-                stepsBeanList.get(1).setState(1);
-                stepsBeanList.get(2).setState(0);
+            stepsBeanList.add(stepBean4);
+            Log.d("MyErrandDetail", "onCreateView: " +label);
+            if (label.equals("领取的任务")) {
+                stepsBeanList.get(2).setState(1);
+                stepsBeanList.get(3).setState(0);
+                Log.d("MyErrandDetail", "labelMessage: " + label);
             }
-            setStepStytle(setpview5,stepsBeanList);
+
+            //如果是cancel或finish的话，一开始初始化就要设置一下状态
+            if (item.getClose_state() != null) {
+                if (item.getClose_state().equals("cancel")) {
+                    stepsBeanList.get(0).setState(1);
+                    for (int i = 0; i < 4; i++) {
+                        stepsBeanList.get(i + 1).setState(-1);
+                    }
+                } else if (item.getClose_state().equals("finish")) {
+                    for (int i = 0; i < 4; i++) {
+                        stepsBeanList.get(i + 1).setState(1);
+                    }
+                } else if (item.getClose_state().equals("canceling")) {
+                    stepsBeanList.get(0).setState(0);
+                    for (int i = 0; i < 4; i++) {
+                        stepsBeanList.get(i + 1).setState(-1);
+                    }
+                }
+            }
+
+            setStepStytle(setpview5, stepsBeanList);
 
             binding.cancelButtonPurchases.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(stepsBeanList.get(1).getState()==1)
-                    {
-                        //已经被领取了，就不能点击取消任务
-                        Toast.makeText(requireContext(),"任务已被领取，不能取消任务。"
-                                ,Toast.LENGTH_LONG).show();;
-                    }else{
-                        stepsBeanList.get(0).setState(-1);
-                        TipDialog.show((AppCompatActivity) getActivity(), "取消成功", TipDialog.TYPE.SUCCESS);
-                        setStepStytle(setpview5,stepsBeanList);
+                    UserService user= new RetrofitUser().get(getContext()).create(UserService.class);
+                    SharedPreferences pre=getContext().getSharedPreferences("login",Context.MODE_PRIVATE);
+                    String mobile=pre.getString("mobile","");
+                    String token=pre.getString("token","");
+                    String orderid=String.valueOf(item.getId());
+                    if(label.equals("发布的任务")){
+                        if (stepsBeanList.get(2).getState() == 1 || item.getExecutor() != null) {
+                            //已经被领取了，就不能点击取消任务
+                            Toast.makeText(requireContext(), "任务已被领取，取消接单需要与接单人进行沟通。"
+                                    , Toast.LENGTH_LONG).show();
+                            stepsBeanList.get(0).setState(0);
+                        } else {
+                            stepsBeanList.get(0).setState(1);
+                            TipDialog.show((AppCompatActivity) getActivity(), "取消成功", TipDialog.TYPE.SUCCESS);
+                        }
+                        //cancel 请求
+                        for (int i = 0; i < 4; i++) {
+                            stepsBeanList.get(i + 1).setState(-1);
+                        }
+                        setStepStytle(setpview5, stepsBeanList);
+                        Call<ResponseBody> cancelTask = user.Put_Fin_Cancel_Task(mobile, orderid,
+                                token, "df3b72a07a0a4fa1854a48b543690eab", "cancel");
+                        cancelTask.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                                if (response.body() != null) {
+                                    Log.d("MyErrandCancel", "onResponse: " + response.body().toString());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                                Log.d("MyErrandCancel", "onFailure: ");
+                            }
+                        });
+                    }else if (label.equals("领取的任务")){
+                        Call<ResponseBody> cancelTask=user.Get_Acc_Cancel_Order(mobile,orderid,token,
+                                "df3b72a07a0a4fa1854a48b543690eab","false");
+                        cancelTask.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                stepsBeanList.get(0).setState(1);
+                                for(int i=0;i<4;i++)
+                                {
+                                    stepsBeanList.get(i+1).setState(-1);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                            }
+                        });
+                        TipDialog.show((AppCompatActivity) getActivity(), "接单取消成功", TipDialog.TYPE.SUCCESS);
                     }
                 }
             });
@@ -195,16 +281,94 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
             binding.compeleteButtonPurchases.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(stepsBeanList.get(1).getState()==-1)
+                    if(stepsBeanList.get(2).getState()==-1)
                     {
                         //没被领取了，就不能点击完成任务
                         Toast.makeText(requireContext(),"任务未被领取，不能完成任务。" +
                                 "取消任务可以按取消按钮",Toast.LENGTH_LONG).show();;
                     }else{
-                        stepsBeanList.get(2).setState(1);
-                        stepsBeanList.get(3).setState(1);
-                        setStepStytle(setpview5,stepsBeanList);
+                        stepsBeanList.get(0).setState(-1);
+                        for (int i = 0; i < 4; i++) {
+                            stepsBeanList.get(i + 1).setState(1);
+                        }
+                        setStepStytle(setpview5, stepsBeanList);
+                        UserService user = new RetrofitUser().get(getContext()).create(UserService.class);
+                        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                        String mobile = pre.getString("mobile", "");
+                        String token = pre.getString("token", "");
+                        String order_id = String.valueOf(item.getId());
+                        Call<ResponseBody> finish = user.Put_Fin_Cancel_Task(mobile, order_id, token,
+                                "df3b72a07a0a4fa1854a48b543690eab", "finish");
+                        finish.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                            }
+                        });
                         TipDialog.show((AppCompatActivity) getActivity(), "完成任务", TipDialog.TYPE.SUCCESS);
+                    }
+                }
+            });
+
+            binding.acceptButtonPurchases.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(label.equals("领取的任务")){
+                        UserService user = new RetrofitUser().get(getContext()).create(UserService.class);
+                        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                        String mobile = pre.getString("mobile", "");
+                        String token = pre.getString("token", "");
+                        String orderid = String.valueOf(item.getId());
+                        Call<ResponseBody> accept=user.Put_Fin_Cancel_Task(mobile,orderid,token
+                                ,"df3b72a07a0a4fa1854a48b543690eab","close");
+                        accept.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                                stepsBeanList.get(0).setState(1);
+                                for (int i = 0; i < 4; i++) {
+                                    stepsBeanList.get(i + 1).setState(-1);
+                                }
+                                setStepStytle(setpview5, stepsBeanList);
+                            }
+
+                            @Override
+                            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+
+                            }
+                        });
+                        TipDialog.show((AppCompatActivity) getActivity(), "订单取消成功", TipDialog.TYPE.SUCCESS);
+                    }
+                }
+            });
+
+            binding.refuseButtonPurchase.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(label.equals("领取的任务")){
+                        UserService user = new RetrofitUser().get(getContext()).create(UserService.class);
+                        SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                        String mobile = pre.getString("mobile", "");
+                        String token = pre.getString("token", "");
+                        String orderid = String.valueOf(item.getId());
+                        Call<ResponseBody> accept=user.Put_Fin_Cancel_Task(mobile,orderid,token
+                                ,"df3b72a07a0a4fa1854a48b543690eab","reopen");
+                        accept.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+
+                            }
+
+                            @Override
+                            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+
+                            }
+                        });
+                        TipDialog.show((AppCompatActivity) getActivity(), "订单取消拒绝成功", TipDialog.TYPE.SUCCESS);
                     }
                 }
             });

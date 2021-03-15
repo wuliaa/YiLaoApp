@@ -57,6 +57,23 @@ public interface UserService {
     Call<ResponseBody> get_user(@Path("mobile")String mobile, @Query("appid")String app,@Query("token") String token);
     @GET("users/{mobile}")
     Call<ResponseBody> get_user(@Path("mobile")String mobile);
+
+    //获得“我的任务”的所有订单
     @GET("users/{mobile}/orders")
-    Call<ResponseBody> get_myorder(@Path("mobile")String mobil,@Query("token")String token,@Query("appid")String app,@Query("type")String type);
+    Call<ResponseBody> get_myorder(@Path("mobile")String mobil,@Query("token")String token,
+                                   @Query("appid")String app,@Query("type")String type);
+
+    //A为发布人，B为接单人
+    //A取消订单   或者是    B接受或这拒绝A的取消订单
+    @PATCH("users/{mobile}/orders/{order_id}")
+    Call<ResponseBody>  Put_Fin_Cancel_Task(@Path("mobile")String mobile,@Path("order_id")String orderId,
+                                   @Query("token") String token,
+                                   @Query("appid")String appid,@Query("close")String close);
+
+    //B取消接单
+    @PATCH("users/{mobile}/orders/{order_id}")
+    Call<ResponseBody> Get_Acc_Cancel_Order(@Path("mobile")String mobile,@Path("order_id")String orderId,
+                                        @Query("token")String token,
+                                        @Query("Appid")String appid,@Query("receive")String receive);
+
 }

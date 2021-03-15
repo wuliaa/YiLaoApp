@@ -161,12 +161,14 @@ public class MyBulletinFragment extends Fragment implements SwipeRefreshLayout.O
                                         String photos = all.get(i).getPhotos();                     //订单的图片
                                         String category = all.get(i).getCategory();                //订单分类
                                         String name = all.get(i).getName();                       //订单名字
-                                        String nickname=all.get(i).getId_name();
-                                        All_orders purchase1 = new All_orders(getfromUser,phone, address, time,
-                                                task_id.get(i), content
-                                                , Float.parseFloat(money), protected_info,
+                                        String nickname=all.get(i).getId_name();             //订单人的昵称
+                                        String close_state=all.get(i).getClose_state();
+                                        String receive_at=all.get(i).getReceive_at();
+                                        All_orders Mybulletin = new All_orders(getfromUser,phone, address, time,
+                                                task_id.get(i), content, Float.parseFloat(money),
+                                                close_state,receive_at,protected_info,
                                                 category, photos, uuid, name,nickname);
-                                        bulletinList.add(purchase1);
+                                        bulletinList.add(Mybulletin);
                                         Message message = new Message();
                                         message.what = 1;
                                         //然后将消息发送出去
