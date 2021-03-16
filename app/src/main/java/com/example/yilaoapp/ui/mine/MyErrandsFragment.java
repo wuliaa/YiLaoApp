@@ -159,7 +159,7 @@ public class MyErrandsFragment extends Fragment implements SwipeRefreshLayout.On
                                         String close_state=all.get(i).getClose_state();         //订单的状态
                                         String receive_at=all.get(i).getReceive_at();
                                         All_orders errand1 = new All_orders(getfromUser,phone, address, time, task_id.get(i),
-                                                content, Float.parseFloat(money),close_state, "",
+                                                content, Float.parseFloat(money),close_state, receive_at,
                                                 protected_info, uuid,nickname);
                                         errandsList.add(errand1);
                                         Message message = new Message();
@@ -167,7 +167,7 @@ public class MyErrandsFragment extends Fragment implements SwipeRefreshLayout.On
                                         //然后将消息发送出去
                                         handler.sendMessage(message);
                                         Log.d("getClose_stateErrand", all.get(i).getDetail()+"  "
-                                                +all.get(i).getExecutor()+ "   "+all.get(i).getClose_state());
+                                                +all.get(i).getExecutor()+ "   "+all.get(i).getReceive_at());
                                     }
                                 }
                             }

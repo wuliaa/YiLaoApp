@@ -190,10 +190,15 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
             stepsBeanList.add(stepBean3);
             stepsBeanList.add(stepBean4);
             Log.d("MyErrandDetail", "onCreateView: " +label);
+            //如果为领取的任务，状态直接到进行中
             if (label.equals("领取的任务")) {
                 stepsBeanList.get(2).setState(1);
                 stepsBeanList.get(3).setState(0);
-                Log.d("MyErrandDetail", "labelMessage: " + label);
+            } else if (label.equals("发布的任务")) {
+                if (!item.getReceive_at().equals("")) {
+                    stepsBeanList.get(2).setState(1);
+                    stepsBeanList.get(3).setState(0);
+                }
             }
 
             //如果是cancel或finish的话，一开始初始化就要设置一下状态

@@ -167,14 +167,10 @@ public class MyErrandsDetailFragment extends Fragment {
             if (label.equals("领取的任务")) {
                 stepsBeanList.get(2).setState(1);
                 stepsBeanList.get(3).setState(0);
-                Log.d("getClose_stateErrand", "labelMessage1: " + label);
-                Log.d("getClose_stateErrand", " inlabel1 " + item.getReceive_at());
             } else if (label.equals("发布的任务")) {
                 if (!item.getReceive_at().equals("")) {
                     stepsBeanList.get(2).setState(1);
                     stepsBeanList.get(3).setState(0);
-                    Log.d("getClose_stateErrand", "labelMessage: " + label);
-                    Log.d("getClose_stateErrand", " inlabel " + item.getReceive_at());
                 }
             }
             Log.d("getClose_stateErrand", " outlabel " + item.getReceive_at());
@@ -342,7 +338,11 @@ public class MyErrandsDetailFragment extends Fragment {
                         accept.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-
+                                stepsBeanList.get(0).setState(-1);
+                                stepsBeanList.get(1).setState(1);
+                                stepsBeanList.get(2).setState(1);
+                                stepsBeanList.get(3).setState(0);
+                                setStepStytle(setpview5, stepsBeanList);
                             }
 
                             @Override
