@@ -194,7 +194,7 @@ public class PurchaseDetailFragment extends Fragment
                                 return false;
                             }
                         }).sendEmptyMessageDelayed(0, 3000);
-                        chat_task ch = new chat_task("您的任务我已领取，订单信息如下:" + detail,phone);
+                        chat_task ch = new chat_task("您的任务我已领取，订单信息如下:" + detail,phone,"TEXT");
                         chat_service send = new RetrofitUser().get(getContext()).create(chat_service.class);
                         Call<ResponseBody> sen_mes = send.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", ch);
                         sen_mes.enqueue(new Callback<ResponseBody>() {

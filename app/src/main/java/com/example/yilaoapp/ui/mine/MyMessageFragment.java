@@ -89,7 +89,7 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
         });
         binding.swipeMymessage.setOnRefreshListener(this);
         init();
-        handler = new Handler(){
+        handler = new Handler() {
             @Override
             public void handleMessage(@NonNull android.os.Message msg) {
                 super.handleMessage(msg);
@@ -155,10 +155,18 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                                 }.getType();
                                 all_chat = gson.fromJson(str, type);
                                 for (int i = 0; i < all_chat.size(); i++) {
-                                    Message mm = new Message(all_chat.get(i).getId_name(), all_chat.get(i).getLast_content(), all_chat.get(i).getLast_send_at(),
-                                            all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getMobile()));
-
-                                    messageList.add(mm);
+                                    Message mm;
+                                    if (!all_chat.get(i).getFrom_user().equals("") &&
+                                            !all_chat.get(i).getTo_user().equals("")) {
+                                        if (mobile.equals(all_chat.get(i).getFrom_user())) {
+                                            mm = new Message(all_chat.get(i).getId_name(), all_chat.get(i).getLast_content(), all_chat.get(i).getLast_send_at(),
+                                                    all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getTo_user()));
+                                        } else {
+                                            mm = new Message(all_chat.get(i).getId_name(), all_chat.get(i).getLast_content(), all_chat.get(i).getLast_send_at(),
+                                                    all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getFrom_user()));
+                                        }
+                                        messageList.add(mm);
+                                    }
                                 }
                                 android.os.Message message = new android.os.Message();
                                 message.what = 1;
@@ -229,6 +237,6 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
             public void run() {
                 binding.swipeMymessage.setRefreshing(false); // 是否显示刷新进度;false:不显示
             }
-        }, 3000);
+        }, 1000);
     }
 }

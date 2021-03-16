@@ -5,10 +5,21 @@ import java.math.BigInteger;
 public class chat_task {
     String content;
     BigInteger to_user;
+    String type;
 
-    public chat_task(String content, BigInteger to_user) {
+    public chat_task(String content, BigInteger to_user, String type) {
         this.content = content;
         this.to_user = to_user;
+        this.type = type;
+    }
+
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getContent() {
