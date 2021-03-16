@@ -114,7 +114,6 @@ public class LoginFragment extends Fragment {
     public void login(View v, String mobile, String password) {
         UserService service = new RetrofitUser().get(getContext()).create(UserService.class);
         Call<ResponseBody> loginback = service.login_password(mobile, "df3b72a07a0a4fa1854a48b543690eab", password);
-        System.out.println(111);
         loginback.enqueue(callback=new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

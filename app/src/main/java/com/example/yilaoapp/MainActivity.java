@@ -9,17 +9,15 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 
-import android.telecom.CallScreeningService;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,15 +27,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.yilaoapp.bean.User;
-import com.example.yilaoapp.bean.messbean;
-import com.example.yilaoapp.bean.tok;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
-import com.example.yilaoapp.service.image_service;
-import com.example.yilaoapp.utils.PhotoOperation;
 import com.example.yilaoapp.utils.PollingService;
 import com.example.yilaoapp.utils.PollingUtils;
-import com.example.yilaoapp.utils.ServiceHelp;
+import com.example.yilaoapp.utils.messageService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
 import com.google.android.material.navigation.NavigationView;
@@ -45,10 +39,7 @@ import com.google.gson.Gson;
 import com.jaeger.library.StatusBarUtil;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
-import java.util.LinkedList;
-import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -129,8 +120,8 @@ public class  MainActivity extends AppCompatActivity {
             }
         });
         System.out.println("Start polling service...");
-        PollingUtils.startPollingService(this, 2, PollingService.class, PollingService.ACTION);
-
+        //PollingUtils.startPollingService(this, 2, PollingService.class, PollingService.ACTION);
+        startService(new Intent(this, messageService.class));
     }
 
     public void getNickAddPortrait(ImageView portrait,TextView nick){
