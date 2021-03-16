@@ -74,6 +74,6 @@ public interface UserService {
     @PATCH("users/{mobile}/orders/{order_id}")
     Call<ResponseBody> Get_Acc_Cancel_Order(@Path("mobile")String mobile,@Path("order_id")String orderId,
                                         @Query("token")String token,
-                                        @Query("Appid")String appid,@Query("receive")String receive);
+                                        @Query("appid")String appid,@Query("receive")String receive);
 
 }
