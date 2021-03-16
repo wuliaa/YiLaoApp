@@ -44,6 +44,8 @@
         <activity
             android:name=".MainActivity"
             android:windowSoftInputMode="stateHidden|adjustResize" />
+        <service android:name=".utils.messageService"/>
+        <service android:name=".utils.PollingService"/>
     </application>
 
 </manifest>
