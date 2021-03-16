@@ -1,10 +1,15 @@
 package com.example.yilaoapp.chat.activity;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.DatabaseConfiguration;
+import androidx.room.InvalidationTracker;
+import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.TargetApi;
@@ -46,6 +51,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.Mess;
 import com.example.yilaoapp.bean.chat_task;
 import com.example.yilaoapp.chat.adapter.ChatAdapter;
 import com.example.yilaoapp.chat.bean.AudioMsgBody;
@@ -62,6 +68,8 @@ import com.example.yilaoapp.chat.util.LogUtil;
 import com.example.yilaoapp.chat.widget.MediaManager;
 import com.example.yilaoapp.chat.widget.RecordButton;
 import com.example.yilaoapp.chat.widget.StateButton;
+import com.example.yilaoapp.database.chat.ChatDataBase;
+import com.example.yilaoapp.database.dao.ChatDao;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.chat_service;
 import com.example.yilaoapp.utils.PhotoOperation;
@@ -126,10 +134,12 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     BigInteger phone;
     SharedPreferences pre;
     String mobile;
+    BigInteger phone2;
     String uuid2;
     String token;
-   // private Handler mHandler= new Handler(Looper.getMainLooper()); // 全局变量
-
+    private Handler mHandler= new Handler(Looper.getMainLooper()); // 全局变量
+    ChatDataBase chatDataBase;
+    ChatDao chatDao;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,32 +148,34 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         back.setOnClickListener(v -> onBackPressed());
         initContent();
         initPeople();
-       /* new Runnable() {
-            @Override
-            public void run() {//在此添加需轮寻的接口
-                //关闭定时任务
-                //mHandler.removeCallbacks(mTimeCounterRunnable);
-                //执行任务
-                chat_service ch=new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
-                Call<ResponseBody> ch_back=ch.get_message(mobile,mob,token,"df3b72a07a0a4fa1854a48b543690eab");
-                ch_back.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        try {
-                            System.out.println(response.body().string());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                    }
-                });
-                mHandler.postDelayed(this, 2 * 1000);
-            }
-        };*/
+        chatDataBase=ChatDataBase.getDatabase(this);
+        chatDao=chatDataBase.getChatDao();
+//        new Runnable() {
+//            @Override
+//            public void run() {//在此添加需轮寻的接口
+//                //关闭定时任务
+//                //mHandler.removeCallbacks(mTimeCounterRunnable);
+//                //执行任务
+//                chat_service ch=new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
+//                Call<ResponseBody> ch_back=ch.get_message(mobile,mob,token,"df3b72a07a0a4fa1854a48b543690eab");
+//                ch_back.enqueue(new Callback<ResponseBody>() {
+//                    @Override
+//                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                        try {
+//                            System.out.println(response.body().string());
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//                    }
+//                });
+//                mHandler.postDelayed(this, 2 * 1000);
+//            }
+//        };
     }
 
     public void initPeople() {
@@ -176,6 +188,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         phone = new BigInteger(mob);
         pre = getApplicationContext().getSharedPreferences("login", Context.MODE_PRIVATE);
         mobile = pre.getString("mobile", "");
+        phone2 = new BigInteger(mobile);
         uuid2 = pre.getString("id_photo", "");
         token = pre.getString("token", "");
     }
@@ -426,6 +439,8 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 mAdapter.addData(mMessgae);
                 //模拟两秒后发送成功
                 updateMsg(mMessgae);
+//                Mess mess=new Mess(1,hello,phone2,phone,null,"TEXT");
+//                chatDao.insert(mess);
             }
 
             @Override

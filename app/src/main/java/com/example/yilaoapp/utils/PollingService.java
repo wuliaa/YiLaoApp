@@ -121,25 +121,25 @@ public class PollingService extends
             count ++;
             //当计数能被5整除时弹出通知
             if (count % 2 == 0) {
-                chat_service ch=new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
-                SharedPreferences pre=getSharedPreferences("login", Context.MODE_PRIVATE);
-                String token=pre.getString("token","");
-                Call<ResponseBody> ch_back=ch.get_message("13060887368","13412101248",token,"df3b72a07a0a4fa1854a48b543690eab");
-                ch_back.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        try {
-                            System.out.println(response.body().string());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                    }
-                });
+//                chat_service ch=new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
+//                SharedPreferences pre=getSharedPreferences("login", Context.MODE_PRIVATE);
+//                String token=pre.getString("token","");
+//                Call<ResponseBody> ch_back=ch.get_message("13060887368","13412101248",token,"df3b72a07a0a4fa1854a48b543690eab");
+//                ch_back.enqueue(new Callback<ResponseBody>() {
+//                    @Override
+//                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                        try {
+//                            System.out.println(response.body().string());
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//                    }
+//                });
                 showNotification();
                 System.out.println("New message!");
             }

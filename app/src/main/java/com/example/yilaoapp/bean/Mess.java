@@ -1,8 +1,13 @@
 package com.example.yilaoapp.bean;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.math.BigInteger;
 
+@Entity(tableName = "chat_table")
 public class Mess {
+    @PrimaryKey
     int id;
     String content;
     BigInteger from_user;
