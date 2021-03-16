@@ -168,7 +168,7 @@ public class MyErrandsDetailFragment extends Fragment {
                 stepsBeanList.get(2).setState(1);
                 stepsBeanList.get(3).setState(0);
             } else if (label.equals("发布的任务")) {
-                if (!item.getReceive_at().equals("")) {
+                if (item.getReceive_at()!=null) {
                     stepsBeanList.get(2).setState(1);
                     stepsBeanList.get(3).setState(0);
                 }
@@ -239,11 +239,16 @@ public class MyErrandsDetailFragment extends Fragment {
                         cancelTask.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                stepsBeanList.get(0).setState(1);
-                                for (int i = 0; i < 4; i++) {
-                                    stepsBeanList.get(i + 1).setState(-1);
+                                if(response.code()/100==4) {
+                                    TipDialog.show((AppCompatActivity) getActivity(), "接单取消失败", TipDialog.TYPE.ERROR);
+                                }else {
+                                    stepsBeanList.get(0).setState(1);
+                                    for (int i = 0; i < 4; i++) {
+                                        stepsBeanList.get(i + 1).setState(-1);
+                                    }
+                                    setStepStytle(setpview5, stepsBeanList);
+                                    TipDialog.show((AppCompatActivity) getActivity(), "接单取消成功", TipDialog.TYPE.SUCCESS);
                                 }
-                                setStepStytle(setpview5, stepsBeanList);
                             }
 
                             @Override
@@ -251,7 +256,6 @@ public class MyErrandsDetailFragment extends Fragment {
 
                             }
                         });
-                        TipDialog.show((AppCompatActivity) getActivity(), "接单取消成功", TipDialog.TYPE.SUCCESS);
                     }
                 }
             });

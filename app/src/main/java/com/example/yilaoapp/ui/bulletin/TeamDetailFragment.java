@@ -95,38 +95,7 @@ public class TeamDetailFragment extends Fragment implements EasyPermissions.Perm
                     .placeholder(R.drawable.head1)
                     .error(R.drawable.head2)
                     .into(binding.teamdHead);
-            //获得昵称
-            UserService userService=new RetrofitUser().get(getContext()).create(UserService.class);
-            Call<ResponseBody> user=userService.get_user(String.valueOf(item.getPhone()));
-            user.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.code() / 100 == 4) {
-                        Toast.makeText(getContext(),"用户不存在",Toast.LENGTH_SHORT).show();
-                    }else if (response.code() / 100 == 5) {
-                        Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
-                    } else if (response.code() / 100 == 1 ||
-                            response.code() / 100 == 3) {
-                        Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
-                    } else{
-                        String info = "";
-                        try {
-                            info = response.body().string();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Gson gson = new Gson();
-                        User user = gson.fromJson(info, User.class);
-                        phone=user.getMobile().toString();
-                        nickName=user.getId_name();
-                        binding.teamdname.setText(nickName);
-                    }
-                }
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                }
-            });
+           binding.teamdname.setText(item.getId_name());
             binding.teamdcontent.setText(item.getDetail());
             binding.teamdtime.setText(item.getCreate_at());
             binding.teamdactivityname.setText(item.getName());
