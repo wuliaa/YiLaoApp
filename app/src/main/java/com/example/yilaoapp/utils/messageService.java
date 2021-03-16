@@ -143,6 +143,7 @@ public class messageService extends Service {
                                     .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher))
                                     .build();
                         }
+                        messageNotification.flags = Notification.FLAG_AUTO_CANCEL;
                         messageNotificatioManager.notify(messageNotificationID,messageNotification);
                         //每次通知完，通知ID递增一下，避免消息覆盖掉
                         messageNotificationID++;
