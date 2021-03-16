@@ -128,7 +128,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     String mobile;
     String uuid2;
     String token;
-    private Handler mHandler= new Handler(Looper.getMainLooper()); // 全局变量
+   // private Handler mHandler= new Handler(Looper.getMainLooper()); // 全局变量
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -138,7 +138,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         back.setOnClickListener(v -> onBackPressed());
         initContent();
         initPeople();
-        new Runnable() {
+       /* new Runnable() {
             @Override
             public void run() {//在此添加需轮寻的接口
                 //关闭定时任务
@@ -163,7 +163,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 });
                 mHandler.postDelayed(this, 2 * 1000);
             }
-        };
+        };*/
     }
 
     public void initPeople() {

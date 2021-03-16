@@ -31,7 +31,7 @@ public class CacheInterceptor implements Interceptor {
         Response response = chain.proceed(request);
         Response responseLatest;
         if (net.detect(context)) {
-            int maxAge = 5; //有网失效一分钟
+            int maxAge = 3; //有网失效一分钟
             responseLatest = response.newBuilder()
                     .removeHeader("Pragma")
                     .removeHeader("Cache-Control")

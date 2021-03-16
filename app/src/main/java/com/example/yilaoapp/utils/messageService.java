@@ -16,11 +16,18 @@ import android.os.IBinder;
 import androidx.core.app.NotificationCompat;
 
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.All_orders;
+import com.example.yilaoapp.bean.Mess;
 import com.example.yilaoapp.chat.activity.ChatActivity;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.chat_service;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.LinkedList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -80,13 +87,27 @@ public class messageService extends Service {
                         builder.setContentTitle("Bmob Test");*/
                         chat_service ch=new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
                         SharedPreferences pre=getSharedPreferences("login", Context.MODE_PRIVATE);
+                        String cur_time=pre.getString("time","");
+                        long t=0;
+                        if(cur_time.equals("")){
+                               t=-3;
+                        }
+                        else{
+                            t=Integer.parseInt(cur_time)-System.currentTimeMillis()/1000;
+                        }
                         String token=pre.getString("token","");
-                        Call<ResponseBody> ch_back=ch.get_message("13060887368","13412101248",token,"df3b72a07a0a4fa1854a48b543690eab");
+                        Call<ResponseBody> ch_back=ch.get_message("13060887368","0",token,"df3b72a07a0a4fa1854a48b543690eab",String.valueOf(t));
                         ch_back.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 try {
-                                    System.out.println(response.body().string());
+                                    List<Mess> ms=new LinkedList<>();
+                                    String str="";
+                                    str=response.body().string();
+                                    Gson gson = new Gson();
+                                    Type type = new TypeToken<List<Mess>>() {
+                                    }.getType();
+                                    ms = gson.fromJson(str, type);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -97,7 +118,7 @@ public class messageService extends Service {
 
                             }
                         });
-                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                       /* if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
                             messageIntent = new Intent(getApplicationContext(),ChatActivity.class);//跳转
                             messagePendingIntent = PendingIntent.getActivity(getApplicationContext(),0,messageIntent,0);
                             String id = "channelId";
@@ -138,7 +159,7 @@ public class messageService extends Service {
                         messageNotification.flags = Notification.FLAG_AUTO_CANCEL;
                         messageNotificatioManager.notify(messageNotificationID,messageNotification);
                         //每次通知完，通知ID递增一下，避免消息覆盖掉
-                        messageNotificationID++;
+                        messageNotificationID++;*/
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();

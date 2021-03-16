@@ -121,7 +121,7 @@ public class  MainActivity extends AppCompatActivity {
         });
         System.out.println("Start polling service...");
         //PollingUtils.startPollingService(this, 2, PollingService.class, PollingService.ACTION);
-        //startService(new Intent(this, messageService.class));
+        startService(new Intent(this, messageService.class));
     }
 
     public void getNickAddPortrait(ImageView portrait,TextView nick){
