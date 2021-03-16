@@ -141,7 +141,18 @@ public class PurchaseDetailFragment extends Fragment
                 photosUrl.add(url);
             }
             binding.PurchaseninePhoto.setData(photosUrl);
+            SharedPreferences pre=getContext().getSharedPreferences("login",Context.MODE_PRIVATE);
+            String mobile=pre.getString("mobile","");
+            //如果是自己发布的话，就看不到那两个按钮
+            if(String.valueOf(item.getFrom_user()).equals(mobile))
+            {
+                Log.d("PurchaseDetail", "User: "+item.getFrom_user());
+                Log.d("PurchaseDetail",  "Mobile: "+item.getFrom_user());
+                binding.button6.setVisibility(View.GONE);
+                binding.button7.setVisibility(View.GONE);
+            }
         });
+
         //联系对方
         binding.button6.setOnClickListener(new View.OnClickListener() {
             @Override

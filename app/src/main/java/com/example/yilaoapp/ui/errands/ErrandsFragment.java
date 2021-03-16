@@ -137,7 +137,6 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     adapter.setOnItemClickListener(new ErrandAdapter.OnItemClickListener() {
                         @Override
                         public void OnItemClick(View view, All_orders data, int position) {
-                            Log.d("errandlist", "OnItemClick: 13");
                             SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                             String mobile = pre.getString("mobile", "");
                             String token = pre.getString("token", "");
@@ -146,27 +145,44 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                             act.enqueue(callback = new retrofit2.Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                    TipDialog.show((AppCompatActivity) getActivity(), "领取成功", TipDialog.TYPE.SUCCESS);
-                                    new Handler(new Handler.Callback() {
-                                        @Override
-                                        public boolean handleMessage(@NonNull android.os.Message msg) {
-                                            return false;
-                                        }
-                                    }).sendEmptyMessageDelayed(0, 3000);
-                                    chat_task ch = new chat_task("您的任务我已领取，订单信息如下:" + data.getDetail(), data.getFrom_user());
-                                    chat_service send = new RetrofitUser().get(getContext()).create(chat_service.class);
-                                    Call<ResponseBody> sen_mes = send.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", ch);
-                                    sen_mes.enqueue(callback = new retrofit2.Callback<ResponseBody>() {
-                                        @Override
-                                        public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                            Log.d("chat", "信息已success");
+                                    if (response.code() / 100 == 4) {
+                                        Toast.makeText(getContext(), "自己不能接自己的单", Toast.LENGTH_SHORT).show();
+                                    } else if (response.code() / 100 == 5) {
+                                        Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                                    } else if (response.code() / 100 == 1 ||
+                                            response.code() / 100 == 3) {
+                                        Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        TipDialog.show((AppCompatActivity) getActivity(), "领取成功", TipDialog.TYPE.SUCCESS);
+                                        new Handler(new Handler.Callback() {
+                                            @Override
+                                            public boolean handleMessage(@NonNull android.os.Message msg) {
+                                                return false;
+                                            }
+                                        }).sendEmptyMessageDelayed(0, 3000);
+                                        List<All_orders> oldDatas = errandList;
+                                        errandList.remove(position);
+                                        adapter.notifyItemRemoved(position);
+                                        if (position != errandList.size()) { // 如果移除的是最后一个，忽略
+                                            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new AdapterDiffCallback<>(oldDatas, errandList), true);
+                                            diffResult.dispatchUpdatesTo(adapter);
                                         }
 
-                                        @Override
-                                        public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                                        chat_task ch = new chat_task("您的任务我已领取，订单信息如下:" + data.getDetail(), data.getFrom_user());
+                                        chat_service send = new RetrofitUser().get(getContext()).create(chat_service.class);
+                                        Call<ResponseBody> sen_mes = send.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", ch);
+                                        sen_mes.enqueue(callback = new retrofit2.Callback<ResponseBody>() {
+                                            @Override
+                                            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                                                Log.d("chat", "信息已success");
+                                            }
 
-                                        }
-                                    });
+                                            @Override
+                                            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+
+                                            }
+                                        });
+                                    }
                                 }
 
                                 @Override
@@ -174,13 +190,6 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
                                 }
                             });
-                            List<All_orders> oldDatas = errandList;
-                            errandList.remove(position);
-                            adapter.notifyItemRemoved(position);
-                            if (position != errandList.size()) { // 如果移除的是最后一个，忽略
-                                DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new AdapterDiffCallback<>(oldDatas, errandList), true);
-                                diffResult.dispatchUpdatesTo(adapter);
-                            }
                         }
                     });
                 }
@@ -211,7 +220,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 errand_service errand = new RetrofitUser().get(getContext()).create(errand_service.class);
                 SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                 String mobile = pre.getString("mobile", "");
-                Call<ResponseBody> get_errand = errand.get_orders(mobile,"跑腿");
+                Call<ResponseBody> get_errand = errand.get_orders(mobile, "跑腿");
                 get_errand.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
@@ -231,7 +240,10 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                 }.getType();
                                 all = gson.fromJson(str, type);
                                 for (int i = 0; i < all.size(); i++) {
-                                    if (!task_id.contains(all.get(i).getId()) && all.get(i).getExecutor() == null) {
+                                    if (!task_id.contains(all.get(i).getId()) &&
+                                            all.get(i).getExecutor() == null &&   //订单还未被领取
+                                            all.get(i).getClose_state() == null      //订单不是取消的或者是完成的
+                                    ) {
                                         Log.d("executor", "onResponse" + i + ": " + all.get(i).getExecutor());
                                         task_id.add(all.get(i).getId());
                                         String content = all.get(i).getDetail();
@@ -239,18 +251,20 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                         String money = String.valueOf(all.get(i).getReward());
                                         String time = all.get(i).getCreate_at();
                                         BigInteger getfromUser = all.get(i).getFrom_user();
-                                        BigInteger phone=all.get(i).getPhone();
+                                        BigInteger phone = all.get(i).getPhone();
                                         String protected_info = all.get(i).getProtected_info();
                                         String uuid = all.get(i).getId_photo();
-                                        String id_name=all.get(i).getId_name();
-                                        All_orders errand1 = new All_orders(getfromUser,phone, address, time, task_id.get(i),
-                                                content, Float.parseFloat(money), protected_info, uuid,id_name);
+                                        String id_name = all.get(i).getId_name();
+                                        String close_state = all.get(i).getClose_state();
+                                        All_orders errand1 = new All_orders(getfromUser, phone, address, time, task_id.get(i),
+                                                content, Float.parseFloat(money), close_state, "",
+                                                protected_info, uuid, id_name);
                                         errandList.add(errand1);
                                         Message message = new Message();
                                         message.what = 1;
                                         //然后将消息发送出去
                                         handler.sendMessage(message);
-                                        Log.d("errand", "message: " );
+                                        Log.d("errand", "message: ");
                                     }
                                 }
                             } catch (IOException e) {

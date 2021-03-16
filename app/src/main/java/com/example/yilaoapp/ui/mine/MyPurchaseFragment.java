@@ -164,9 +164,11 @@ public class MyPurchaseFragment extends Fragment implements SwipeRefreshLayout.O
                                         String category = all.get(i).getCategory();                //订单分类
                                         String name = all.get(i).getName();                       //订单名字
                                         String nickname=all.get(i).getId_name();               //昵称
+                                        String close_state=all.get(i).getClose_state();       //订单状态
+                                        String receiver_at=all.get(i).getReceive_at();
                                         All_orders purchase1 = new All_orders(getfromUser,phone, address, time,
-                                                task_id.get(i), content, Float.parseFloat(money),
-                                                protected_info, category, photos, uuid, name,nickname);
+                                                task_id.get(i), content, Float.parseFloat(money),close_state,
+                                                receiver_at,protected_info, category, photos, uuid, name,nickname);
                                         purchaseList.add(purchase1);
                                         Log.d(" PurchaseList", "message: " + content + "1" +
                                                 address + "2" + money + "3" + time);
@@ -175,7 +177,8 @@ public class MyPurchaseFragment extends Fragment implements SwipeRefreshLayout.O
                                         //然后将消息发送出去
                                         handler.sendMessage(message);
                                         Log.d("TaskFragmentPurchase", "message:"+time);
-                                        Log.d("getClose_statePurchase", "onCreateView: "+all.get(i).getClose_state());
+                                        Log.d("getClose_statePurchase",   all.get(i).getDetail()+"  "
+                                                +all.get(i).getClose_state());
                                     }
                                 }
                             }

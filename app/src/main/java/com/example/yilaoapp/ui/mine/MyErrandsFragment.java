@@ -3,6 +3,7 @@ package com.example.yilaoapp.ui.mine;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -154,16 +155,19 @@ public class MyErrandsFragment extends Fragment implements SwipeRefreshLayout.On
                                         BigInteger phone = all.get(i).getPhone();             //订单人的电话
                                         String protected_info = all.get(i).getProtected_info();   //保护信息
                                         String uuid = all.get(i).getId_photo();                 //订单人的头像
-                                        String nickname=all.get(i).getId_name();
+                                        String nickname=all.get(i).getId_name();              //订单人的昵称
+                                        String close_state=all.get(i).getClose_state();         //订单的状态
+                                        String receive_at=all.get(i).getReceive_at();
                                         All_orders errand1 = new All_orders(getfromUser,phone, address, time, task_id.get(i),
-                                                content, Float.parseFloat(money), protected_info, uuid,nickname);
+                                                content, Float.parseFloat(money),close_state, receive_at,
+                                                protected_info, uuid,nickname);
                                         errandsList.add(errand1);
                                         Message message = new Message();
                                         message.what = 1;
                                         //然后将消息发送出去
                                         handler.sendMessage(message);
-                                        Log.d("TaskFragmentErrand", "message: " +time+" 2  "+money);
-                                        Log.d("getClose_stateErrand", "onCreateView: "+all.get(i).getClose_state());
+                                        Log.d("getClose_stateErrand", all.get(i).getDetail()+"  "
+                                                +all.get(i).getExecutor()+ "   "+all.get(i).getReceive_at());
                                     }
                                 }
                             }

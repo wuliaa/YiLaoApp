@@ -186,7 +186,7 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                 pur_service pur = new RetrofitUser().get(getContext()).create(pur_service.class);
                 SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                 String mobile = pre.getString("mobile", "");
-                Call<ResponseBody> get_purchase = pur.get_orders(mobile,"代购");
+                Call<ResponseBody> get_purchase = pur.get_orders(mobile, "代购");
                 get_purchase.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
@@ -209,23 +209,26 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                                 //获取每个用户的照片的字节流
                                 for (int i = 0; i < all.size(); i++) {
                                     if (!task_id.contains(all.get(i).getId()) &&
-                                            all.get(i).getExecutor() == null
+                                            all.get(i).getExecutor() == null &&   //订单还未被领取
+                                            all.get(i).getClose_state() == null      //订单不是取消的或者是完成的
                                     ) {
                                         task_id.add(all.get(i).getId());
                                         String content = all.get(i).getDetail();                       //详情
                                         Point_address address = all.get(i).getDestination();          //地址
                                         String money = String.valueOf(all.get(i).getReward());       //订单酬劳
                                         String time = all.get(i).getCreate_at();                     //订单创建时间
-                                        BigInteger getfromUser=all.get(i).getFrom_user();
+                                        BigInteger getfromUser = all.get(i).getFrom_user();
                                         BigInteger phone = all.get(i).getPhone();               //发布订单的电话号码
                                         String protected_info = all.get(i).getProtected_info();    //隐藏信息
                                         String uuid = all.get(i).getId_photo();                   //头像的uuid
                                         String photos = all.get(i).getPhotos();                     //订单的图片
                                         String category = all.get(i).getCategory();                //订单分类
                                         String name = all.get(i).getName();                       //订单名字
-                                        String id_name=all.get(i).getId_name();                //订单发布者的id_name
-                                        All_orders purchase1 = new All_orders(getfromUser,phone, address, time, task_id.get(i), content
-                                                , Float.parseFloat(money), protected_info, category, photos, uuid, name,id_name);
+                                        String id_name = all.get(i).getId_name();                //订单发布者的id_name
+                                        String close_state = all.get(i).getClose_state();            //订单状态
+                                        All_orders purchase1 = new All_orders(getfromUser, phone, address, time, task_id.get(i), content
+                                                , Float.parseFloat(money), close_state, "",
+                                                protected_info, category, photos, uuid, name, id_name);
 
                                         purchaseList.add(purchase1);
                                         Log.d(" PurchaseList", "message: " + content + "1" +
@@ -247,7 +250,7 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                     @Override
                     public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
 
-                        System.out.println("pur_error:" + t.getMessage() + " "+t.getClass().getName());
+                        System.out.println("pur_error:" + t.getMessage() + " " + t.getClass().getName());
                     }
                 });
             }
