@@ -222,6 +222,7 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
 
     @Override
     public void onRefresh() {
+        init();
         binding.swipeMymessage.postDelayed(new Runnable() { // 发送延迟消息到消息队列
             @Override
             public void run() {
