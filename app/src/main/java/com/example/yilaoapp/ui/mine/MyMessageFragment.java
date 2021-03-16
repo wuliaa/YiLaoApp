@@ -157,6 +157,7 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                                 for (int i = 0; i < all_chat.size(); i++) {
                                     Message mm = new Message(all_chat.get(i).getId_name(), all_chat.get(i).getLast_content(), all_chat.get(i).getLast_send_at(),
                                             all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getMobile()));
+
                                     messageList.add(mm);
                                 }
                                 android.os.Message message = new android.os.Message();

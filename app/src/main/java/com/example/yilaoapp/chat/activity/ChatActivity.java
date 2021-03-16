@@ -1,6 +1,5 @@
 package com.example.yilaoapp.chat.activity;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,19 +15,17 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -49,7 +46,6 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.yilaoapp.R;
-import com.example.yilaoapp.bean.Uuid;
 import com.example.yilaoapp.bean.chat_task;
 import com.example.yilaoapp.chat.adapter.ChatAdapter;
 import com.example.yilaoapp.chat.bean.AudioMsgBody;
@@ -63,7 +59,6 @@ import com.example.yilaoapp.chat.bean.VideoMsgBody;
 import com.example.yilaoapp.chat.util.ChatUiHelper;
 import com.example.yilaoapp.chat.util.FileUtils;
 import com.example.yilaoapp.chat.util.LogUtil;
-import com.example.yilaoapp.chat.util.PictureFileUtil;
 import com.example.yilaoapp.chat.widget.MediaManager;
 import com.example.yilaoapp.chat.widget.RecordButton;
 import com.example.yilaoapp.chat.widget.StateButton;
@@ -71,25 +66,17 @@ import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.chat_service;
 import com.example.yilaoapp.utils.PhotoOperation;
 import com.example.yilaoapp.utils.SavePhoto;
-import com.kongzue.dialog.interfaces.OnMenuItemClickListener;
-import com.kongzue.dialog.v3.BottomMenu;
 import com.kongzue.dialog.v3.TipDialog;
-import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.entity.LocalMedia;
-import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -141,6 +128,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     String mobile;
     String uuid2;
     String token;
+    private Handler mHandler = new Handler(Looper.getMainLooper()); // 全局变量
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -150,6 +138,32 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         back.setOnClickListener(v -> onBackPressed());
         initContent();
         initPeople();
+        Runnable mTimeCounterRunnable = new Runnable() {
+            @Override
+            public void run() {//在此添加需轮寻的接口
+                //关闭定时任务
+                //mHandler.removeCallbacks(mTimeCounterRunnable);
+                //执行任务
+                chat_service ch=new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
+                Call<ResponseBody> ch_back=ch.get_message(mobile,mob,token,"df3b72a07a0a4fa1854a48b543690eab");
+                ch_back.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        try {
+                            System.out.println(response.body().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+                mHandler.postDelayed(this, 2 * 1000);
+            }
+        };
     }
 
     public void initPeople() {
