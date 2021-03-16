@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 
 import androidx.core.app.NotificationCompat;
@@ -49,13 +50,7 @@ public class messageService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         //初始化
         messageNotification = new Notification();
-        messageNotification.icon = R.drawable.ic_launcher_background;
-        messageNotification.tickerText = "新消息";
-        messageNotification.defaults = Notification.DEFAULT_SOUND;
         messageNotificatioManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-
-        messageIntent = new Intent(this,ChatActivity.class);//跳转
-        messagePendingIntent = PendingIntent.getActivity(this,0,messageIntent,0);
 
         //开启线程
         messageThread = new MessageThread();
@@ -75,7 +70,7 @@ public class messageService extends Service {
         public void run() {
             while(isRunning){
                 try {
-                    //休息10分钟
+                    //休息3秒
                     Thread.sleep(3000);
                     //获取服务器消息
                     String serverMessage = getServerMessage();
@@ -102,43 +97,40 @@ public class messageService extends Service {
 
                             }
                         });
-                       /* builder.setContentText("奥巴马宣布,本拉登兄弟挂了!"+serverMessage);
-                        builder.setSmallIcon(R.mipmap.ic_launcher);
-                        builder.setContentIntent(messagePendingIntent);//执行intent
-                        //更新通知栏
-                        System.out.println(serverMessage);
-                        messageNotification=builder.getNotification();*/
-                        //创建Notification，传入Context和channelId
-                        /*Notification notification = new NotificationCompat.Builder(getApplicationContext())
-                                .setAutoCancel(true)
-                                .setContentTitle("收到聊天消息")
-                                .setContentText("今天晚上吃什么")
-                                .setWhen(System.currentTimeMillis())
-                                .setSmallIcon(R.mipmap.ic_launcher)
-                                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                                .setContentIntent(messagePendingIntent)
-                                .setPriority(Notification.PRIORITY_DEFAULT)
-                                .setChannelId("com.example.yilaoapp.utils.messageService")
-                                //在build()方法之前还可以添加其他方法
-                                .build();*/
                         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                            messageIntent = new Intent(getApplicationContext(),ChatActivity.class);//跳转
+                            messagePendingIntent = PendingIntent.getActivity(getApplicationContext(),0,messageIntent,0);
                             String id = "channelId";
                             String name = "channelName";
+                            Bundle bundle=new Bundle();
+                            bundle.putString("mobile","13412101248");
+                            bundle.putString("uuid","uuid");
+                            bundle.putString("id_name","nickName");
+                            messageIntent.putExtra("bundle",bundle);
                             NotificationChannel channel = new NotificationChannel(id,name,NotificationManager.IMPORTANCE_LOW);
                             messageNotificatioManager.createNotificationChannel(channel);
                             messageNotification = new Notification.Builder(getApplicationContext())
                                     .setChannelId(id)
-                                    .setContentTitle("This is content title O")
+                                    .setContentTitle("YilaoServer")
                                     .setContentText("This is content text O")
                                     .setWhen(System.currentTimeMillis())
                                     .setSmallIcon(R.mipmap.ic_launcher)
+                                    .setContentIntent(messagePendingIntent)
                                     .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher))
                                     .build();
                         }else{
+                            messageIntent = new Intent(getApplicationContext(),ChatActivity.class);//跳转
+                            Bundle bundle=new Bundle();
+                            bundle.putString("mobile","13412101248");
+                            bundle.putString("uuid","uuid");
+                            bundle.putString("id_name","nickName");
+                            messageIntent.putExtra("bundle",bundle);
+                            messagePendingIntent = PendingIntent.getActivity(getApplicationContext(),0,messageIntent,0);
                             messageNotification = new NotificationCompat.Builder(getApplicationContext())
-                                    .setContentTitle("This is content title")
+                                    .setContentTitle("YilaoServer")
                                     .setContentText("This is content text")
                                     .setWhen(System.currentTimeMillis())
+                                    .setContentIntent(messagePendingIntent)
                                     .setSmallIcon(R.mipmap.ic_launcher)
                                     .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher))
                                     .build();
