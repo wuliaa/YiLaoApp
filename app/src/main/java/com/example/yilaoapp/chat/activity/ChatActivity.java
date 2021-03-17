@@ -51,6 +51,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.yilaoapp.R;
+import com.example.yilaoapp.bean.ChatID;
 import com.example.yilaoapp.bean.Mess;
 import com.example.yilaoapp.bean.chat_task;
 import com.example.yilaoapp.chat.adapter.ChatAdapter;
@@ -74,6 +75,8 @@ import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.chat_service;
 import com.example.yilaoapp.utils.PhotoOperation;
 import com.example.yilaoapp.utils.SavePhoto;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.kongzue.dialog.v3.TipDialog;
 import com.luck.picture.lib.entity.LocalMedia;
 
@@ -81,6 +84,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -137,9 +141,10 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     BigInteger phone2;
     String uuid2;
     String token;
-    private Handler mHandler= new Handler(Looper.getMainLooper()); // 全局变量
+    private Handler mHandler = new Handler(Looper.getMainLooper()); // 全局变量
     ChatDataBase chatDataBase;
     ChatDao chatDao;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,8 +153,8 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         back.setOnClickListener(v -> onBackPressed());
         initContent();
         initPeople();
-        chatDataBase=ChatDataBase.getDatabase(this);
-        chatDao=chatDataBase.getChatDao();
+        chatDataBase = ChatDataBase.getDatabase(this);
+        chatDao = chatDataBase.getChatDao();
 //        new Runnable() {
 //            @Override
 //            public void run() {//在此添加需轮寻的接口
@@ -431,7 +436,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         mMessgae.setBody(mTextMsgBody);
 
         chat_service chat = new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
-        Call<ResponseBody> chat_back = chat.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", new chat_task(hello,phone,"TEXT"));
+        Call<ResponseBody> chat_back = chat.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", new chat_task(hello, phone, "TEXT"));
         chat_back.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -439,14 +444,20 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 mAdapter.addData(mMessgae);
                 //模拟两秒后发送成功
                 updateMsg(mMessgae);
-                String str=null;
-                try {
-                    str = response.body().string();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-//                Mess mess=new Mess(1,hello,phone2,phone,null,"TEXT");
-//                chatDao.insert(mess);
+                new Thread() {
+                    public void run() {
+                        String str = null;
+                        try {
+                            str = response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Gson gson = new Gson();
+                        ChatID chatID = gson.fromJson(str, ChatID.class);
+                        Mess mess = new Mess(chatID.getId(), hello, mobile, mob, chatID.getSend_at(), "TEXT");
+                        chatDao.insert(mess);
+                    }
+                }.start();
             }
 
             @Override
@@ -641,7 +652,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                             .into(new SimpleTarget<Bitmap>() {
                                 @Override
                                 public void onResourceReady(Bitmap bitmap, Transition<? super Bitmap> transition) {
-                                    SavePhoto savePhoto=new SavePhoto(mContext);
+                                    SavePhoto savePhoto = new SavePhoto(mContext);
                                     savePhoto.saveImageToGallery(bitmap);
                                 }
                             });

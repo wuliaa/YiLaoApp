@@ -45,8 +45,12 @@ import android.widget.Toast;
 
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.All_orders;
+import com.example.yilaoapp.bean.ChatID;
+import com.example.yilaoapp.bean.Mess;
 import com.example.yilaoapp.bean.Point_address;
 import com.example.yilaoapp.bean.chat_task;
+import com.example.yilaoapp.database.chat.ChatDataBase;
+import com.example.yilaoapp.database.dao.ChatDao;
 import com.example.yilaoapp.databinding.FragmentErrandsBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.accept_service;
@@ -85,6 +89,8 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
     ErrandAdapter adapter;
     Handler handler;
     Callback<ResponseBody> callback;
+    ChatDataBase chatDataBase;
+    ChatDao chatDao;
 
     public ErrandsFragment() {
     }
@@ -121,6 +127,8 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         });
         setHasOptionsMenu(true);
         initErrands();
+        chatDataBase = ChatDataBase.getDatabase(getContext());
+        chatDao = chatDataBase.getChatDao();
         binding.swipeErrands.setOnRefreshListener(this);
         handler = new Handler() {
             @Override
@@ -175,6 +183,22 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                             @Override
                                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                                                 Log.d("chat", "信息已success");
+                                                new Thread() {
+                                                    public void run() {
+                                                        String str = null;
+                                                        try {
+                                                            str = response.body().string();
+                                                        } catch (IOException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        Gson gson = new Gson();
+                                                        ChatID chatID = gson.fromJson(str, ChatID.class);
+                                                        Mess mess = new Mess(chatID.getId(),
+                                                                "您的任务我已领取，订单信息如下:" + data.getDetail(),
+                                                                mobile, data.getFrom_user().toString(), chatID.getSend_at(), "TEXT");
+                                                        chatDao.insert(mess);
+                                                    }
+                                                }.start();
                                             }
 
                                             @Override
