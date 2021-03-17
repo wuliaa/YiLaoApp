@@ -1,5 +1,6 @@
 package com.example.yilaoapp.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -16,11 +17,13 @@ import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
+import com.example.yilaoapp.MainActivity;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.All_orders;
 import com.example.yilaoapp.bean.Mess;
 import com.example.yilaoapp.chat.activity.ChatActivity;
 import com.example.yilaoapp.service.RetrofitUser;
+import com.example.yilaoapp.service.chat_retrofit;
 import com.example.yilaoapp.service.chat_service;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -45,8 +48,6 @@ public class messageService extends Service {
     private Intent messageIntent = null;
     private PendingIntent messagePendingIntent = null;
 
-    //通知栏消息
-    private int messageNotificationID = 1000;
     private Notification messageNotification = null;
     private NotificationManager messageNotificatioManager = null;
 
@@ -54,9 +55,12 @@ public class messageService extends Service {
         return null;
     }
 
+    @SuppressLint("WrongConstant")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //初始化
+
+        flags = START_STICKY;
         messageNotification = new Notification();
         messageNotificatioManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -64,7 +68,6 @@ public class messageService extends Service {
         messageThread = new MessageThread();
         messageThread.isRunning = true;
         messageThread.start();
-        System.out.println("start");
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -81,23 +84,17 @@ public class messageService extends Service {
                     //休息3秒
                     Thread.sleep(3000);
                     //获取服务器消息
-                    String serverMessage = getServerMessage();
-                    if (serverMessage != null && !"".equals(serverMessage)) {
                        /* Notification.Builder builder = new Notification.Builder(getApplicationContext());//新建Notification.Builder对象
                         //PendingIntent点击通知后所跳转的页面
                         builder.setContentTitle("Bmob Test");*/
-                        chat_service ch = new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
+                        chat_service ch = new chat_retrofit().get().create(chat_service.class);
                         SharedPreferences pre = getSharedPreferences("login", Context.MODE_PRIVATE);
-                        String cur_time = pre.getString("time", "");
-                        long t = 0;
-                        if (cur_time.equals("")) {
-                            t = -3;
-                        } else {
-                            t = Integer.parseInt(cur_time) - System.currentTimeMillis() / 1000;
-                        }
+                        String min_id = pre.getString("min_id", "");
+                        if(min_id.equals(""))
+                            min_id="0";
                         String phone = pre.getString("mobile","");
                         String token = pre.getString("token", "");
-                        Call<ResponseBody> ch_back = ch.get_message(phone, "0", token, "df3b72a07a0a4fa1854a48b543690eab", String.valueOf(t));
+                        Call<ResponseBody> ch_back = ch.get_message(phone, "0", token, "df3b72a07a0a4fa1854a48b543690eab", min_id);
                         ch_back.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -105,13 +102,52 @@ public class messageService extends Service {
                                     Toast.makeText(getApplicationContext(), "401", Toast.LENGTH_SHORT).show();
                                 } else {
                                     try {
-                                        List<Mess> ms = new LinkedList<>();
-                                        String str = "";
-                                        str = response.body().string();
-                                        Gson gson = new Gson();
-                                        Type type = new TypeToken<List<Mess>>() {
-                                        }.getType();
-                                        ms = gson.fromJson(str, type);
+                                        if(response.body()!=null) {
+                                            List<Mess> ms = new LinkedList<>();
+                                            String str = "";
+                                            str = response.body().string();
+                                            Gson gson = new Gson();
+                                            Type type = new TypeToken<List<Mess>>() {
+                                            }.getType();
+                                            ms = gson.fromJson(str, type);
+                                            if(ms.size()>0) {//有新的聊天记录
+                                                SharedPreferences.Editor e = pre.edit();
+                                                e.putString("min_id", String.valueOf(ms.get(ms.size() - 1).getId() + 1));
+                                                e.commit();
+                                                if (judge_work.isBackground(getApplicationContext())) {//在后台运行
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                        messageIntent = new Intent(getApplicationContext(), MainActivity.class);//跳转
+                                                        messagePendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, messageIntent, 0);
+                                                        String id = "channelId";
+                                                        String name = "channelName";
+                                                        NotificationChannel channel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_LOW);
+                                                        messageNotificatioManager.createNotificationChannel(channel);
+                                                        messageNotification = new Notification.Builder(getApplicationContext())
+                                                                .setChannelId(id)
+                                                                .setContentTitle("YilaoApp")
+                                                                .setContentText("您有新消息，请及时查看！")
+                                                                .setWhen(System.currentTimeMillis())
+                                                                .setSmallIcon(R.mipmap.ic_launcher)//图标设置
+                                                                .setContentIntent(messagePendingIntent)
+                                                                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                                                                .build();
+                                                    } else {
+                                                        messageIntent = new Intent(getApplicationContext(), ChatActivity.class);//跳转
+                                                        messagePendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, messageIntent, 0);
+                                                        messageNotification = new NotificationCompat.Builder(getApplicationContext())
+                                                                .setContentTitle("YilaoApp")
+                                                                .setContentText("您有新消息，请及时查看！")
+                                                                .setWhen(System.currentTimeMillis())
+                                                                .setContentIntent(messagePendingIntent)
+                                                                .setSmallIcon(R.mipmap.ic_launcher)
+                                                                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                                                                .build();
+                                                    }
+                                                    messageNotification.flags = Notification.FLAG_AUTO_CANCEL;
+                                                    messageNotificatioManager.notify(0, messageNotification);
+                                                }
+                                            }
+                                        }
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
@@ -123,49 +159,7 @@ public class messageService extends Service {
 
                             }
                         });
-                       /* if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                            messageIntent = new Intent(getApplicationContext(),ChatActivity.class);//跳转
-                            messagePendingIntent = PendingIntent.getActivity(getApplicationContext(),0,messageIntent,0);
-                            String id = "channelId";
-                            String name = "channelName";
-                            Bundle bundle=new Bundle();
-                            bundle.putString("mobile","13412101248");
-                            bundle.putString("uuid","uuid");
-                            bundle.putString("id_name","nickName");
-                            messageIntent.putExtra("bundle",bundle);
-                            NotificationChannel channel = new NotificationChannel(id,name,NotificationManager.IMPORTANCE_LOW);
-                            messageNotificatioManager.createNotificationChannel(channel);
-                            messageNotification = new Notification.Builder(getApplicationContext())
-                                    .setChannelId(id)
-                                    .setContentTitle("YilaoServer")
-                                    .setContentText("This is content text O")
-                                    .setWhen(System.currentTimeMillis())
-                                    .setSmallIcon(R.mipmap.ic_launcher)
-                                    .setContentIntent(messagePendingIntent)
-                                    .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher))
-                                    .build();
-                        }else{
-                            messageIntent = new Intent(getApplicationContext(),ChatActivity.class);//跳转
-                            Bundle bundle=new Bundle();
-                            bundle.putString("mobile","13412101248");
-                            bundle.putString("uuid","uuid");
-                            bundle.putString("id_name","nickName");
-                            messageIntent.putExtra("bundle",bundle);
-                            messagePendingIntent = PendingIntent.getActivity(getApplicationContext(),0,messageIntent,0);
-                            messageNotification = new NotificationCompat.Builder(getApplicationContext())
-                                    .setContentTitle("YilaoServer")
-                                    .setContentText("This is content text")
-                                    .setWhen(System.currentTimeMillis())
-                                    .setContentIntent(messagePendingIntent)
-                                    .setSmallIcon(R.mipmap.ic_launcher)
-                                    .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher))
-                                    .build();
-                        }
-                        messageNotification.flags = Notification.FLAG_AUTO_CANCEL;
-                        messageNotificatioManager.notify(messageNotificationID,messageNotification);
-                        //每次通知完，通知ID递增一下，避免消息覆盖掉
-                        messageNotificationID++;*/
-                    }
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -173,20 +167,9 @@ public class messageService extends Service {
         }
     }
 
-    /**
-     * 这里以此方法为服务器Demo，仅作示例
-     *
-     * @return 返回服务器要推送的消息，否则如果为空的话，不推送
-     */
-    public String getServerMessage() {
-        return "YES!";
-    }
-
     @Override
     public void onDestroy() {
-        System.exit(0);
-        //或者，二选一，推荐使用System.exit(0)，这样进程退出的更干净
-        //messageThread.isRunning = false;
+        //System.exit(0);
         super.onDestroy();
     }
 }
