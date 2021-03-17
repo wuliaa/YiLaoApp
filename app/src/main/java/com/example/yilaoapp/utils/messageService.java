@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
@@ -57,7 +58,7 @@ public class messageService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         //初始化
         messageNotification = new Notification();
-        messageNotificatioManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        messageNotificatioManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         //开启线程
         messageThread = new MessageThread();
@@ -69,47 +70,51 @@ public class messageService extends Service {
 
     /**
      * 从服务器端获取消息
-     *
      */
-    class MessageThread extends Thread{
+    class MessageThread extends Thread {
         //运行状态，下一步骤有大用
         public boolean isRunning = true;
+
         public void run() {
-            while(isRunning){
+            while (isRunning) {
                 try {
                     //休息3秒
                     Thread.sleep(3000);
                     //获取服务器消息
                     String serverMessage = getServerMessage();
-                    if(serverMessage!=null&&!"".equals(serverMessage)){
+                    if (serverMessage != null && !"".equals(serverMessage)) {
                        /* Notification.Builder builder = new Notification.Builder(getApplicationContext());//新建Notification.Builder对象
                         //PendingIntent点击通知后所跳转的页面
                         builder.setContentTitle("Bmob Test");*/
-                        chat_service ch=new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
-                        SharedPreferences pre=getSharedPreferences("login", Context.MODE_PRIVATE);
-                        String cur_time=pre.getString("time","");
-                        long t=0;
-                        if(cur_time.equals("")){
-                               t=-3;
+                        chat_service ch = new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
+                        SharedPreferences pre = getSharedPreferences("login", Context.MODE_PRIVATE);
+                        String cur_time = pre.getString("time", "");
+                        long t = 0;
+                        if (cur_time.equals("")) {
+                            t = -3;
+                        } else {
+                            t = Integer.parseInt(cur_time) - System.currentTimeMillis() / 1000;
                         }
-                        else{
-                            t=Integer.parseInt(cur_time)-System.currentTimeMillis()/1000;
-                        }
-                        String token=pre.getString("token","");
-                        Call<ResponseBody> ch_back=ch.get_message("13060887368","0",token,"df3b72a07a0a4fa1854a48b543690eab",String.valueOf(t));
+                        String phone = pre.getString("mobile","");
+                        String token = pre.getString("token", "");
+                        Call<ResponseBody> ch_back = ch.get_message(phone, "0", token, "df3b72a07a0a4fa1854a48b543690eab", String.valueOf(t));
                         ch_back.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                try {
-                                    List<Mess> ms=new LinkedList<>();
-                                    String str="";
-                                    str=response.body().string();
-                                    Gson gson = new Gson();
-                                    Type type = new TypeToken<List<Mess>>() {
-                                    }.getType();
-                                    ms = gson.fromJson(str, type);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                                if (response.code() / 100 == 4) {
+                                    Toast.makeText(getApplicationContext(), "401", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    try {
+                                        List<Mess> ms = new LinkedList<>();
+                                        String str = "";
+                                        str = response.body().string();
+                                        Gson gson = new Gson();
+                                        Type type = new TypeToken<List<Mess>>() {
+                                        }.getType();
+                                        ms = gson.fromJson(str, type);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
 
@@ -170,11 +175,13 @@ public class messageService extends Service {
 
     /**
      * 这里以此方法为服务器Demo，仅作示例
+     *
      * @return 返回服务器要推送的消息，否则如果为空的话，不推送
      */
-    public String getServerMessage(){
+    public String getServerMessage() {
         return "YES!";
     }
+
     @Override
     public void onDestroy() {
         System.exit(0);

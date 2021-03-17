@@ -439,6 +439,12 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 mAdapter.addData(mMessgae);
                 //模拟两秒后发送成功
                 updateMsg(mMessgae);
+                String str=null;
+                try {
+                    str = response.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 //                Mess mess=new Mess(1,hello,phone2,phone,null,"TEXT");
 //                chatDao.insert(mess);
             }

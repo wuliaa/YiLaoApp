@@ -10,12 +10,12 @@ public class Mess {
     @PrimaryKey
     int id;
     String content;
-    BigInteger from_user;
-    BigInteger to_user;
+    String from_user;
+    String to_user;
     String send_at;
     String type;
 
-    public Mess(int id, String content, BigInteger from_user, BigInteger to_user, String send_at, String type) {
+    public Mess(int id, String content, String from_user, String to_user, String send_at, String type) {
         this.id = id;
         this.content = content;
         this.from_user = from_user;
@@ -40,19 +40,19 @@ public class Mess {
         this.content = content;
     }
 
-    public BigInteger getFrom_user() {
+    public String getFrom_user() {
         return from_user;
     }
 
-    public void setFrom_user(BigInteger from_user) {
+    public void setFrom_user(String from_user) {
         this.from_user = from_user;
     }
 
-    public BigInteger getTo_user() {
+    public String getTo_user() {
         return to_user;
     }
 
-    public void setTo_user(BigInteger to_user) {
+    public void setTo_user(String to_user) {
         this.to_user = to_user;
     }
 
