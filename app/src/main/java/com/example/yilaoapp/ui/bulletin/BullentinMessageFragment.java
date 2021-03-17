@@ -1,6 +1,7 @@
 package com.example.yilaoapp.ui.bulletin;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +18,8 @@ import androidx.navigation.Navigation;
 
 import android.os.Environment;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,6 +99,38 @@ public class BullentinMessageFragment extends Fragment implements EasyPermission
             public void onClick(View v) {
                 NavController controller = Navigation.findNavController(v);
                 controller.popBackStack();
+            }
+        });
+
+        int num = 40;//限制的最大字数
+        binding.editTextTextMultiLine.addTextChangedListener(new TextWatcher() {
+            private CharSequence temp;
+            private int selectionStart;
+            private int selectionEnd;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                temp = s;
+            }
+
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void afterTextChanged(Editable s) {
+                int number = num - s.length();
+                binding.numViewBulltentin.setText(""+number+"/40");
+                selectionStart = binding.editTextTextMultiLine.getSelectionStart();
+                selectionEnd = binding.editTextTextMultiLine.getSelectionEnd();
+                if (temp.length() > num) {
+                    s.delete(selectionStart - 1, selectionEnd);
+                    int tempSelection = selectionEnd;
+                    binding.editTextTextMultiLine.setText(s);
+                    binding.editTextTextMultiLine.setSelection(tempSelection);//设置光标在最后
+                }
             }
         });
         binding.mPhotosSnpl.setMaxItemCount(9);

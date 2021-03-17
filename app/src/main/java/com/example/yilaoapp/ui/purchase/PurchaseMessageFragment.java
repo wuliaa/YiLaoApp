@@ -1,6 +1,7 @@
 package com.example.yilaoapp.ui.purchase;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +18,8 @@ import androidx.navigation.Navigation;
 
 import android.os.Environment;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -101,6 +104,37 @@ public class PurchaseMessageFragment extends Fragment implements EasyPermissions
                 controller.popBackStack();
             }
         });
+        int num = 40;//限制的最大字数
+        binding.editTextTextMultiLine.addTextChangedListener(new TextWatcher() {
+            private CharSequence temp;
+            private int selectionStart;
+            private int selectionEnd;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                temp = s;
+            }
+
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void afterTextChanged(Editable s) {
+                int number = num - s.length();
+                binding.numView.setText(""+number+"/40");
+                selectionStart = binding.editTextTextMultiLine.getSelectionStart();
+                selectionEnd = binding.editTextTextMultiLine.getSelectionEnd();
+                if (temp.length() > num) {
+                    s.delete(selectionStart - 1, selectionEnd);
+                    int tempSelection = selectionEnd;
+                    binding.editTextTextMultiLine.setText(s);
+                    binding.editTextTextMultiLine.setSelection(tempSelection);//设置光标在最后
+                }
+            }
+        });
         binding.mPurchasePhotosSnpl.setMaxItemCount(9);
         binding.mPurchasePhotosSnpl.setEditable(true);
         binding.mPurchasePhotosSnpl.setPlusEnable(true);
@@ -132,7 +166,7 @@ public class PurchaseMessageFragment extends Fragment implements EasyPermissions
                             (Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.code() / 100 == 4) {
                             Toast.makeText(getContext(), "上传失败，请重新上传", Toast.LENGTH_LONG).show();
-                        }else if (response.code() / 100 == 5) {
+                        } else if (response.code() / 100 == 5) {
                             Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
                         } else if (response.code() / 100 == 1 ||
                                 response.code() / 100 == 3) {
@@ -175,6 +209,7 @@ public class PurchaseMessageFragment extends Fragment implements EasyPermissions
                                     NavController controller = Navigation.findNavController(v);
                                     controller.popBackStack();
                                 }
+
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
 

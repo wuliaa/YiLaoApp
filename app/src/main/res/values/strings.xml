@@ -254,5 +254,6 @@
     <string name="relativeAddress">请填写联系地点</string>
     <string name="accept_cancel_task">同意取消订单</string>
     <string name="refuse_accept_task">拒绝取消订单</string>
+    <string name="StringLimit">40/40</string>
 
 </resources>
