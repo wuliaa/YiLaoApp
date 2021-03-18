@@ -587,6 +587,28 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                     Gson gson = new Gson();
                     u = gson.fromJson(uid, Uuid.class);
                     uuid3 = u.getUuid();
+                    StringBuilder stringBuilder=new StringBuilder();
+                    stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
+                            .append(mobile)
+                            .append("/resources/")
+                            .append(uuid3);
+                    String url=stringBuilder.toString();
+                    chat_service chat = new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
+                    Call<ResponseBody> chat_back = chat.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", new chat_task(url, phone, "IMAGE"));
+                    chat_back.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            //开始发送
+                            mAdapter.addData(mMessgae);
+                            //模拟两秒后发送成功
+                            updateMsg(mMessgae);
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                        }
+                    });
                     response.body().close();
                 }
             }
@@ -596,30 +618,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 Toast.makeText(getApplicationContext(), "网络连接出错,请重新发送", Toast.LENGTH_SHORT).show();
             }
         });
-        StringBuilder stringBuilder=new StringBuilder();
-        stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
-                .append(mobile)
-                .append("/resources/")
-                .append(uuid3);
-        String url=stringBuilder.toString();
-        chat_service chat = new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
-        Call<ResponseBody> chat_back = chat.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", new chat_task(url, phone, "IMAGE"));
-        chat_back.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                //开始发送
-                mAdapter.addData(mMessgae);
-                //模拟两秒后发送成功
-                updateMsg(mMessgae);
-                response.body().close();
-                response.body().close();
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
     }
 
 
