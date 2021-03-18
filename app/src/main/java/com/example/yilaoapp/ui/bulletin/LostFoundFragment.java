@@ -172,8 +172,8 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
                                         String close_state=all.get(i).getClose_state();     //订单状态
                                         All_orders lost = new All_orders(getfromUser,phone, address, time,
                                                 task_id.get(number++), content, Float.parseFloat(money),
-                                                close_state, "",protected_info,
-                                                category, photos, uuid, name,id_name);
+                                                close_state, "",null,protected_info,
+                                                category, photos, uuid, name,id_name,"","");
                                         LostList.add(lost);
                                         Message message = new Message();
                                         message.what = 1;
@@ -205,6 +205,6 @@ public class LostFoundFragment extends Fragment implements SwipeRefreshLayout.On
             public void run() {
                 binding.swipeLost.setRefreshing(false); // 是否显示刷新进度;false:不显示
             }
-        }, 3000);
+        }, 1000);
     }
 }

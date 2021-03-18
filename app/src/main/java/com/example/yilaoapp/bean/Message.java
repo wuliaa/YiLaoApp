@@ -8,13 +8,23 @@ public class Message {
     private String time;
     private String uuid;
     private BigInteger mobile;
+    private String type;
 
-    public Message(String nick, String content, String time, String uuid, BigInteger mobile) {
+    public Message(String nick, String content, String time, String uuid, BigInteger mobile, String type) {
         this.nick = nick;
         this.content = content;
         this.time = time;
         this.uuid = uuid;
         this.mobile = mobile;
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getNick() {

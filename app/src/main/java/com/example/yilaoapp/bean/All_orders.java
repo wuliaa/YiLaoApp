@@ -26,8 +26,8 @@ public class All_orders {
     String id_photo;
     String name;//物品名称
     String id_name;
-    String id_photo2;
-    String id_name2;
+    String id_photo1;
+    String id_name1;
 
 
 
@@ -63,12 +63,12 @@ public class All_orders {
 
     //针对跑腿的初始化函数
     public All_orders(BigInteger getfrom_User,BigInteger phone, Point_address destination, String create_at,
-                      int id, String detail,  float reward, String close_state, String receive_at,
-                      String protected_info, String id_photo,String id_name) {
+                      int id, String detail,  float reward, String close_state, String receive_at, BigInteger executor,
+                      String protected_info, String id_photo,String id_name,String id_photo1,String id_name1) {
         this.receive_at = receive_at;
         this.close_at = "";
         this.phone = phone;   //发布的任务的联系电话
-        this.executor = null; //接受任务的人的电话号码
+        this.executor = executor; //接受任务的人的电话号码
         this.from_user = getfrom_User;   //发布的任务的人的电话号码
         this.destination = destination;   //收获地址
         this.close_state = close_state;
@@ -85,24 +85,26 @@ public class All_orders {
         this.count = 0;
         this.id_photo=id_photo;     //发布订单的人的头像
         this.id_name=id_name;
+        this.id_photo1=id_photo1;         //接单人的头像
+        this.id_name1=id_name1;         //接单人的昵称
     }
 
     //针对代购和公告的初始化函数
     public All_orders(BigInteger getfrom_User, BigInteger phone, Point_address destination, String create_at,
-                      int id, String detail,  float reward, String close_state, String receive_at,
+                      int id, String detail,  float reward, String close_state, String receive_at,BigInteger executor,
                       String protected_info, String category, String photos,
-                      String id_photo,String name,String id_name) {
+                      String id_photo,String name,String id_name,String id_photo1,String id_name1) {
         this.receive_at = receive_at;
         this.close_at = "";
-        this.phone = phone;   //发布的任务的联系电话
-        this.executor = null; //接受任务的人的电话号码
+        this.phone = phone;            //发布的任务的联系电话
+        this.executor = executor;      //接受任务的人的电话号码
         this.from_user = getfrom_User;   //发布的任务的人的电话号码
         this.destination = destination;   //收获地址
         this.close_state = close_state;
         this.create_at = create_at;   //任务创建时间
         this.id = id;                //订单id
         this.detail = detail;        //订单详情
-        this.type = type;            //订单种类
+        this.type = "";            //订单种类
         this.category = category;     //公告的子分类
         this.photos = photos;        //图片
         this.in_at = "";
@@ -111,8 +113,10 @@ public class All_orders {
         this.out_at = "";
         this.count = 0;
         this.id_photo=id_photo;     //发布订单的人的头像
-        this.name=name;
+        this.name=name;            //物品名称
         this.id_name=id_name;
+        this.id_photo1=id_photo1; //接单人的头像
+        this.id_name1=id_name1;      //接单人的昵称
     }
 
 
@@ -289,5 +293,21 @@ public class All_orders {
 
     public void setId_name(String id_name) {
         this.id_name = id_name;
+    }
+
+    public String getId_photo1() {
+        return id_photo1;
+    }
+
+    public void setId_photo1(String id_photo1) {
+        this.id_photo1 = id_photo1;
+    }
+
+    public String getId_name1() {
+        return id_name1;
+    }
+
+    public void setId_name1(String id_name1) {
+        this.id_name1 = id_name1;
     }
 }

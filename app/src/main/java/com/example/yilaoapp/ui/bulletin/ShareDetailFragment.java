@@ -1,10 +1,13 @@
 package com.example.yilaoapp.ui.bulletin;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -35,10 +38,13 @@ import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.chat.activity.ChatActivity;
+import com.example.yilaoapp.chat.util.LogUtil;
+import com.example.yilaoapp.chat.widget.SetPermissionDialog;
 import com.example.yilaoapp.databinding.FragmentShareDetailBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
 import com.google.gson.Gson;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,6 +57,7 @@ import java.util.StringTokenizer;
 
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
+import io.reactivex.functions.Consumer;
 import okhttp3.ResponseBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -78,6 +85,7 @@ public class ShareDetailFragment extends Fragment implements EasyPermissions.Per
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        phone="";
         uuid="";
         nickName="";
         photosUrl =new ArrayList<String>();
@@ -114,6 +122,10 @@ public class ShareDetailFragment extends Fragment implements EasyPermissions.Per
             binding.sharedcontent.setText(item.getDetail());
             binding.sharedtime.setText(item.getCreate_at());
             binding.ShareninePhotoLayout.setDelegate(this);
+            phone=String.valueOf(item.getFrom_user());
+            nickName=item.getId_name();
+            uuid=item.getId_photo();
+
             StringTokenizer st = new StringTokenizer(item.getPhotos(), ",");
             while (st.hasMoreTokens()) {
                 uuid = st.nextToken();
@@ -127,17 +139,33 @@ public class ShareDetailFragment extends Fragment implements EasyPermissions.Per
             }
             binding.ShareninePhotoLayout.setData(photosUrl);
         });
-        binding.sharedbutton.setOnClickListener(new View.OnClickListener() {
+
+        //联系对方
+        binding.sharedname.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (phone != null && uuid != null) {
-                    Intent intent = new Intent(requireActivity(), ChatActivity.class);
-                    Bundle bundle=new Bundle();
-                    bundle.putString("mobile",phone);
-                    bundle.putString("uuid",uuid);
-                    bundle.putString("id_name",nickName);
-                    intent.putExtra("bundle",bundle);
-                    startActivity(intent);
+                SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                String mobile=pre.getString("monile","");
+                if(mobile.equals(phone)){
+                    Toast.makeText(getContext(),"自己不能联系自己",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    if (!phone.equals("")) {
+                        new Handler(new Handler.Callback() {
+                            @Override
+                            public boolean handleMessage(@NonNull android.os.Message msg) {
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        requestPermisson(v);
+                                    }
+                                }, 100);
+                                LogUtil.d(new String(Character.toChars(0x1F60E)));
+                                //viewModel.select(d1ata);
+                                return false;
+                            }
+                        }).sendEmptyMessageDelayed(0, 500);
+                    }
                 }
             }
         });
@@ -203,5 +231,45 @@ public class ShareDetailFragment extends Fragment implements EasyPermissions.Per
     public void onClickExpand(BGANinePhotoLayout ninePhotoLayout, View view, int position, String model, List<String> models) {
         ninePhotoLayout.setIsExpand(true);
         ninePhotoLayout.flushItems();
+    }
+
+    @SuppressLint("CheckResult")
+    private void requestPermisson(View view) {
+        RxPermissions rxPermission = new RxPermissions(this);
+        rxPermission
+                .request(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,//存储权限
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.RECORD_AUDIO
+                )
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+                        if (aBoolean) {
+                            Intent intent = new Intent(requireActivity(), ChatActivity.class);
+                            Bundle bundle=new Bundle();
+                            bundle.putString("mobile",String.valueOf(phone));
+                            bundle.putString("uuid",uuid);
+                            bundle.putString("id_name",nickName);
+                            intent.putExtra("bundle",bundle);
+                            startActivity(intent);
+                        } else {
+                            SetPermissionDialog mSetPermissionDialog = new SetPermissionDialog(getContext());
+                            mSetPermissionDialog.show();
+                            mSetPermissionDialog.setConfirmCancelListener(new SetPermissionDialog.OnConfirmCancelClickListener() {
+                                @Override
+                                public void onLeftClick() {
+                                    //requireActivity().finish();
+                                }
+
+                                @Override
+                                public void onRightClick() {
+                                    //requireActivity().finish();
+                                }
+                            });
+                        }
+                    }
+                });
     }
 }

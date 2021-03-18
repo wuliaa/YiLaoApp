@@ -167,9 +167,13 @@ public class MyPurchaseFragment extends Fragment implements SwipeRefreshLayout.O
                                         String nickname=all.get(i).getId_name();               //昵称
                                         String close_state=all.get(i).getClose_state();       //订单状态
                                         String receiver_at=all.get(i).getReceive_at();
+                                        BigInteger executor=all.get(i).getExecutor();
+                                        String id_photo1=all.get(i).getId_photo1();        //接单人的头像
+                                        String id_name1=all.get(i).getId_name1();         //接单人的昵称
                                         All_orders purchase1 = new All_orders(getfromUser,phone, address, time,
                                                 task_id.get(i), content, Float.parseFloat(money),close_state,
-                                                receiver_at,protected_info, category, photos, uuid, name,nickname);
+                                                receiver_at,executor,protected_info, category, photos,
+                                                uuid, name,nickname,id_photo1,id_name1);
                                         purchaseList.add(purchase1);
                                         Log.d(" PurchaseList", "message: " + content + "1" +
                                                 address + "2" + money + "3" + time);
