@@ -492,6 +492,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 mAdapter.addData(mMessgae);
                 //模拟两秒后发送成功
                 updateMsg(mMessgae);
+                response.body().close();
             }
 
             @Override
@@ -510,9 +511,23 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         mImageMsgBody.setThumbUrl(path);
         mMessgae.setBody(mImageMsgBody);
         //开始发送
-        mAdapter.addData(mMessgae);
-        //模拟两秒后发送成功
-        updateMsg(mMessgae);
+        chat_service chat = new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
+        Call<ResponseBody> chat_back = chat.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", new chat_task(path, phone, "TEXT"));
+        chat_back.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                //开始发送
+                mAdapter.addData(mMessgae);
+                //模拟两秒后发送成功
+                updateMsg(mMessgae);
+                response.body().close();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
 

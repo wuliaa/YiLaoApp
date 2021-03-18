@@ -93,17 +93,18 @@ public class messageService extends Service {
                         builder.setContentTitle("Bmob Test");*/
                     chat_service ch = new chat_retrofit().get().create(chat_service.class);
                     SharedPreferences pre = getSharedPreferences("login", Context.MODE_PRIVATE);
-                    String min_id = pre.getString("min_id", "");
-                    if (min_id.equals(""))
-                        min_id = "0";
                     String phone = pre.getString("mobile", "");
                     String token = pre.getString("token", "");
+                    SharedPreferences pre1 = getSharedPreferences(phone, Context.MODE_PRIVATE);
+                    String min_id = pre1.getString("min_id", "");
+                    if (min_id.equals(""))
+                        min_id = "0";
                     Call<ResponseBody> ch_back = ch.get_message(phone, "0", token, "df3b72a07a0a4fa1854a48b543690eab", min_id);
                     ch_back.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             if (response.code() / 100 == 4) {
-                                Toast.makeText(getApplicationContext(), "401", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getApplicationContext(), "401", Toast.LENGTH_SHORT).show();
                             } else {
                                 try {
                                     if (response.body() != null) {
@@ -113,19 +114,20 @@ public class messageService extends Service {
                                         Gson gson = new Gson();
                                         Type type = new TypeToken<List<Mess>>() {
                                         }.getType();
+                                        response.body().close();
                                         ms = gson.fromJson(str, type);
-                                        chatDataBase = ChatDataBase.getDatabase(getApplicationContext());
-                                        chatDao = chatDataBase.getChatDao();
-                                        List<Mess> finalMs = ms;
-                                        new Thread() {
-                                            public void run() {
-                                                for (int i = 0; i < finalMs.size(); i++) {
-                                                    chatDao.insert(finalMs.get(i));
-                                                }
-                                            }
-                                        }.start();
                                         if (ms.size() > 0) {//有新的聊天记录
-                                            SharedPreferences.Editor e = pre.edit();
+                                            chatDataBase = ChatDataBase.getDatabase(getApplicationContext());
+                                            chatDao = chatDataBase.getChatDao();
+                                            List<Mess> finalMs = ms;
+                                            new Thread() {
+                                                public void run() {
+                                                    for (int i = 0; i < finalMs.size(); i++) {
+                                                        chatDao.insert(finalMs.get(i));
+                                                    }
+                                                }
+                                            }.start();///855
+                                            SharedPreferences.Editor e = pre1.edit();
                                             e.putString("min_id", String.valueOf(ms.get(ms.size() - 1).getId() + 1));
                                             e.commit();
                                             if (judge_work.isBackground(getApplicationContext())) {//在后台运行
