@@ -161,6 +161,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     Handler handler;
     Uuid u;
     String uuid3;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -206,7 +207,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                                 }
                             });
                         }
-                    }else if(mess.getType().equals("IMAGE")){
+                    } else if (mess.getType().equals("IMAGE")) {
                         if (mess.getFrom_user().equals(mob) &&
                                 mess.getTo_user().equals(mobile)) {
                             runOnUiThread(new Runnable() {
@@ -269,7 +270,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                                     mAdapter.addData(mMessgaeText);
                                     mRvChat.scrollToPosition(mAdapter.getItemCount() - 1);
                                 }
-                            }else if(mm.get(i).getType().equals("IMAGE")){
+                            } else if (mm.get(i).getType().equals("IMAGE")) {
                                 if (mm.get(i).getFrom_user().equals(mob) &&
                                         mm.get(i).getTo_user().equals(mobile)) {
                                     Message mMessgaeImage = getBaseReceiveMessage(MsgType.IMAGE);
@@ -369,27 +370,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onRefresh() {
         //下拉刷新模拟获取历史消息
-        List<Message> mReceiveMsgList = new ArrayList<Message>();
-        //构建文本消息
-        Message mMessgaeText = getBaseReceiveMessage(MsgType.TEXT);
-        TextMsgBody mTextMsgBody = new TextMsgBody();
-        mTextMsgBody.setMessage("收到的消息");
-        mMessgaeText.setBody(mTextMsgBody);
-        mReceiveMsgList.add(mMessgaeText);
-        //构建图片消息
-        Message mMessgaeImage = getBaseReceiveMessage(MsgType.IMAGE);
-        ImageMsgBody mImageMsgBody = new ImageMsgBody();
-        mImageMsgBody.setThumbUrl("https://c-ssl.duitang.com/uploads/item/201208/30/20120830173930_PBfJE.thumb.700_0.jpeg");
-        mMessgaeImage.setBody(mImageMsgBody);
-        mReceiveMsgList.add(mMessgaeImage);
-        //构建文件消息
-        Message mMessgaeFile = getBaseReceiveMessage(MsgType.FILE);
-        FileMsgBody mFileMsgBody = new FileMsgBody();
-        mFileMsgBody.setDisplayName("收到的文件");
-        mFileMsgBody.setSize(12);
-        mMessgaeFile.setBody(mFileMsgBody);
-        mReceiveMsgList.add(mMessgaeFile);
-        mAdapter.addData(0, mReceiveMsgList);
+
         mSwipeRefresh.setRefreshing(false);
     }
 
@@ -577,9 +558,9 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         mImageMsgBody.setThumbUrl(path);
         mMessgae.setBody(mImageMsgBody);
         //开始发送
-        byte[] ba=null;
-        PhotoOperation operation=new PhotoOperation();
-        ba=operation.Path2ByteArray(path);
+        byte[] ba = null;
+        PhotoOperation operation = new PhotoOperation();
+        ba = operation.Path2ByteArray(path);
         Map<String, RequestBody> map = new HashMap<>();
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/from-data"), ba);
         //注意：file就是与服务器对应的key,后面filename是服务器得到的文件名
@@ -587,36 +568,42 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         image_service img = new RetrofitUser().get(getApplicationContext()).create(image_service.class);
         Call<ResponseBody> image_call = img.send_photo(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", map);
         image_call.enqueue(new Callback<ResponseBody>() {
-                               @Override
-                               public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                   if (response.code() / 100 == 4) {
-                                       Toast.makeText(getApplicationContext(), "发送失败", Toast.LENGTH_LONG).show();
-                                   } else if (response.code() / 100 == 5) {
-                                       Toast.makeText(getApplicationContext(), "服务器错误", Toast.LENGTH_SHORT).show();
-                                   } else if (response.code() / 100 == 1 ||
-                                           response.code() / 100 == 3) {
-                                       Toast.makeText(getApplicationContext(), "网络连接出错,请重新发送", Toast.LENGTH_SHORT).show();
-                                   } else {
-                                       String uid = "";
-                                       try {
-                                           uid = response.body().string();
-                                       } catch (IOException e) {
-                                           e.printStackTrace();
-                                       }
-                                       Gson gson = new Gson();
-                                       u = gson.fromJson(uid, Uuid.class);
-                                       uuid3=u.getUuid();
-                                       response.body().close();
-                                   }
-                               }
-                                   @Override
-                                   public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                       Toast.makeText(getApplicationContext(), "网络连接出错,请重新发送", Toast.LENGTH_SHORT).show();
-                                   }
-                               });
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() / 100 == 4) {
+                    Toast.makeText(getApplicationContext(), "发送失败", Toast.LENGTH_LONG).show();
+                } else if (response.code() / 100 == 5) {
+                    Toast.makeText(getApplicationContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                } else if (response.code() / 100 == 1 ||
+                        response.code() / 100 == 3) {
+                    Toast.makeText(getApplicationContext(), "网络连接出错,请重新发送", Toast.LENGTH_SHORT).show();
+                } else {
+                    String uid = "";
+                    try {
+                        uid = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Gson gson = new Gson();
+                    u = gson.fromJson(uid, Uuid.class);
+                    uuid3 = u.getUuid();
+                    response.body().close();
+                }
+            }
 
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "网络连接出错,请重新发送", Toast.LENGTH_SHORT).show();
+            }
+        });
+        StringBuilder stringBuilder=new StringBuilder();
+        stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
+                .append(mobile)
+                .append("/resources/")
+                .append(uuid3);
+        String url=stringBuilder.toString();
         chat_service chat = new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
-        Call<ResponseBody> chat_back = chat.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", new chat_task(uuid3, phone, "IMAGE"));
+        Call<ResponseBody> chat_back = chat.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", new chat_task(url, phone, "IMAGE"));
         chat_back.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
