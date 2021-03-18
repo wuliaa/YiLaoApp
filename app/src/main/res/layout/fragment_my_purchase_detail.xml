@@ -158,10 +158,8 @@
                     <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
                         android:id="@+id/ninePhotoLayout"
                         style="@style/MatchWrap"
+                        android:layout_width="wrap_content"
                         android:layout_gravity="center|center_vertical"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="20dp"
                         android:foregroundGravity="center"
                         app:bga_npl_itemCornerRadius="0dp"
                         app:bga_npl_itemSpanCount="3"
@@ -169,13 +167,14 @@
                         app:bga_npl_itemWidth="0dp"
                         app:bga_npl_otherWhiteSpacing="64dp"
                         app:bga_npl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
-                        app:bga_npl_showAsLargeWhenOnlyOne="true" >
+                        app:bga_npl_showAsLargeWhenOnlyOne="true">
 
                     </cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout>
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:layout_gravity="center"
                         android:orientation="horizontal">
 
                         <Button
@@ -183,7 +182,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginStart="40dp"
                             android:layout_marginTop="20dp"
                             android:layout_marginBottom="20dp"
                             android:background="@drawable/add_deepen"
@@ -226,8 +224,7 @@
                             android:background="@drawable/purchase_contact_deepen"
                             android:text="@string/refuse_accept_task"
                             android:textColor="#FFFFFF"
-                            android:visibility="gone"
-                            />
+                            android:visibility="gone" />
                     </LinearLayout>
 
                     <Button
@@ -235,14 +232,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="50dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
                         android:background="@drawable/contact_deepen"
                         android:drawableStart="@drawable/chaticon"
                         android:drawablePadding="5dp"
                         android:text="@string/contact"
                         android:textColor="#3E3E3E"
-                        android:textSize="14sp"
-                        />
+                        android:textSize="14sp" />
                 </LinearLayout>
             </ScrollView>
 

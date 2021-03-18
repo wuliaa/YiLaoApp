@@ -154,7 +154,8 @@ public class MyErrandsDetailFragment extends Fragment {
                     binding.acceptButtonErrands.setVisibility(View.VISIBLE);
                     binding.refuseButtonErrands.setVisibility(View.VISIBLE);
                 }
-            } else {
+            }
+            if(item.getReceive_at()==null){
                 binding.ChatMyErrand.setVisibility(View.GONE);
             }
 

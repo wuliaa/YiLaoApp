@@ -165,9 +165,11 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
                     binding.acceptButtonPurchases.setVisibility(View.VISIBLE);
                     binding.refuseButtonPurchase.setVisibility(View.VISIBLE);
                 }
-            } else {
+            }
+            if(item.getReceive_at()==null){
                 binding.ChatMyPurchase.setVisibility(View.GONE);
             }
+
 
 
             //添加对图片的代码
@@ -203,6 +205,7 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
                 stepsBeanList.get(2).setState(1);
                 stepsBeanList.get(3).setState(0);
             } else if (label.equals("发布的任务")) {
+                Log.d("MyPurchaseReceive", "onCreateView: "+item.getReceive_at());
                 if (item.getReceive_at() != null) {
                     stepsBeanList.get(2).setState(1);
                     stepsBeanList.get(3).setState(0);

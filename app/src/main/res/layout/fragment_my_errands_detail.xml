@@ -157,8 +157,9 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:layout_gravity="center"
                         android:orientation="horizontal">
 
                         <Button
@@ -166,7 +167,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginStart="80dp"
                             android:layout_marginTop="30dp"
                             android:layout_marginBottom="20dp"
                             android:background="@drawable/add_deepen"
@@ -178,7 +178,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginStart="50dp"
+                            android:layout_marginStart="30dp"
                             android:layout_marginTop="30dp"
                             android:layout_marginBottom="20dp"
                             android:background="@drawable/purchase_contact_deepen"
@@ -209,23 +209,23 @@
                             android:background="@drawable/purchase_contact_deepen"
                             android:text="@string/refuse_accept_task"
                             android:textColor="#FFFFFF"
-                            android:visibility="gone"
-                            />
+                            android:visibility="gone" />
 
                     </LinearLayout>
+
                     <Button
                         android:id="@+id/ChatMyErrand"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="50dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
                         android:background="@drawable/contact_deepen"
                         android:drawableStart="@drawable/chaticon"
                         android:drawablePadding="5dp"
                         android:text="@string/contact"
                         android:textColor="#3E3E3E"
-                        android:textSize="14sp"
-                        />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
             </ScrollView>
