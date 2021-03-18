@@ -24,8 +24,8 @@ public class GlideUtils {
 		Glide.with(mContext)
 				.load(imgUrl) // 图片地址
 				.diskCacheStrategy(DiskCacheStrategy.ALL)
-				.placeholder(R.color.white)
-				.error(R.color.white)
+				.placeholder(R.drawable.wait)
+				.error(R.drawable.error)
 				.centerCrop()
 				.into(imageView);
  	}
