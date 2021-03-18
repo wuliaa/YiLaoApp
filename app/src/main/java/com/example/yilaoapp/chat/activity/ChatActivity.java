@@ -161,7 +161,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     Handler handler;
     Uuid u;
     String uuid3;
-
+   List<Mess> mk;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,10 +176,13 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         new Thread() {
             public void run() {
                 List<Mess> item = chatDao.getAll2();
+                mk=new LinkedList<>();
+                mk.add(new Mess(0,"","","","",""));
                 for (Mess mess : item) {
                     if (mess.getType().equals("TEXT")) {
                         if (mess.getFrom_user().equals(mob) &&
                                 mess.getTo_user().equals(mobile)) {
+                            mk.add(mess);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -194,6 +197,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                             });
                         } else if (mess.getFrom_user().equals(mobile) &&
                                 mess.getTo_user().equals(mob)) {
+                            mk.add(mess);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -210,6 +214,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                     } else if (mess.getType().equals("IMAGE")) {
                         if (mess.getFrom_user().equals(mob) &&
                                 mess.getTo_user().equals(mobile)) {
+                            mk.add(mess);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -224,6 +229,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                             });
                         } else if (mess.getFrom_user().equals(mobile) &&
                                 mess.getTo_user().equals(mob)) {
+                            mk.add(mess);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -262,22 +268,24 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                         for (int i = mAdapter.getData().size(); i < mm.size(); i++) {
                             if (mm.get(i).getType().equals("TEXT")) {
                                 if (mm.get(i).getFrom_user().equals(mob) &&
-                                        mm.get(i).getTo_user().equals(mobile)) {
+                                        mm.get(i).getTo_user().equals(mobile)&&(mm.get(i).getId()>mk.get(mk.size()-1).getId())){
                                     Message mMessgaeText = getBaseReceiveMessage(MsgType.TEXT);
                                     TextMsgBody mTextMsgBody = new TextMsgBody();
                                     mTextMsgBody.setMessage(mm.get(i).getContent());
                                     mMessgaeText.setBody(mTextMsgBody);
+                                    mk.add(mm.get(i));
                                     mAdapter.addData(mMessgaeText);
                                     mRvChat.scrollToPosition(mAdapter.getItemCount() - 1);
                                 }
                             } else if (mm.get(i).getType().equals("IMAGE")) {
                                 if (mm.get(i).getFrom_user().equals(mob) &&
-                                        mm.get(i).getTo_user().equals(mobile)) {
+                                        mm.get(i).getTo_user().equals(mobile)&&(mm.get(i).getId()>mk.get(mk.size()-1).getId())) {
                                     Message mMessgaeImage = getBaseReceiveMessage(MsgType.IMAGE);
                                     ImageMsgBody mImageMsgBody = new ImageMsgBody();
                                     mImageMsgBody.setThumbUrl(mm.get(i).getContent());
                                     mMessgaeImage.setBody(mImageMsgBody);
                                     mMessgaeImage.setSentStatus(MsgSendStatus.SENT);
+                                    mk.add(mm.get(i));
                                     mAdapter.addData(mMessgaeImage);
                                     mRvChat.scrollToPosition(mAdapter.getItemCount() - 1);
                                 }
