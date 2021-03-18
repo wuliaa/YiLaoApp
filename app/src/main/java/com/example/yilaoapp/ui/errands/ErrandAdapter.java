@@ -60,7 +60,7 @@ public class ErrandAdapter extends RecyclerView.Adapter<ErrandAdapter.ErrandView
                 .into(holder.head);
         holder.address.setText(errand.getDestination().getName());
         holder.content.setText(errand.getDetail());
-        holder.time.setText(errand.getCreate_at());
+        holder.time.setText(errand.getCreate_at().split(" ")[0]);
         holder.money.setText(String.valueOf(errand.getReward()));
     }
 

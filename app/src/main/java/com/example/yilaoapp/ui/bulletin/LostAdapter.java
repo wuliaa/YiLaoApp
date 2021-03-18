@@ -53,7 +53,7 @@ public class LostAdapter extends RecyclerView.Adapter<LostAdapter.LostViewHolder
                 .into(holder.photo);
         holder.objectName.setText(lost.getName());
         holder.content.setText(lost.getDetail());
-        holder.time.setText(lost.getCreate_at());
+        holder.time.setText(lost.getCreate_at().split(" ")[0]);
         holder.address.setText(lost.getDestination().getName());
     }
 

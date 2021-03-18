@@ -59,7 +59,7 @@ public class MyPurchaseAdapter extends RecyclerView.Adapter<MyPurchaseAdapter.My
         holder.objectName.setText(purchase.getName());
         holder.content.setText(purchase.getDetail());
         if(purchase.getCreate_at()!=null)
-             time=purchase.getCreate_at().split("T")[0];
+             time=purchase.getCreate_at().split(" ")[0];
         else
             time="时间丢失了";
         holder.time.setText("发布时间："+time);

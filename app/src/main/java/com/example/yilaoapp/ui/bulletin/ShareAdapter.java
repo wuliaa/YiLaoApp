@@ -55,7 +55,7 @@ public class ShareAdapter extends RecyclerView.Adapter<ShareAdapter.ShareViewHol
                 .into(holder.photo);
         holder.objectName.setText(share.getName());
         holder.content.setText(share.getDetail());
-        holder.time.setText(share.getCreate_at());
+        holder.time.setText(share.getCreate_at().split(" ")[0]);
     }
 
     @Override

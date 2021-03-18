@@ -55,7 +55,7 @@ public class MyBulletinAdapter extends  RecyclerView.Adapter<MyBulletinAdapter.M
         holder.objectName.setText(bulletin.getName());
         holder.content.setText(bulletin.getDetail());
         if(bulletin.getCreate_at()!=null)
-            time=bulletin.getCreate_at().split("T")[0];
+            time=bulletin.getCreate_at().split(" ")[0];
         else
             time="时间丢失了";
         holder.time.setText("发布时间："+time);

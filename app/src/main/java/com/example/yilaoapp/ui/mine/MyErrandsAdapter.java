@@ -57,7 +57,7 @@ public class MyErrandsAdapter extends  RecyclerView.Adapter<MyErrandsAdapter.MyE
         holder.objectName.setText(errands.getName());
         holder.content.setText(errands.getDetail());
         if(errands.getCreate_at()!=null)
-            time=errands.getCreate_at().split("T")[0];
+            time=errands.getCreate_at().split(" ")[0];
         else
             time="时间丢失了";
         holder.time.setText("发布时间："+time);

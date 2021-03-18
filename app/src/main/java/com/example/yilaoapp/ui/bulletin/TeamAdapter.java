@@ -51,7 +51,7 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
                 .into(holder.photo);
         holder.activityName.setText(team.getName());
         holder.content.setText(team.getDetail());
-        holder.time.setText(team.getCreate_at());
+        holder.time.setText(team.getCreate_at().split(" ")[0]);
     }
 
     @Override
