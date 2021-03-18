@@ -92,6 +92,7 @@ public class ChangePsdFragment extends Fragment {
                                     e.apply();
                                     NavController controller = Navigation.findNavController(v);
                                     controller.popBackStack();
+                                    response.body().close();
                                 }
 
                                 @Override

@@ -144,6 +144,7 @@ public class  MainActivity extends AppCompatActivity {
                     String str = "";
                     try {
                         str = response.body().string();
+                        response.body().close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

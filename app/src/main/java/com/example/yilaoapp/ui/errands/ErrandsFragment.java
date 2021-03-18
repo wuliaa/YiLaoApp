@@ -159,7 +159,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                         Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
                                     } else if (response.code() / 100 == 1 ||
                                             response.code() / 100 == 3) {
-                                        Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "网络错误", Toast.LENGTH_SHORT).show();
                                     } else {
                                         TipDialog.show((AppCompatActivity) getActivity(), "领取成功", TipDialog.TYPE.SUCCESS);
                                         new Handler(new Handler.Callback() {
@@ -191,6 +191,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                                         } catch (IOException e) {
                                                             e.printStackTrace();
                                                         }
+                                                        response.body().close();
                                                         Gson gson = new Gson();
                                                         ChatID chatID = gson.fromJson(str, ChatID.class);
                                                         Mess mess = new Mess(chatID.getId(),
@@ -291,6 +292,7 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                         Log.d("errand", "message: ");
                                     }
                                 }
+                                response.body().close();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

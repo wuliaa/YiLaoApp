@@ -175,10 +175,9 @@ public class BullentinMessageFragment extends Fragment implements EasyPermission
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            //System.out.println(uid);
+                            response.body().close();
                             Gson gson = new Gson();
                             Uuid u = gson.fromJson(uid, Uuid.class);
-                            //System.out.println(u.getUuid());
                             String detail = binding.editTextTextMultiLine.getText().toString();
                             String address = binding.lostAddress.getText().toString();
                             BigInteger phone = new BigInteger(binding.telephoneText.getText().toString());
@@ -206,6 +205,7 @@ public class BullentinMessageFragment extends Fragment implements EasyPermission
                                     }).sendEmptyMessageDelayed(0, 3000);
                                     NavController controller = Navigation.findNavController(v);
                                     controller.popBackStack();
+                                    response.body().close();
                                 }
 
                                 @Override

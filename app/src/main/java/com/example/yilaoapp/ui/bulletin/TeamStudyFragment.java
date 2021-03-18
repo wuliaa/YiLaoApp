@@ -141,7 +141,7 @@ public class TeamStudyFragment extends Fragment implements SwipeRefreshLayout.On
                             Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
                         } else if (response.code() / 100 == 1 ||
                                 response.code() / 100 == 3) {
-                            Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "网络错误", Toast.LENGTH_SHORT).show();
                         } else {
                             String str = "";
                             try {
@@ -180,6 +180,7 @@ public class TeamStudyFragment extends Fragment implements SwipeRefreshLayout.On
                                         handler.sendMessage(message);
                                     }
                                 }
+                                response.body().close();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

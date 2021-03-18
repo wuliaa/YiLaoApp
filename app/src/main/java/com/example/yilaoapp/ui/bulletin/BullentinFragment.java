@@ -78,32 +78,21 @@ public class BullentinFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_bullentin,container,false);
-        //binding.setData(BullentinViewModel);
         binding.setLifecycleOwner(requireActivity());
         ((AppCompatActivity) requireActivity()).setSupportActionBar(binding.toolbar);
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setDisplayShowTitleEnabled(false);
         binding.toolbar.inflateMenu(R.menu.menu_main);
         binding.toolbar.setNavigationIcon(R.drawable.ic_baseline_dehaze_24);
-//        mDrawerLayout=requireActivity().findViewById(R.id.drawer_layout);
         binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mDrawerLayout.openDrawer(GravityCompat.START);
             }
         });
-//        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
-//                getChildFragmentManager(), FragmentPagerItems.with(getContext())
-//                .add(R.string.shareTools, ShareToolsFragment.class)
-//                .add(R.string.lost, LostFoundFragment.class)
-//                .add(R.string.teamStudy, TeamStudyFragment.class)
-//                .create());
         binding.viewpager.setAdapter(adapter);
         binding.viewpagertab.setViewPager(binding.viewpager);
-
         return binding.getRoot();
-        //return inflater.inflate(R.layout.fragment_bullentin, container, false);
     }
 
     @Override

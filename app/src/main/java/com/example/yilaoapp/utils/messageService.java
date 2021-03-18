@@ -110,10 +110,11 @@ public class messageService extends Service {
                                             Type type = new TypeToken<List<Mess>>() {
                                             }.getType();
                                             ms = gson.fromJson(str, type);
+                                            response.body().close();
                                             if(ms.size()>0) {//有新的聊天记录
                                                 SharedPreferences.Editor e = pre.edit();
                                                 e.putString("min_id", String.valueOf(ms.get(ms.size() - 1).getId() + 1));
-                                                e.commit();
+                                                e.apply();
                                                 if (judge_work.isBackground(getApplicationContext())) {//在后台运行
                                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                                         messageIntent = new Intent(getApplicationContext(), MainActivity.class);//跳转

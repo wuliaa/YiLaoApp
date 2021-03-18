@@ -172,7 +172,7 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                                 message.what = 1;
                                 //然后将消息发送出去
                                 handler.sendMessage(message);
-
+                                response.body().close();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

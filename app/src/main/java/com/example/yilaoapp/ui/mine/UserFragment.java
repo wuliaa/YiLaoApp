@@ -190,6 +190,7 @@ public class UserFragment extends Fragment {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    response.body().close();
                     Gson gson = new Gson();
                     Uuid u = gson.fromJson(uid, Uuid.class);
                     String name, sex, address;

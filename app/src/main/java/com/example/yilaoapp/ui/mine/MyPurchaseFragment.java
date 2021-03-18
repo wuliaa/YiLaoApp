@@ -147,6 +147,7 @@ public class MyPurchaseFragment extends Fragment implements SwipeRefreshLayout.O
                                 Type type = new TypeToken<List<All_orders>>() {
                                 }.getType();
                                 List<All_orders> all = gson.fromJson(str, type);
+                                response.body().close();
                                 //获取每个用户的照片的字节流
                                 for (int i = 0; i < all.size(); i++) {
                                     if (!task_id.contains(all.get(i).getId())

@@ -170,6 +170,7 @@ public class MyErrandsFragment extends Fragment implements SwipeRefreshLayout.On
                                                 +all.get(i).getExecutor()+ "   "+all.get(i).getReceive_at());
                                     }
                                 }
+                                response.body().close();
                             }
                         } catch (IOException e) {
                             e.printStackTrace();

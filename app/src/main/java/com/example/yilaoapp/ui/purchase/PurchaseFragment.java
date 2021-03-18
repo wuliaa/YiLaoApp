@@ -239,12 +239,11 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                                         handler.sendMessage(message);
                                     }
                                 }
+                                response.body().close();
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        System.out.println(response.code());
-                        System.out.println(str);
                     }
 
                     @Override

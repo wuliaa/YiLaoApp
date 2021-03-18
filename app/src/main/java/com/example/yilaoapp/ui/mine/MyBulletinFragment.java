@@ -177,6 +177,7 @@ public class MyBulletinFragment extends Fragment implements SwipeRefreshLayout.O
                                         Log.d("getClose_stateBullentin", "onCreateView: "+all.get(i).getClose_state());
                                     }
                                 }
+                                response.body().close();
                             }
                         } catch (IOException e) {
                             e.printStackTrace();

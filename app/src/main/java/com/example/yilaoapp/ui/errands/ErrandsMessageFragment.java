@@ -130,11 +130,12 @@ public class ErrandsMessageFragment extends Fragment {
                         }).sendEmptyMessageDelayed(0, 3000);
                         NavController controller = Navigation.findNavController(view);
                         controller.popBackStack();
+                        response.body().close();
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        System.out.println(1111);
+                        Toast.makeText(getContext(),"网络连接出错",Toast.LENGTH_LONG).show();
                     }
                 });
 

@@ -452,6 +452,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        response.body().close();
                         Gson gson = new Gson();
                         ChatID chatID = gson.fromJson(str, ChatID.class);
                         Mess mess = new Mess(chatID.getId(), hello, mobile, mob, chatID.getSend_at(), "TEXT");
@@ -493,6 +494,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        response.body().close();
                         Gson gson = new Gson();
                         ChatID chatID = gson.fromJson(str, ChatID.class);
                         Mess mess = new Mess(chatID.getId(), path, mobile, mob, chatID.getSend_at(), "IMAGE");

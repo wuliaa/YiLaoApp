@@ -117,8 +117,6 @@ public class LoginFragment extends Fragment {
         loginback.enqueue(callback=new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                System.out.println(222);
-                System.out.println(response.message());
                 if (response.code() / 100 == 4) {
                     UIOp('1',null);
                 } else if (response.code() / 100 == 5) {
@@ -130,6 +128,7 @@ public class LoginFragment extends Fragment {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    response.body().close();
                     Gson gson = new Gson();
                     tok token = gson.fromJson(str, tok.class);
                     SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
@@ -160,6 +159,7 @@ public class LoginFragment extends Fragment {
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }
+                response.body().close();
                 Gson gson1 = new Gson();
                 User user = gson1.fromJson(u, User.class);
                 if (user.getId_name() == null || user.getId_photo() == null || user.getSex() == null || user.getId_school() == null) {

@@ -196,6 +196,7 @@ public class MyInformationFragment extends Fragment {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    response.body().close();
                     Gson gson = new Gson();
                     User user = gson.fromJson(str, User.class);
                     binding.informationTextView16.setText(user.getMobile().toString());

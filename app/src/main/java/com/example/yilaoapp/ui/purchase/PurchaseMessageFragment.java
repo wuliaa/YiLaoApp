@@ -178,10 +178,9 @@ public class PurchaseMessageFragment extends Fragment implements EasyPermissions
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            System.out.println(uid);
+                            response.body().close();
                             Gson gson = new Gson();
                             Uuid u = gson.fromJson(uid, Uuid.class);
-                            System.out.println(u.getUuid());
                             String detail = binding.editTextTextMultiLine.getText().toString();
                             String address = binding.addressText.getText().toString();
                             BigInteger phone = new BigInteger(binding.telephoneText.getText().toString());
