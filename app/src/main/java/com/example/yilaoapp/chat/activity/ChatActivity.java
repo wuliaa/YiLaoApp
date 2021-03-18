@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.DatabaseConfiguration;
@@ -73,6 +75,8 @@ import com.example.yilaoapp.database.chat.ChatDataBase;
 import com.example.yilaoapp.database.dao.ChatDao;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.chat_service;
+import com.example.yilaoapp.ui.errands.ErrandsViewModel;
+import com.example.yilaoapp.utils.AdapterDiffCallback;
 import com.example.yilaoapp.utils.PhotoOperation;
 import com.example.yilaoapp.utils.SavePhoto;
 import com.google.gson.Gson;
@@ -141,46 +145,92 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     BigInteger phone2;
     String uuid2;
     String token;
-    private Handler mHandler = new Handler(Looper.getMainLooper()); // 全局变量
     ChatDataBase chatDataBase;
     ChatDao chatDao;
+    ChatViewModel chatViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        chatViewModel = ViewModelProviders.of(this).get(ChatViewModel.class);
         ImageView back = findViewById(R.id.chatback);
         back.setOnClickListener(v -> onBackPressed());
         initContent();
         initPeople();
         chatDataBase = ChatDataBase.getDatabase(this);
         chatDao = chatDataBase.getChatDao();
-//        new Runnable() {
-//            @Override
-//            public void run() {//在此添加需轮寻的接口
-//                //关闭定时任务
-//                //mHandler.removeCallbacks(mTimeCounterRunnable);
-//                //执行任务
-//                chat_service ch=new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
-//                Call<ResponseBody> ch_back=ch.get_message(mobile,mob,token,"df3b72a07a0a4fa1854a48b543690eab");
-//                ch_back.enqueue(new Callback<ResponseBody>() {
-//                    @Override
-//                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                        try {
-//                            System.out.println(response.body().string());
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
+        new Thread(){
+            public void run(){
+                List<Mess> item=chatDao.getAll2();
+                for (Mess mess : item) {
+                    if (mess.getType().equals("TEXT")) {
+                        if (mess.getFrom_user().equals(mob) &&
+                                mess.getTo_user().equals(mobile)) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Message mMessgaeText = getBaseReceiveMessage(MsgType.TEXT);
+                                    TextMsgBody mTextMsgBody = new TextMsgBody();
+                                    mTextMsgBody.setMessage(mess.getContent());
+                                    mMessgaeText.setBody(mTextMsgBody);
+                                    mMessgaeText.setSentStatus(MsgSendStatus.SENT);
+                                    mAdapter.addData(mMessgaeText);
+                                }
+                            });
+                        } else if (mess.getFrom_user().equals(mobile) &&
+                                mess.getTo_user().equals(mob)) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Message mMessgaeText = getBaseSendMessage(MsgType.TEXT);
+                                    TextMsgBody mTextMsgBody = new TextMsgBody();
+                                    mTextMsgBody.setMessage(mess.getContent());
+                                    mMessgaeText.setBody(mTextMsgBody);
+                                    mMessgaeText.setSentStatus(MsgSendStatus.SENT);
+                                    mAdapter.addData(mMessgaeText);
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        }.start();
+
+        chatViewModel.getChatList().observe(this, item -> {
+            int more=item.size()-mAdapter.getData().size();
+            for(int i=0;i<more;i++){
+                if(item.get(item.size()-more+i).getType().equals("TEXT")){
+                    if (item.get(item.size()-more+i).getFrom_user().equals(mob) &&
+                            item.get(item.size()-more+i).getTo_user().equals(mobile)) {
+                        Message mMessgaeText = getBaseReceiveMessage(MsgType.TEXT);
+                        TextMsgBody mTextMsgBody = new TextMsgBody();
+                        mTextMsgBody.setMessage(item.get(item.size()-more+i).getContent());
+                        mMessgaeText.setBody(mTextMsgBody);
+                        mAdapter.addData(mMessgaeText);
+                    }
+                }
+            }
+//            for (Mess mess : item) {
+//                if (mess.getType().equals("TEXT")) {
+//                    if (mess.getFrom_user().equals(mob) &&
+//                            mess.getTo_user().equals(mobile)) {
+//                        Message mMessgaeText = getBaseReceiveMessage(MsgType.TEXT);
+//                        TextMsgBody mTextMsgBody = new TextMsgBody();
+//                        mTextMsgBody.setMessage(mess.getContent());
+//                        mMessgaeText.setBody(mTextMsgBody);
+//                        mAdapter.addData(mMessgaeText);
+//                    } else if (mess.getFrom_user().equals(mobile) &&
+//                            mess.getTo_user().equals(mob)) {
+//                        Message mMessgaeText = getBaseSendMessage(MsgType.TEXT);
+//                        TextMsgBody mTextMsgBody = new TextMsgBody();
+//                        mTextMsgBody.setMessage(mess.getContent());
+//                        mMessgaeText.setBody(mTextMsgBody);
+//                        mAdapter.addData(mMessgaeText);
 //                    }
-//
-//                    @Override
-//                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-//
-//                    }
-//                });
-//                mHandler.postDelayed(this, 2 * 1000);
+//                }
 //            }
-//        };
+        });
     }
 
     public void initPeople() {
@@ -444,21 +494,6 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 mAdapter.addData(mMessgae);
                 //模拟两秒后发送成功
                 updateMsg(mMessgae);
-                new Thread() {
-                    public void run() {
-                        String str = null;
-                        try {
-                            str = response.body().string();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        response.body().close();
-                        Gson gson = new Gson();
-                        ChatID chatID = gson.fromJson(str, ChatID.class);
-                        Mess mess = new Mess(chatID.getId(), hello, mobile, mob, chatID.getSend_at(), "TEXT");
-                        chatDao.insert(mess);
-                    }
-                }.start();
             }
 
             @Override
@@ -477,37 +512,9 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         mImageMsgBody.setThumbUrl(path);
         mMessgae.setBody(mImageMsgBody);
         //开始发送
-        chat_service chat = new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
-        Call<ResponseBody> chat_back = chat.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", new chat_task(path, phone, "IMAGE"));
-        chat_back.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                //开始发送
-                mAdapter.addData(mMessgae);
-                //模拟两秒后发送成功
-                updateMsg(mMessgae);
-                new Thread() {
-                    public void run() {
-                        String str = null;
-                        try {
-                            str = response.body().string();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        response.body().close();
-                        Gson gson = new Gson();
-                        ChatID chatID = gson.fromJson(str, ChatID.class);
-                        Mess mess = new Mess(chatID.getId(), path, mobile, mob, chatID.getSend_at(), "IMAGE");
-                        chatDao.insert(mess);
-                    }
-                }.start();
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
+        mAdapter.addData(mMessgae);
+        //模拟两秒后发送成功
+        updateMsg(mMessgae);
     }
 
 

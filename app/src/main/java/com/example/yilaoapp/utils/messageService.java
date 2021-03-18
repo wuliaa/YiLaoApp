@@ -22,6 +22,8 @@ import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.All_orders;
 import com.example.yilaoapp.bean.Mess;
 import com.example.yilaoapp.chat.activity.ChatActivity;
+import com.example.yilaoapp.database.chat.ChatDataBase;
+import com.example.yilaoapp.database.dao.ChatDao;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.chat_retrofit;
 import com.example.yilaoapp.service.chat_service;
@@ -50,6 +52,8 @@ public class messageService extends Service {
 
     private Notification messageNotification = null;
     private NotificationManager messageNotificatioManager = null;
+    ChatDataBase chatDataBase;
+    ChatDao chatDao;
 
     public IBinder onBind(Intent intent) {
         return null;
@@ -87,79 +91,88 @@ public class messageService extends Service {
                        /* Notification.Builder builder = new Notification.Builder(getApplicationContext());//新建Notification.Builder对象
                         //PendingIntent点击通知后所跳转的页面
                         builder.setContentTitle("Bmob Test");*/
-                        chat_service ch = new chat_retrofit().get().create(chat_service.class);
-                        SharedPreferences pre = getSharedPreferences("login", Context.MODE_PRIVATE);
-                        String min_id = pre.getString("min_id", "");
-                        if(min_id.equals(""))
-                            min_id="0";
-                        String phone = pre.getString("mobile","");
-                        String token = pre.getString("token", "");
-                        Call<ResponseBody> ch_back = ch.get_message(phone, "0", token, "df3b72a07a0a4fa1854a48b543690eab", min_id);
-                        ch_back.enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                if (response.code() / 100 == 4) {
-                                    Toast.makeText(getApplicationContext(), "401", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    try {
-                                        if(response.body()!=null) {
-                                            List<Mess> ms = new LinkedList<>();
-                                            String str = "";
-                                            str = response.body().string();
-                                            Gson gson = new Gson();
-                                            Type type = new TypeToken<List<Mess>>() {
-                                            }.getType();
-                                            ms = gson.fromJson(str, type);
-                                            response.body().close();
-                                            if(ms.size()>0) {//有新的聊天记录
-                                                SharedPreferences.Editor e = pre.edit();
-                                                e.putString("min_id", String.valueOf(ms.get(ms.size() - 1).getId() + 1));
-                                                e.apply();
-                                                if (judge_work.isBackground(getApplicationContext())) {//在后台运行
-                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                                        messageIntent = new Intent(getApplicationContext(), MainActivity.class);//跳转
-                                                        messagePendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, messageIntent, 0);
-                                                        String id = "channelId";
-                                                        String name = "channelName";
-                                                        NotificationChannel channel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_LOW);
-                                                        messageNotificatioManager.createNotificationChannel(channel);
-                                                        messageNotification = new Notification.Builder(getApplicationContext())
-                                                                .setChannelId(id)
-                                                                .setContentTitle("YilaoApp")
-                                                                .setContentText("您有新消息，请及时查看！")
-                                                                .setWhen(System.currentTimeMillis())
-                                                                .setSmallIcon(R.mipmap.ic_launcher)//图标设置
-                                                                .setContentIntent(messagePendingIntent)
-                                                                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                                                                .build();
-                                                    } else {
-                                                        messageIntent = new Intent(getApplicationContext(), ChatActivity.class);//跳转
-                                                        messagePendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, messageIntent, 0);
-                                                        messageNotification = new NotificationCompat.Builder(getApplicationContext())
-                                                                .setContentTitle("YilaoApp")
-                                                                .setContentText("您有新消息，请及时查看！")
-                                                                .setWhen(System.currentTimeMillis())
-                                                                .setContentIntent(messagePendingIntent)
-                                                                .setSmallIcon(R.mipmap.ic_launcher)
-                                                                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                                                                .build();
-                                                    }
-                                                    messageNotification.flags = Notification.FLAG_AUTO_CANCEL;
-                                                    messageNotificatioManager.notify(0, messageNotification);
+                    chat_service ch = new chat_retrofit().get().create(chat_service.class);
+                    SharedPreferences pre = getSharedPreferences("login", Context.MODE_PRIVATE);
+                    String min_id = pre.getString("min_id", "");
+                    if (min_id.equals(""))
+                        min_id = "0";
+                    String phone = pre.getString("mobile", "");
+                    String token = pre.getString("token", "");
+                    Call<ResponseBody> ch_back = ch.get_message(phone, "0", token, "df3b72a07a0a4fa1854a48b543690eab", min_id);
+                    ch_back.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.code() / 100 == 4) {
+                                Toast.makeText(getApplicationContext(), "401", Toast.LENGTH_SHORT).show();
+                            } else {
+                                try {
+                                    if (response.body() != null) {
+                                        List<Mess> ms = new LinkedList<>();
+                                        String str = "";
+                                        str = response.body().string();
+                                        Gson gson = new Gson();
+                                        Type type = new TypeToken<List<Mess>>() {
+                                        }.getType();
+                                        ms = gson.fromJson(str, type);
+                                        chatDataBase = ChatDataBase.getDatabase(getApplicationContext());
+                                        chatDao = chatDataBase.getChatDao();
+                                        List<Mess> finalMs = ms;
+                                        new Thread() {
+                                            public void run() {
+                                                for (int i = 0; i < finalMs.size(); i++) {
+                                                    chatDao.insert(finalMs.get(i));
                                                 }
                                             }
+                                        }.start();
+                                        if (ms.size() > 0) {//有新的聊天记录
+                                            SharedPreferences.Editor e = pre.edit();
+                                            e.putString("min_id", String.valueOf(ms.get(ms.size() - 1).getId() + 1));
+                                            e.commit();
+                                            if (judge_work.isBackground(getApplicationContext())) {//在后台运行
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                    messageIntent = new Intent(getApplicationContext(), MainActivity.class);//跳转
+                                                    messagePendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, messageIntent, 0);
+                                                    String id = "channelId";
+                                                    String name = "channelName";
+                                                    NotificationChannel channel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_LOW);
+                                                    messageNotificatioManager.createNotificationChannel(channel);
+                                                    messageNotification = new Notification.Builder(getApplicationContext())
+                                                            .setChannelId(id)
+                                                            .setContentTitle("YilaoApp")
+                                                            .setContentText("您有新消息，请及时查看！")
+                                                            .setWhen(System.currentTimeMillis())
+                                                            .setSmallIcon(R.mipmap.ic_launcher)//图标设置
+                                                            .setContentIntent(messagePendingIntent)
+                                                            .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                                                            .build();
+                                                } else {
+                                                    messageIntent = new Intent(getApplicationContext(), ChatActivity.class);//跳转
+                                                    messagePendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, messageIntent, 0);
+                                                    messageNotification = new NotificationCompat.Builder(getApplicationContext())
+                                                            .setContentTitle("YilaoApp")
+                                                            .setContentText("您有新消息，请及时查看！")
+                                                            .setWhen(System.currentTimeMillis())
+                                                            .setContentIntent(messagePendingIntent)
+                                                            .setSmallIcon(R.mipmap.ic_launcher)
+                                                            .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                                                            .build();
+                                                }
+                                                messageNotification.flags = Notification.FLAG_AUTO_CANCEL;
+                                                messageNotificatioManager.notify(0, messageNotification);
+                                            }
                                         }
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
                                     }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
                             }
+                        }
 
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                            }
-                        });
+                        }
+                    });
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
