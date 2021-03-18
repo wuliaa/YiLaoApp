@@ -92,6 +92,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -210,14 +211,21 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 super.handleMessage(msg);
                 if (msg.what == 1) {
                     chatViewModel.getChatList().observe(ChatActivity.this, item -> {
-                        int more = item.size() - mAdapter.getData().size();
-                        for (int i = 0; i < more; i++) {
-                            if (item.get(item.size() - more + i).getType().equals("TEXT")) {
-                                if (item.get(item.size() - more + i).getFrom_user().equals(mob) &&
-                                        item.get(item.size() - more + i).getTo_user().equals(mobile)) {
+                        List<Mess> mm=new LinkedList<>();
+                        for(int i=0;i<item.size();i++){
+                            if ((item.get(i).getFrom_user().equals(mob) &&
+                                    item.get(i).getTo_user().equals(mobile))||(item.get(i).getFrom_user().equals(mobile) &&
+                                    item.get(i).getTo_user().equals(mob))){
+                                mm.add(item.get(i));
+                            }
+                        }
+                        for (int i =mAdapter.getData().size(); i < mm.size(); i++) {
+                            if (mm.get(i).getType().equals("TEXT")) {
+                                if (mm.get(i).getFrom_user().equals(mob) &&
+                                        mm.get(i).getTo_user().equals(mobile)) {
                                     Message mMessgaeText = getBaseReceiveMessage(MsgType.TEXT);
                                     TextMsgBody mTextMsgBody = new TextMsgBody();
-                                    mTextMsgBody.setMessage(item.get(item.size() - more + i).getContent());
+                                    mTextMsgBody.setMessage(mm.get(i).getContent());
                                     mMessgaeText.setBody(mTextMsgBody);
                                     mAdapter.addData(mMessgaeText);
                                     mRvChat.scrollToPosition(mAdapter.getItemCount() - 1);
@@ -512,7 +520,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         mMessgae.setBody(mImageMsgBody);
         //开始发送
         chat_service chat = new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
-        Call<ResponseBody> chat_back = chat.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", new chat_task(path, phone, "TEXT"));
+        Call<ResponseBody> chat_back = chat.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", new chat_task(path, phone, "IMAGE"));
         chat_back.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
