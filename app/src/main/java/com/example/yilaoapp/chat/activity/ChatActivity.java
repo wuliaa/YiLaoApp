@@ -56,6 +56,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.ChatID;
 import com.example.yilaoapp.bean.Mess;
+import com.example.yilaoapp.bean.Uuid;
 import com.example.yilaoapp.bean.chat_task;
 import com.example.yilaoapp.chat.adapter.ChatAdapter;
 import com.example.yilaoapp.chat.bean.AudioMsgBody;
@@ -76,6 +77,7 @@ import com.example.yilaoapp.database.chat.ChatDataBase;
 import com.example.yilaoapp.database.dao.ChatDao;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.chat_service;
+import com.example.yilaoapp.service.image_service;
 import com.example.yilaoapp.ui.errands.ErrandsViewModel;
 import com.example.yilaoapp.utils.AdapterDiffCallback;
 import com.example.yilaoapp.utils.PhotoOperation;
@@ -92,13 +94,17 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -151,7 +157,8 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     ChatDao chatDao;
     ChatViewModel chatViewModel;
     Handler handler;
-
+    Uuid u;
+    String uuid3;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -414,15 +421,23 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 200 && resultCode == RESULT_OK && null != data) {
             if (Build.VERSION.SDK_INT >= 19) {
-                handleImageOnKitkat(data);
+                try {
+                    handleImageOnKitkat(data);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             } else {
-                handleImageBeforeKitkat(data);
+                try {
+                    handleImageBeforeKitkat(data);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
     @TargetApi(19)
-    private void handleImageOnKitkat(Intent data) {
+    private void handleImageOnKitkat(Intent data) throws FileNotFoundException {
         String imagePath = null;
         Uri uri = data.getData();
         if (DocumentsContract.isDocumentUri(this, uri)) {
@@ -447,7 +462,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         displayImage(imagePath);//根据图片路径显示图片
     }
 
-    private void handleImageBeforeKitkat(Intent data) {
+    private void handleImageBeforeKitkat(Intent data) throws FileNotFoundException {
         Uri uri = data.getData();
         String imagePath = getImagePath(uri, null);
         displayImage(imagePath);
@@ -466,7 +481,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         return path;
     }
 
-    private void displayImage(String imagePath) {
+    private void displayImage(String imagePath) throws FileNotFoundException {
         if (imagePath != null) {
             byte[] ba = null;
             PhotoOperation Operation = new PhotoOperation();
@@ -513,14 +528,52 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 
     //图片消息
-    private void sendImageMessage(String path) {
+    private void sendImageMessage(String path) throws FileNotFoundException {
         final Message mMessgae = getBaseSendMessage(MsgType.IMAGE);
         ImageMsgBody mImageMsgBody = new ImageMsgBody();
         mImageMsgBody.setThumbUrl(path);
         mMessgae.setBody(mImageMsgBody);
         //开始发送
+        byte[] ba=null;
+        PhotoOperation operation=new PhotoOperation();
+        ba=operation.Path2ByteArray(path);
+        Map<String, RequestBody> map = new HashMap<>();
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/from-data"), ba);
+        //注意：file就是与服务器对应的key,后面filename是服务器得到的文件名
+        map.put("file\"; filename=\"" + "1.jpeg", requestFile);
+        image_service img = new RetrofitUser().get(getApplicationContext()).create(image_service.class);
+        Call<ResponseBody> image_call = img.send_photo(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", map);
+        image_call.enqueue(new Callback<ResponseBody>() {
+                               @Override
+                               public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                   if (response.code() / 100 == 4) {
+                                       Toast.makeText(getApplicationContext(), "发送失败", Toast.LENGTH_LONG).show();
+                                   } else if (response.code() / 100 == 5) {
+                                       Toast.makeText(getApplicationContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                                   } else if (response.code() / 100 == 1 ||
+                                           response.code() / 100 == 3) {
+                                       Toast.makeText(getApplicationContext(), "网络连接出错,请重新发送", Toast.LENGTH_SHORT).show();
+                                   } else {
+                                       String uid = "";
+                                       try {
+                                           uid = response.body().string();
+                                       } catch (IOException e) {
+                                           e.printStackTrace();
+                                       }
+                                       Gson gson = new Gson();
+                                       u = gson.fromJson(uid, Uuid.class);
+                                       uuid3=u.getUuid();
+                                       response.body().close();
+                                   }
+                               }
+                                   @Override
+                                   public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                       Toast.makeText(getApplicationContext(), "网络连接出错,请重新发送", Toast.LENGTH_SHORT).show();
+                                   }
+                               });
+
         chat_service chat = new RetrofitUser().get(getApplicationContext()).create(chat_service.class);
-        Call<ResponseBody> chat_back = chat.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", new chat_task(path, phone, "IMAGE"));
+        Call<ResponseBody> chat_back = chat.send_message(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", new chat_task(uuid3, phone, "IMAGE"));
         chat_back.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -528,6 +581,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 mAdapter.addData(mMessgae);
                 //模拟两秒后发送成功
                 updateMsg(mMessgae);
+                response.body().close();
                 response.body().close();
             }
 
