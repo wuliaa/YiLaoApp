@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LifecycleRegistryOwner;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -148,6 +149,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     ChatDataBase chatDataBase;
     ChatDao chatDao;
     ChatViewModel chatViewModel;
+    Handler handler;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -160,9 +162,9 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         initPeople();
         chatDataBase = ChatDataBase.getDatabase(this);
         chatDao = chatDataBase.getChatDao();
-        new Thread(){
-            public void run(){
-                List<Mess> item=chatDao.getAll2();
+        new Thread() {
+            public void run() {
+                List<Mess> item = chatDao.getAll2();
                 for (Mess mess : item) {
                     if (mess.getType().equals("TEXT")) {
                         if (mess.getFrom_user().equals(mob) &&
@@ -194,43 +196,36 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                         }
                     }
                 }
+                android.os.Message message = new android.os.Message();
+                message.what = 1;
+                handler.sendMessage(message);
             }
         }.start();
 
-        chatViewModel.getChatList().observe(this, item -> {
-            int more=item.size()-mAdapter.getData().size();
-            for(int i=0;i<more;i++){
-                if(item.get(item.size()-more+i).getType().equals("TEXT")){
-                    if (item.get(item.size()-more+i).getFrom_user().equals(mob) &&
-                            item.get(item.size()-more+i).getTo_user().equals(mobile)) {
-                        Message mMessgaeText = getBaseReceiveMessage(MsgType.TEXT);
-                        TextMsgBody mTextMsgBody = new TextMsgBody();
-                        mTextMsgBody.setMessage(item.get(item.size()-more+i).getContent());
-                        mMessgaeText.setBody(mTextMsgBody);
-                        mAdapter.addData(mMessgaeText);
-                    }
+        handler = new Handler() {
+            @Override
+            public void handleMessage(@NonNull android.os.Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == 1) {
+                    chatViewModel.getChatList().observe(ChatActivity.this, item -> {
+                        int more = item.size() - mAdapter.getData().size();
+                        for (int i = 0; i < more; i++) {
+                            if (item.get(item.size() - more + i).getType().equals("TEXT")) {
+                                if (item.get(item.size() - more + i).getFrom_user().equals(mob) &&
+                                        item.get(item.size() - more + i).getTo_user().equals(mobile)) {
+                                    Message mMessgaeText = getBaseReceiveMessage(MsgType.TEXT);
+                                    TextMsgBody mTextMsgBody = new TextMsgBody();
+                                    mTextMsgBody.setMessage(item.get(item.size() - more + i).getContent());
+                                    mMessgaeText.setBody(mTextMsgBody);
+                                    mAdapter.addData(mMessgaeText);
+                                }
+                            }
+                        }
+                    });
                 }
             }
-//            for (Mess mess : item) {
-//                if (mess.getType().equals("TEXT")) {
-//                    if (mess.getFrom_user().equals(mob) &&
-//                            mess.getTo_user().equals(mobile)) {
-//                        Message mMessgaeText = getBaseReceiveMessage(MsgType.TEXT);
-//                        TextMsgBody mTextMsgBody = new TextMsgBody();
-//                        mTextMsgBody.setMessage(mess.getContent());
-//                        mMessgaeText.setBody(mTextMsgBody);
-//                        mAdapter.addData(mMessgaeText);
-//                    } else if (mess.getFrom_user().equals(mobile) &&
-//                            mess.getTo_user().equals(mob)) {
-//                        Message mMessgaeText = getBaseSendMessage(MsgType.TEXT);
-//                        TextMsgBody mTextMsgBody = new TextMsgBody();
-//                        mTextMsgBody.setMessage(mess.getContent());
-//                        mMessgaeText.setBody(mTextMsgBody);
-//                        mAdapter.addData(mMessgaeText);
-//                    }
-//                }
-//            }
-        });
+        };
+
     }
 
     public void initPeople() {
