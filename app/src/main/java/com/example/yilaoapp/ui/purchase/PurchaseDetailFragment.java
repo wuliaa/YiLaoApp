@@ -281,6 +281,7 @@ public class PurchaseDetailFragment extends Fragment
         ninePhotoLayout.setIsExpand(true);
         ninePhotoLayout.flushItems();
     }
+    @SuppressLint("CheckResult")
     private void requestPermisson(View view) {
         RxPermissions rxPermission = new RxPermissions(this);
         rxPermission

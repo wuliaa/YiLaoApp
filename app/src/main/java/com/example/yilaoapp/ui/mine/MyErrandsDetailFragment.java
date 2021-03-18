@@ -1,7 +1,9 @@
 package com.example.yilaoapp.ui.mine;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Build;
@@ -33,6 +35,9 @@ import com.example.yilaoapp.MyApplication;
 import com.example.yilaoapp.R;
 import com.example.yilaoapp.bean.All_orders;
 import com.example.yilaoapp.bean.User;
+import com.example.yilaoapp.chat.activity.ChatActivity;
+import com.example.yilaoapp.chat.util.LogUtil;
+import com.example.yilaoapp.chat.widget.SetPermissionDialog;
 import com.example.yilaoapp.databinding.FragmentMyErrandsDetailBinding;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
@@ -40,6 +45,7 @@ import com.github.siyamed.shapeimageview.RoundedImageView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kongzue.dialog.v3.TipDialog;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -47,6 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import io.reactivex.functions.Consumer;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -147,6 +154,8 @@ public class MyErrandsDetailFragment extends Fragment {
                     binding.acceptButtonErrands.setVisibility(View.VISIBLE);
                     binding.refuseButtonErrands.setVisibility(View.VISIBLE);
                 }
+            } else {
+                binding.ChatMyErrand.setVisibility(View.GONE);
             }
 
             //设置最上面的状态栏
@@ -168,7 +177,7 @@ public class MyErrandsDetailFragment extends Fragment {
                 stepsBeanList.get(2).setState(1);
                 stepsBeanList.get(3).setState(0);
             } else if (label.equals("发布的任务")) {
-                if (item.getReceive_at()!=null) {
+                if (item.getReceive_at() != null) {
                     stepsBeanList.get(2).setState(1);
                     stepsBeanList.get(3).setState(0);
                 }
@@ -239,9 +248,9 @@ public class MyErrandsDetailFragment extends Fragment {
                         cancelTask.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                if(response.code()/100==4) {
+                                if (response.code() / 100 == 4) {
                                     TipDialog.show((AppCompatActivity) getActivity(), "接单取消失败", TipDialog.TYPE.ERROR);
-                                }else {
+                                } else {
                                     stepsBeanList.get(0).setState(1);
                                     for (int i = 0; i < 4; i++) {
                                         stepsBeanList.get(i + 1).setState(-1);
@@ -300,14 +309,14 @@ public class MyErrandsDetailFragment extends Fragment {
             binding.acceptButtonErrands.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(label.equals("领取的任务")){
+                    if (label.equals("领取的任务")) {
                         UserService user = new RetrofitUser().get(getContext()).create(UserService.class);
                         SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                         String mobile = pre.getString("mobile", "");
                         String token = pre.getString("token", "");
                         String orderid = String.valueOf(item.getId());
-                        Call<ResponseBody> accept=user.Put_Fin_Cancel_Task(mobile,orderid,token
-                        ,"df3b72a07a0a4fa1854a48b543690eab","close");
+                        Call<ResponseBody> accept = user.Put_Fin_Cancel_Task(mobile, orderid, token
+                                , "df3b72a07a0a4fa1854a48b543690eab", "close");
                         accept.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
@@ -331,14 +340,14 @@ public class MyErrandsDetailFragment extends Fragment {
             binding.refuseButtonErrands.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(label.equals("领取的任务")){
+                    if (label.equals("领取的任务")) {
                         UserService user = new RetrofitUser().get(getContext()).create(UserService.class);
                         SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                         String mobile = pre.getString("mobile", "");
                         String token = pre.getString("token", "");
                         String orderid = String.valueOf(item.getId());
-                        Call<ResponseBody> accept=user.Put_Fin_Cancel_Task(mobile,orderid,token
-                                ,"df3b72a07a0a4fa1854a48b543690eab","reopen");
+                        Call<ResponseBody> accept = user.Put_Fin_Cancel_Task(mobile, orderid, token
+                                , "df3b72a07a0a4fa1854a48b543690eab", "reopen");
                         accept.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
@@ -355,6 +364,36 @@ public class MyErrandsDetailFragment extends Fragment {
                             }
                         });
                         TipDialog.show((AppCompatActivity) getActivity(), "订单取消拒绝成功", TipDialog.TYPE.SUCCESS);
+                    }
+                }
+            });
+
+            //联系对方
+            binding.ChatMyErrand.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!String.valueOf(item.getExecutor()).equals("") ||
+                            !String.valueOf(item.getFrom_user()).equals("")) {
+                        new Handler(new Handler.Callback() {
+                            @Override
+                            public boolean handleMessage(@NonNull android.os.Message msg) {
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (label.equals("发布的任务")) {
+                                            requestPermisson(v, String.valueOf(item.getExecutor())
+                                                    , item.getId_photo1(), item.getId_name1());
+                                        } else if (label.equals("领取的任务")) {
+                                            requestPermisson(v, String.valueOf(item.getFrom_user())
+                                                    , item.getId_photo(), item.getId_name());
+                                        }
+                                    }
+                                }, 100);
+                                LogUtil.d(new String(Character.toChars(0x1F60E)));
+                                //viewModel.select(d1ata);
+                                return false;
+                            }
+                        }).sendEmptyMessageDelayed(0, 500);
                     }
                 }
             });
@@ -381,6 +420,47 @@ public class MyErrandsDetailFragment extends Fragment {
                         ContextCompat.getDrawable(requireActivity(), R.drawable.default_icon))//设置StepsViewIndicator DefaultIcon
                 .setStepsViewIndicatorAttentionIcon(
                         ContextCompat.getDrawable(requireActivity(), R.drawable.attention));//设置StepsViewIndicator AttentionIcon
+    }
+
+
+    @SuppressLint("CheckResult")
+    private void requestPermisson(View view, String phone, String id_photo, String nickName) {
+        RxPermissions rxPermission = new RxPermissions(this);
+        rxPermission
+                .request(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,//存储权限
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.RECORD_AUDIO
+                )
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+                        if (aBoolean) {
+                            Intent intent = new Intent(requireActivity(), ChatActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("mobile", String.valueOf(phone));
+                            bundle.putString("uuid", id_photo);
+                            bundle.putString("id_name", nickName);
+                            intent.putExtra("bundle", bundle);
+                            startActivity(intent);
+                        } else {
+                            SetPermissionDialog mSetPermissionDialog = new SetPermissionDialog(getContext());
+                            mSetPermissionDialog.show();
+                            mSetPermissionDialog.setConfirmCancelListener(new SetPermissionDialog.OnConfirmCancelClickListener() {
+                                @Override
+                                public void onLeftClick() {
+                                    //requireActivity().finish();
+                                }
+
+                                @Override
+                                public void onRightClick() {
+                                    //requireActivity().finish();
+                                }
+                            });
+                        }
+                    }
+                });
     }
 
 }

@@ -158,9 +158,12 @@ public class MyErrandsFragment extends Fragment implements SwipeRefreshLayout.On
                                         String nickname=all.get(i).getId_name();              //订单人的昵称
                                         String close_state=all.get(i).getClose_state();         //订单的状态
                                         String receive_at=all.get(i).getReceive_at();
+                                        BigInteger executor=all.get(i).getExecutor();
+                                        String id_photo1=all.get(i).getId_photo1();
+                                        String id_name1=all.get(i).getId_name1();
                                         All_orders errand1 = new All_orders(getfromUser,phone, address, time, task_id.get(i),
-                                                content, Float.parseFloat(money),close_state, receive_at,
-                                                protected_info, uuid,nickname);
+                                                content, Float.parseFloat(money),close_state, receive_at,executor,
+                                                protected_info, uuid,nickname,id_photo1,id_name1);
                                         errandsList.add(errand1);
                                         Message message = new Message();
                                         message.what = 1;

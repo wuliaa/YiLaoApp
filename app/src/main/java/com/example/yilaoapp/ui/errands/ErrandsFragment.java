@@ -261,8 +261,8 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                         String id_name = all.get(i).getId_name();
                                         String close_state = all.get(i).getClose_state();
                                         All_orders errand1 = new All_orders(getfromUser, phone, address, time, task_id.get(i),
-                                                content, Float.parseFloat(money), close_state, "",
-                                                protected_info, uuid, id_name);
+                                                content, Float.parseFloat(money), close_state, "",null,
+                                                protected_info, uuid, id_name,"","");
                                         errandList.add(errand1);
                                         Message message = new Message();
                                         message.what = 1;

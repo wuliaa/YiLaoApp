@@ -171,8 +171,8 @@ public class TeamStudyFragment extends Fragment implements SwipeRefreshLayout.On
                                         String id_name=all.get(i).getId_name();                 //昵称
                                         String close_state=all.get(i).getClose_state();         //订单状态
                                         All_orders purchase1 = new All_orders(getfromUser,phone, address, time, task_id.get(number++), content
-                                                , Float.parseFloat(money), close_state,"",
-                                                protected_info, category, photos, uuid, name,id_name);
+                                                , Float.parseFloat(money), close_state,"",null,
+                                                protected_info, category, photos, uuid, name,id_name,"","");
                                         teamList.add(purchase1);
                                         Message message = new Message();
                                         message.what = 1;

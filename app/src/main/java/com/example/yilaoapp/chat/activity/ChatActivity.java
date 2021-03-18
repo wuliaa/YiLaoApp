@@ -15,6 +15,7 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ContentUris;
 import android.content.Context;
@@ -129,6 +130,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     LinearLayout mLlAdd;//添加布局
     @BindView(R.id.swipe_chat)
     SwipeRefreshLayout mSwipeRefresh;//下拉刷新
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.common_toolbar_title)
     TextView title;
     private ChatAdapter mAdapter;
