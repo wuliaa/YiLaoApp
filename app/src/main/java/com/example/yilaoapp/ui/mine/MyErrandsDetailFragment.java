@@ -122,7 +122,7 @@ public class MyErrandsDetailFragment extends Fragment {
             binding.MyErrandscontent.setText("详情：" + item.getDetail());
             binding.MyErrandsphoneNumber.setText("联系电话：" + item.getPhone());
             binding.MyErrandsAddress.setText("联系地址：" + item.getDestination().getName());
-            binding.MyErrandsmoney.setText("金额：" + item.getReward() + "元");
+            binding.MyErrandsmoney.setText("劳务费：" + item.getReward() + "元");
             //设置完成chip
             SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
             String mobile2 = pre2.getString("mobile", "");

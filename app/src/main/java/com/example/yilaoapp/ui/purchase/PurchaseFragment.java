@@ -148,7 +148,6 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                             new Handler(new Handler.Callback() {
                                 @Override
                                 public boolean handleMessage(@NonNull android.os.Message msg) {
-                                    Toast.makeText(getActivity(), "我是item", Toast.LENGTH_SHORT).show();
                                     mViewModel.setPurchase(data);
                                     NavController controller = Navigation.findNavController(view);
                                     controller.navigate(R.id.action_purchaseFragment_to_purchaseDetailFragment);

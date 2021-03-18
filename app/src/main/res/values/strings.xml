@@ -185,7 +185,7 @@
     <string name="bcoaddress">保存为常用地址</string>
     <string name="xboy">限男生</string>
     <string name="xgirl">限女生</string>
-    <string name="money">薪酬</string>
+    <string name="money">薪酬（仅为劳务费，不包括物品本金）</string>
     <string name="lrmb">最低0.1元</string>
     <string name="ltime">时间限制</string>
     <string name="ntime">从任务被领取后开始计算</string>

@@ -132,7 +132,7 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
             binding.MyPurchasescontent.setText("详情："+item.getDetail());
             binding.MyPurchasesphoneNumber.setText("联系电话："+item.getPhone());
             binding.MyPurchasesAddress.setText("联系地址："+item.getDestination().getName());
-            binding.MyPurchasesmoney.setText("金额："+item.getReward()+"元");
+            binding.MyPurchasesmoney.setText("劳务费："+item.getReward()+"元");
             binding.chip1.setText(item.getCategory());
 
             //设置完成按钮
