@@ -161,19 +161,19 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                                         if (all_chat.get(i).getType().equals("TEXT")) {
                                             if (mobile.equals(all_chat.get(i).getFrom_user())) {
                                                 mm = new Message(all_chat.get(i).getId_name(), all_chat.get(i).getLast_content(), all_chat.get(i).getLast_send_at(),
-                                                        all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getTo_user()));
+                                                        all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getTo_user()),"TEXT");
                                             } else {
                                                 mm = new Message(all_chat.get(i).getId_name(), all_chat.get(i).getLast_content(), all_chat.get(i).getLast_send_at(),
-                                                        all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getFrom_user()));
+                                                        all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getFrom_user()),"TEXT");
                                             }
                                             messageList.add(mm);
                                         }else if(all_chat.get(i).getType().equals("IMAGE")){
                                             if (mobile.equals(all_chat.get(i).getFrom_user())) {
-                                                mm = new Message(all_chat.get(i).getId_name(), "[图片]", all_chat.get(i).getLast_send_at(),
-                                                        all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getTo_user()));
+                                                mm = new Message(all_chat.get(i).getId_name(), all_chat.get(i).getLast_content(), all_chat.get(i).getLast_send_at(),
+                                                        all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getTo_user()),"IMAGE");
                                             } else {
-                                                mm = new Message(all_chat.get(i).getId_name(), "[图片]", all_chat.get(i).getLast_send_at(),
-                                                        all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getFrom_user()));
+                                                mm = new Message(all_chat.get(i).getId_name(), all_chat.get(i).getLast_content(), all_chat.get(i).getLast_send_at(),
+                                                        all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getFrom_user()),"IMAGE");
                                             }
                                             messageList.add(mm);
                                         }

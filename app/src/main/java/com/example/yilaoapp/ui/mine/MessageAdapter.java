@@ -47,8 +47,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 .placeholder(R.drawable.head1)
                 .error(R.drawable.head2)
                 .into(holder.head);
+        if(message.getType().equals("IMAGE")){
+            holder.content.setText("[图片]");
+        }else{
+            holder.content.setText(message.getContent());
+        }
         holder.nick.setText(message.getNick());
-        holder.content.setText(message.getContent());
         holder.time.setText(message.getTime());
     }
 
