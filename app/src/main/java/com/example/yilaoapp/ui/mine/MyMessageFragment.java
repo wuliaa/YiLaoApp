@@ -158,14 +158,25 @@ public class MyMessageFragment extends Fragment implements SwipeRefreshLayout.On
                                     Message mm;
                                     if (!all_chat.get(i).getFrom_user().equals("") &&
                                             !all_chat.get(i).getTo_user().equals("")) {
-                                        if (mobile.equals(all_chat.get(i).getFrom_user())) {
-                                            mm = new Message(all_chat.get(i).getId_name(), all_chat.get(i).getLast_content(), all_chat.get(i).getLast_send_at(),
-                                                    all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getTo_user()));
-                                        } else {
-                                            mm = new Message(all_chat.get(i).getId_name(), all_chat.get(i).getLast_content(), all_chat.get(i).getLast_send_at(),
-                                                    all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getFrom_user()));
+                                        if (all_chat.get(i).getType().equals("TEXT")) {
+                                            if (mobile.equals(all_chat.get(i).getFrom_user())) {
+                                                mm = new Message(all_chat.get(i).getId_name(), all_chat.get(i).getLast_content(), all_chat.get(i).getLast_send_at(),
+                                                        all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getTo_user()));
+                                            } else {
+                                                mm = new Message(all_chat.get(i).getId_name(), all_chat.get(i).getLast_content(), all_chat.get(i).getLast_send_at(),
+                                                        all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getFrom_user()));
+                                            }
+                                            messageList.add(mm);
+                                        }else if(all_chat.get(i).getType().equals("IMAGE")){
+                                            if (mobile.equals(all_chat.get(i).getFrom_user())) {
+                                                mm = new Message(all_chat.get(i).getId_name(), "[图片]", all_chat.get(i).getLast_send_at(),
+                                                        all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getTo_user()));
+                                            } else {
+                                                mm = new Message(all_chat.get(i).getId_name(), "[图片]", all_chat.get(i).getLast_send_at(),
+                                                        all_chat.get(i).getId_photo(), new BigInteger(all_chat.get(i).getFrom_user()));
+                                            }
+                                            messageList.add(mm);
                                         }
-                                        messageList.add(mm);
                                     }
                                 }
                                 android.os.Message message = new android.os.Message();

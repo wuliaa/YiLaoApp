@@ -197,6 +197,36 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                                 }
                             });
                         }
+                    }else if(mess.getType().equals("IMAGE")){
+                        if (mess.getFrom_user().equals(mob) &&
+                                mess.getTo_user().equals(mobile)) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Message mMessgaeImage = getBaseReceiveMessage(MsgType.IMAGE);
+                                    ImageMsgBody mImageMsgBody = new ImageMsgBody();
+                                    mImageMsgBody.setThumbUrl(mess.getContent());
+                                    mMessgaeImage.setBody(mImageMsgBody);
+                                    mMessgaeImage.setSentStatus(MsgSendStatus.SENT);
+                                    mAdapter.addData(mMessgaeImage);
+                                    mRvChat.scrollToPosition(mAdapter.getItemCount() - 1);
+                                }
+                            });
+                        } else if (mess.getFrom_user().equals(mobile) &&
+                                mess.getTo_user().equals(mob)) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Message mMessgaeImage = getBaseSendMessage(MsgType.IMAGE);
+                                    ImageMsgBody mImageMsgBody = new ImageMsgBody();
+                                    mImageMsgBody.setThumbUrl(mess.getContent());
+                                    mMessgaeImage.setBody(mImageMsgBody);
+                                    mMessgaeImage.setSentStatus(MsgSendStatus.SENT);
+                                    mAdapter.addData(mMessgaeImage);
+                                    mRvChat.scrollToPosition(mAdapter.getItemCount() - 1);
+                                }
+                            });
+                        }
                     }
                 }
                 android.os.Message message = new android.os.Message();
@@ -211,15 +241,15 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 super.handleMessage(msg);
                 if (msg.what == 1) {
                     chatViewModel.getChatList().observe(ChatActivity.this, item -> {
-                        List<Mess> mm=new LinkedList<>();
-                        for(int i=0;i<item.size();i++){
+                        List<Mess> mm = new LinkedList<>();
+                        for (int i = 0; i < item.size(); i++) {
                             if ((item.get(i).getFrom_user().equals(mob) &&
-                                    item.get(i).getTo_user().equals(mobile))||(item.get(i).getFrom_user().equals(mobile) &&
-                                    item.get(i).getTo_user().equals(mob))){
+                                    item.get(i).getTo_user().equals(mobile)) || (item.get(i).getFrom_user().equals(mobile) &&
+                                    item.get(i).getTo_user().equals(mob))) {
                                 mm.add(item.get(i));
                             }
                         }
-                        for (int i =mAdapter.getData().size(); i < mm.size(); i++) {
+                        for (int i = mAdapter.getData().size(); i < mm.size(); i++) {
                             if (mm.get(i).getType().equals("TEXT")) {
                                 if (mm.get(i).getFrom_user().equals(mob) &&
                                         mm.get(i).getTo_user().equals(mobile)) {
@@ -228,6 +258,17 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                                     mTextMsgBody.setMessage(mm.get(i).getContent());
                                     mMessgaeText.setBody(mTextMsgBody);
                                     mAdapter.addData(mMessgaeText);
+                                    mRvChat.scrollToPosition(mAdapter.getItemCount() - 1);
+                                }
+                            }else if(mm.get(i).getType().equals("IMAGE")){
+                                if (mm.get(i).getFrom_user().equals(mob) &&
+                                        mm.get(i).getTo_user().equals(mobile)) {
+                                    Message mMessgaeImage = getBaseReceiveMessage(MsgType.IMAGE);
+                                    ImageMsgBody mImageMsgBody = new ImageMsgBody();
+                                    mImageMsgBody.setThumbUrl(mm.get(i).getContent());
+                                    mMessgaeImage.setBody(mImageMsgBody);
+                                    mMessgaeImage.setSentStatus(MsgSendStatus.SENT);
+                                    mAdapter.addData(mMessgaeImage);
                                     mRvChat.scrollToPosition(mAdapter.getItemCount() - 1);
                                 }
                             }

@@ -89,8 +89,6 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
     ErrandAdapter adapter;
     Handler handler;
     Callback<ResponseBody> callback;
-    ChatDataBase chatDataBase;
-    ChatDao chatDao;
 
     public ErrandsFragment() {
     }
@@ -127,8 +125,6 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         });
         setHasOptionsMenu(true);
         initErrands();
-        chatDataBase = ChatDataBase.getDatabase(getContext());
-        chatDao = chatDataBase.getChatDao();
         binding.swipeErrands.setOnRefreshListener(this);
         handler = new Handler() {
             @Override
@@ -183,23 +179,6 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                             @Override
                                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                                                 Log.d("chat", "信息已success");
-                                                new Thread() {
-                                                    public void run() {
-                                                        String str = null;
-                                                        try {
-                                                            str = response.body().string();
-                                                        } catch (IOException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        response.body().close();
-                                                        Gson gson = new Gson();
-                                                        ChatID chatID = gson.fromJson(str, ChatID.class);
-                                                        Mess mess = new Mess(chatID.getId(),
-                                                                "您的任务我已领取，订单信息如下:" + data.getDetail(),
-                                                                mobile, data.getFrom_user().toString(), chatID.getSend_at(), "TEXT");
-                                                        chatDao.insert(mess);
-                                                    }
-                                                }.start();
                                             }
 
                                             @Override
