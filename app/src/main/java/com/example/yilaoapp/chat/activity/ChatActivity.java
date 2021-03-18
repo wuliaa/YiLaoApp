@@ -178,6 +178,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                                     mMessgaeText.setBody(mTextMsgBody);
                                     mMessgaeText.setSentStatus(MsgSendStatus.SENT);
                                     mAdapter.addData(mMessgaeText);
+                                    mRvChat.scrollToPosition(mAdapter.getItemCount() - 1);
                                 }
                             });
                         } else if (mess.getFrom_user().equals(mobile) &&
@@ -191,6 +192,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                                     mMessgaeText.setBody(mTextMsgBody);
                                     mMessgaeText.setSentStatus(MsgSendStatus.SENT);
                                     mAdapter.addData(mMessgaeText);
+                                    mRvChat.scrollToPosition(mAdapter.getItemCount() - 1);
                                 }
                             });
                         }
@@ -218,6 +220,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                                     mTextMsgBody.setMessage(item.get(item.size() - more + i).getContent());
                                     mMessgaeText.setBody(mTextMsgBody);
                                     mAdapter.addData(mMessgaeText);
+                                    mRvChat.scrollToPosition(mAdapter.getItemCount() - 1);
                                 }
                             }
                         }
