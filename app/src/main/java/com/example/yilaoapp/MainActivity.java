@@ -29,8 +29,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.yilaoapp.bean.User;
 import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
-import com.example.yilaoapp.utils.PollingService;
-import com.example.yilaoapp.utils.PollingUtils;
 import com.example.yilaoapp.utils.messageService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
@@ -119,8 +117,6 @@ public class  MainActivity extends AppCompatActivity {
                 bottomNavigationView.setVisibility(View.GONE);
             }
         });
-        System.out.println("Start polling service...");
-        //PollingUtils.startPollingService(this, 2, PollingService.class, PollingService.ACTION);
         startService(new Intent(this, messageService.class));
     }
 
@@ -224,11 +220,5 @@ public class  MainActivity extends AppCompatActivity {
             im.hideSoftInputFromWindow(token,
                     InputMethodManager.HIDE_NOT_ALWAYS);
         }
-    }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        System.out.println("Stop polling service...");
-        PollingUtils.stopPollingService(this, PollingService.class, PollingService.ACTION);
     }
 }
