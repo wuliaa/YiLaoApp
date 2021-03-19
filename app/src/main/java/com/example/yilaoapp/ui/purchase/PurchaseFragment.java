@@ -125,7 +125,7 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
             }
         });
 
-        Log.d("PurchaseList", "onCreateView:");
+
         setHasOptionsMenu(true);
         binding.swipePurchasess.setOnRefreshListener(this);
         initContents();
@@ -176,7 +176,6 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     private void initContents() {
-        Log.d("PurchaseList", "intiContents: ListSize " + purchaseList.size());
         new Thread() {
             @Override
             public void run() {
@@ -230,8 +229,6 @@ public class PurchaseFragment extends Fragment implements SwipeRefreshLayout.OnR
                                                 protected_info, category, photos, uuid, name, id_name,"","");
 
                                         purchaseList.add(purchase1);
-                                        Log.d(" PurchaseList", "message: " + content + "1" +
-                                                address + "2" + money + "3" + time);
                                         Message message = new Message();
                                         message.what = 1;
                                         //然后将消息发送出去

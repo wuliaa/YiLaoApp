@@ -131,7 +131,6 @@ public class MyErrandsDetailFragment extends Fragment {
             else
                 label = "领取的任务";
             binding.chip1.setText(label);
-            Log.d("MyErrandDetail", " out: " + label);
 
             //设置底下的button的出现还是消失
             //完成任务的button只能在“发布任务”中可以看见
@@ -183,7 +182,7 @@ public class MyErrandsDetailFragment extends Fragment {
                     stepsBeanList.get(3).setState(0);
                 }
             }
-            Log.d("getClose_stateErrand", " outlabel " + item.getReceive_at());
+
 
             //如果是cancel或finish的话，一开始初始化就要设置一下状态
             if (item.getClose_state() != null) {

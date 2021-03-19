@@ -142,7 +142,7 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
                 label="发布的任务";
             else
                 label="领取的任务";
-            Log.d("MyPurchasedetail", "labelMessage: "+label);
+
 
             //设置底下的button的出现还是消失
             //完成任务的button只能在“发布任务”中可以看见
@@ -152,7 +152,7 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
                 binding.compeleteButtonPurchases.setVisibility(View.GONE);
             }
             //如果任务是cancel或者finish，那么button都不可见
-            Log.d("getClose_stateErrand", item.getDetail() + " DetailFragment：" + item.getClose_state());
+
             if (item.getClose_state() != null) {
                 if (item.getClose_state().equals("cancel") ||
                         item.getClose_state().equals("finish") ||
@@ -199,13 +199,12 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
             stepsBeanList.add(stepBean2);
             stepsBeanList.add(stepBean3);
             stepsBeanList.add(stepBean4);
-            Log.d("MyErrandDetail", "onCreateView: " +label);
+
             //如果为领取的任务，状态直接到进行中
             if (label.equals("领取的任务")) {
                 stepsBeanList.get(2).setState(1);
                 stepsBeanList.get(3).setState(0);
             } else if (label.equals("发布的任务")) {
-                Log.d("MyPurchaseReceive", "onCreateView: "+item.getReceive_at());
                 if (item.getReceive_at() != null) {
                     stepsBeanList.get(2).setState(1);
                     stepsBeanList.get(3).setState(0);
@@ -262,13 +261,13 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
                             @Override
                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                                 if (response.body() != null) {
-                                    Log.d("MyErrandCancel", "onResponse: " + response.body().toString());
+
                                 }
                             }
 
                             @Override
                             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                                Log.d("MyErrandCancel", "onFailure: ");
+
                             }
                         });
                     }else if (label.equals("领取的任务")){

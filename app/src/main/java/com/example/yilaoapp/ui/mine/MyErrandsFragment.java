@@ -145,7 +145,6 @@ public class MyErrandsFragment extends Fragment implements SwipeRefreshLayout.On
                                 all = gson.fromJson(str, type);
                                 for (int i = 0; i < all.size(); i++) {
                                     if (!task_id.contains(all.get(i).getId())) {
-                                        Log.d("executor", "onResponse" + i + ": " + all.get(i).getExecutor());
                                         task_id.add(all.get(i).getId());
                                         String content = all.get(i).getDetail();                    //订单详情
                                         Point_address address = all.get(i).getDestination();        //联系地址
@@ -169,8 +168,6 @@ public class MyErrandsFragment extends Fragment implements SwipeRefreshLayout.On
                                         message.what = 1;
                                         //然后将消息发送出去
                                         handler.sendMessage(message);
-                                        Log.d("getClose_stateErrand", all.get(i).getDetail()+"  "
-                                                +all.get(i).getExecutor()+ "   "+all.get(i).getReceive_at());
                                     }
                                 }
                                 response.body().close();

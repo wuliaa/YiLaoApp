@@ -146,8 +146,7 @@ public class PurchaseDetailFragment extends Fragment
             //如果是自己发布的话，就看不到那两个按钮
             if(String.valueOf(item.getFrom_user()).equals(mobile))
             {
-                Log.d("PurchaseDetail", "User: "+item.getFrom_user());
-                Log.d("PurchaseDetail",  "Mobile: "+item.getFrom_user());
+
                 binding.button6.setVisibility(View.GONE);
                 binding.button7.setVisibility(View.GONE);
             }

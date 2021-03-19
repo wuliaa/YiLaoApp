@@ -134,7 +134,6 @@ public class ErrandsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
                     layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                     binding.errandRecyclerview.setLayoutManager(layoutManager);
-                    Log.d("errandlist", "onCreateView: " + errandList.size());
                     adapter = new ErrandAdapter(errandList);
                     binding.errandRecyclerview.setHasFixedSize(true);
                     binding.errandRecyclerview.setAdapter(adapter);
