@@ -24,5 +24,8 @@ public interface ChatDao {
 
     @Delete
     void delete(Mess mess);
+
+    @Query("SELECT * FROM chat_table WHERE id =:ID")
+    public boolean hasItem(int ID);
 }
 
