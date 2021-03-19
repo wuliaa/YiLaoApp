@@ -176,8 +176,8 @@ public class MyBulletinFragment extends Fragment implements SwipeRefreshLayout.O
                                         message.what = 1;
                                         //然后将消息发送出去
                                         handler.sendMessage(message);
-                                        Log.d("TaskFragmentBullentin", "message: "+time);
-                                        Log.d("getClose_stateBullentin", "onCreateView: "+all.get(i).getClose_state());
+                                        Log.d("Close_stateBullentin", "onCreateView: "+all.get(i).getDetail()+"  "
+                                                +all.get(i).getClose_state());
                                     }
                                 }
                                 response.body().close();

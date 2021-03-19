@@ -12,6 +12,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#FFFFFF"
         tools:context=".ui.mine.LoginFragment">
 
         <ScrollView
@@ -145,9 +146,9 @@
                         app:mtf_labelColor="#666">
 
                         <EditText
+                            android:id="@+id/loginEdittext"
                             android:layout_width="227dp"
                             android:layout_height="49dp"
-                            android:id="@+id/loginEdittext"
                             android:hint="@string/qslzh"
                             android:inputType="number"
                             android:textColor="@color/fbutton_color_clouds"
@@ -169,10 +170,10 @@
                         app:mtf_labelColor="#666">
 
                         <EditText
+                            android:id="@+id/loginEdittext1"
                             android:layout_width="227dp"
                             android:layout_height="49dp"
                             android:hint="@string/qsrmm"
-                            android:id="@+id/loginEdittext1"
                             android:inputType="textPassword"
                             android:textColor="@color/fbutton_color_nephritis"
                             android:textCursorDrawable="@drawable/login_cursor_color_2"

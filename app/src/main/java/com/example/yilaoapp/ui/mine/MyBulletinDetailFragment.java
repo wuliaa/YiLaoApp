@@ -3,6 +3,7 @@ package com.example.yilaoapp.ui.mine;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -35,6 +37,7 @@ import com.example.yilaoapp.service.RetrofitUser;
 import com.example.yilaoapp.service.UserService;
 import com.github.siyamed.shapeimageview.RoundedImageView;
 import com.google.gson.Gson;
+import com.kongzue.dialog.v3.TipDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,19 +60,20 @@ import retrofit2.Response;
 public class MyBulletinDetailFragment extends Fragment implements EasyPermissions.PermissionCallbacks, BGANinePhotoLayout.Delegate {
     private static final int PRC_PHOTO_PREVIEW = 1;
     FragmentMyBulletinDetailBinding binding;
-    String uuid ;
-    String nickName ;
+    String uuid;
+    String nickName;
     ArrayList<String> photosUrl;
 
     public MyBulletinDetailFragment() {
         // Required empty public constructor
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        uuid="";
-        nickName="";
-        photosUrl =new ArrayList<String>();
+        uuid = "";
+        nickName = "";
+        photosUrl = new ArrayList<String>();
     }
 
 
@@ -98,7 +102,7 @@ public class MyBulletinDetailFragment extends Fragment implements EasyPermission
         binding.toolbar.setTitleMarginStart(screenWidth / 3);
 
         viewModel.getBulletin().observe(getViewLifecycleOwner(), item -> {
-            StringBuilder stringBuilder=new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
                     .append(item.getFrom_user())
                     .append("/resources/")
@@ -113,14 +117,14 @@ public class MyBulletinDetailFragment extends Fragment implements EasyPermission
             //获得昵称
             binding.BulletinName.setText(item.getId_name());
             binding.BulletinContent.setText(item.getDetail());
-            binding.Bulletinaddress.setText("联系地址："+item.getDestination().getName());
-            binding.Bulletintime.setText("发布时间："+item.getCreate_at());
+            binding.Bulletinaddress.setText("联系地址：" + item.getDestination().getName());
+            binding.Bulletintime.setText("发布时间：" + item.getCreate_at());
             binding.chip1.setText(item.getCategory());
             binding.MyBulletinninePhotoLayout.setDelegate(this);
             StringTokenizer st = new StringTokenizer(item.getPhotos(), ",");
             while (st.hasMoreTokens()) {
                 uuid = st.nextToken();
-                StringBuilder stringBuilder1=new StringBuilder();
+                StringBuilder stringBuilder1 = new StringBuilder();
                 stringBuilder1.append("http://api.yilao.tk:15000/v1.0/users/")
                         .append(item.getPhone())
                         .append("/resources/")
@@ -129,11 +133,44 @@ public class MyBulletinDetailFragment extends Fragment implements EasyPermission
                 photosUrl.add(url);
             }
             binding.MyBulletinninePhotoLayout.setData(photosUrl);
+            if(item.getClose_state()!=null) {
+                if(item.getClose_state().equals("cancel"))
+                binding.cancelBulletin.setVisibility(View.GONE);
+            }
+
+
+            binding.cancelBulletin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UserService user = new RetrofitUser().get(getContext()).create(UserService.class);
+                    SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                    String mobile = pre.getString("mobile", "");
+                    String token = pre.getString("token", "");
+                    String orderid = String.valueOf(item.getId());
+                    Call<ResponseBody> cancelTask = user.Put_Fin_Cancel_Task(mobile, orderid,
+                            token, "df3b72a07a0a4fa1854a48b543690eab", "cancel");
+                    cancelTask.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                            if (response.body() != null) {
+                                Log.d("MyBulletinCancel", "onResponse: " + response.body().toString());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                            Log.d("MyBulletinCancel", "onFailure: ");
+                        }
+                    });
+                    TipDialog.show((AppCompatActivity) getActivity(), "取消成功", TipDialog.TYPE.SUCCESS);
+                    binding.cancelBulletin.setVisibility(View.GONE);
+                }
         });
+    });
 
         return binding.getRoot();
-        //return inflater.inflate(R.layout.fragment_purchase_detail, container, false);
-    }
+    //return inflater.inflate(R.layout.fragment_purchase_detail, container, false);
+}
 
     /**
      * 图片预览，兼容6.0动态权限

@@ -132,6 +132,18 @@
                 app:bga_npl_otherWhiteSpacing="64dp"
                 app:bga_npl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
                 app:bga_npl_showAsLargeWhenOnlyOne="true" />
+
+            <Button
+                android:id="@+id/cancel_bulletin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/accept_deepen"
+                android:text="@string/cancel_bulletin"
+                android:textColor="#FFFFFF"
+                android:visibility="visible" />
         </LinearLayout>
     </FrameLayout>
 </layout>

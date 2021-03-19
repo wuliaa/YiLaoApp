@@ -225,21 +225,23 @@
                             android:text="@string/refuse_accept_task"
                             android:textColor="#FFFFFF"
                             android:visibility="gone" />
+
+                        <Button
+                            android:id="@+id/ChatMyPurchase"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="30dp"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginBottom="20dp"
+                            android:background="@drawable/contact_deepen"
+                            android:drawableStart="@drawable/chaticon"
+                            android:drawablePadding="5dp"
+                            android:text="@string/contact"
+                            android:textColor="#3E3E3E"
+                            android:textSize="14sp" />
                     </LinearLayout>
 
-                    <Button
-                        android:id="@+id/ChatMyPurchase"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/contact_deepen"
-                        android:drawableStart="@drawable/chaticon"
-                        android:drawablePadding="5dp"
-                        android:text="@string/contact"
-                        android:textColor="#3E3E3E"
-                        android:textSize="14sp" />
                 </LinearLayout>
             </ScrollView>
 

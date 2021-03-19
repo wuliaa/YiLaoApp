@@ -256,4 +256,5 @@
     <string name="refuse_accept_task">拒绝取消订单</string>
     <string name="StringLimit">40/40</string>
     <string name="id_school">如:某某大学某某校区</string>
+    <string name="cancel_bulletin">取消公告</string>
 </resources>
