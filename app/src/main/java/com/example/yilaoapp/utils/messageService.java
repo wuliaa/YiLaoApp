@@ -123,7 +123,7 @@ public class messageService extends Service {
                                             new Thread() {
                                                 public void run() {
                                                     for (int i = 0; i < finalMs.size(); i++) {
-                                                        if(!chatDao.hasItem(finalMs.get(i).getId()))
+                                                        if(chatDao.hasItem(finalMs.get(i).getId())==null)
                                                             chatDao.insert(finalMs.get(i));
                                                     }
                                                 }
