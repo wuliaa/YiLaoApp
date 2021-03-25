@@ -129,8 +129,17 @@ public class SigninFragment extends Fragment {
         callback.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                TipDialog.show((AppCompatActivity) getActivity(), "发送成功", TipDialog.TYPE.SUCCESS);
-                myCountDownTimer.start();
+                if (response.code() / 100 == 4) {
+                    Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                } else if (response.code() / 100 == 5) {
+                    Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                } else if (response.code() / 100 == 1 ||
+                        response.code() / 100 == 3) {
+                    Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                } else {
+                    TipDialog.show((AppCompatActivity) getActivity(), "发送成功", TipDialog.TYPE.SUCCESS);
+                    myCountDownTimer.start();
+                }
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {

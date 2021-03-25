@@ -110,35 +110,39 @@ public class ErrandsMessageFragment extends Fragment {
                 String detail=binding.editTextTextMultiLine.getText().toString();
                 BigInteger phone=new BigInteger(binding.telephoneText.getText().toString());
                 float money= Float.parseFloat(binding.moneyText.getText().toString());
-                String address=binding.addressText.getText().toString();;
-                Point_address des=new Point_address(0,0,address);
-                errand_order order=new errand_order(phone,"跑腿",detail,des,money);
-                SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                String mobile=pre.getString("mobile","");
-                String token=pre.getString("token","");
-                errand_service errand=new RetrofitUser().get(getContext()).create(errand_service.class);
-                Call<ResponseBody> errand_back=errand.new_order(mobile,token,"df3b72a07a0a4fa1854a48b543690eab",order);
-                errand_back.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        TipDialog.show((AppCompatActivity) getActivity(), "发布成功", TipDialog.TYPE.SUCCESS);
-                        new Handler(new Handler.Callback() {
-                            @Override
-                            public boolean handleMessage(@NonNull android.os.Message msg) {
-                                return false;
-                            }
-                        }).sendEmptyMessageDelayed(0, 3000);
-                        NavController controller = Navigation.findNavController(view);
-                        controller.popBackStack();
-                        response.body().close();
-                    }
+                if(money<0.1) {
+                    Toast.makeText(getContext(),"酬金小于0.1元，发布失败",Toast.LENGTH_SHORT).show();
+                }else {
+                    String address = binding.addressText.getText().toString();
+                    ;
+                    Point_address des = new Point_address(0, 0, address);
+                    errand_order order = new errand_order(phone, "跑腿", detail, des, money);
+                    SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                    String mobile = pre.getString("mobile", "");
+                    String token = pre.getString("token", "");
+                    errand_service errand = new RetrofitUser().get(getContext()).create(errand_service.class);
+                    Call<ResponseBody> errand_back = errand.new_order(mobile, token, "df3b72a07a0a4fa1854a48b543690eab", order);
+                    errand_back.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            TipDialog.show((AppCompatActivity) getActivity(), "发布成功", TipDialog.TYPE.SUCCESS);
+                            new Handler(new Handler.Callback() {
+                                @Override
+                                public boolean handleMessage(@NonNull android.os.Message msg) {
+                                    return false;
+                                }
+                            }).sendEmptyMessageDelayed(0, 3000);
+                            NavController controller = Navigation.findNavController(view);
+                            controller.popBackStack();
+                            response.body().close();
+                        }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(getContext(),"网络连接出错",Toast.LENGTH_LONG).show();
-                    }
-                });
-
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Toast.makeText(getContext(), "网络连接出错", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
             }
         });
         return binding.getRoot();

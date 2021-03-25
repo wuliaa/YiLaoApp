@@ -80,9 +80,17 @@ public class ChangePsdFragment extends Fragment {
                     back.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            Map<String,String> map=new HashMap<String,String>();
-                            map.put("passwd",binding.changePsdEditText10.getText().toString());
-                            Call<ResponseBody> updatepsd=service.updatePsd(mobile,"df3b72a07a0a4fa1854a48b543690eab",password,
+                            if (response.code() / 100 == 4) {
+                                Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                            } else if (response.code() / 100 == 5) {
+                                Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                            } else if (response.code() / 100 == 1 ||
+                                    response.code() / 100 == 3) {
+                                Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                            } else {
+                            Map<String, String> map = new HashMap<String, String>();
+                            map.put("passwd", binding.changePsdEditText10.getText().toString());
+                            Call<ResponseBody> updatepsd = service.updatePsd(mobile, "df3b72a07a0a4fa1854a48b543690eab", password,
                                     map);
                             updatepsd.enqueue(new Callback<ResponseBody>() {
                                 @Override
@@ -97,9 +105,10 @@ public class ChangePsdFragment extends Fragment {
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    Toast.makeText(getContext(),"网络连接失败",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "网络连接失败", Toast.LENGTH_SHORT).show();
                                 }
                             });
+                        }
                         }
 
                         @Override

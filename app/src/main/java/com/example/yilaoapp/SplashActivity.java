@@ -71,16 +71,16 @@ public class SplashActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "网络连接失败", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                     startActivity(intent);
-                    finish();
+//                    finish();
                 }
             });
             Intent intent = new Intent(SplashActivity.this, MainActivity.class);
             startActivity(intent);
-            finish();
+//            finish();
         } else {
             Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
             startActivity(intent);
-            finish();
+//            finish();
         }
         finish();
     }

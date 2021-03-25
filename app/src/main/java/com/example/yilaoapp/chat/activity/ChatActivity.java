@@ -162,6 +162,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     Uuid u;
     String uuid3;
    List<Mess> mk;
+    @SuppressLint("HandlerLeak")
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -383,6 +384,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initChatUi() {
         //mBtnAudio
         final ChatUiHelper mUiHelper = ChatUiHelper.with(this);

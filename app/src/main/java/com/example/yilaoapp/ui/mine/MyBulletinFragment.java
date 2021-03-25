@@ -134,57 +134,65 @@ public class MyBulletinFragment extends Fragment implements SwipeRefreshLayout.O
                 get_team.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                        String str = "";
-                        try {
+                        if (response.code() / 100 == 4) {
+                            Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                        } else if (response.code() / 100 == 5) {
+                            Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                        } else if (response.code() / 100 == 1 ||
+                                response.code() / 100 == 3) {
+                            Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                        } else {
+                            String str = "";
+                            try {
 //                            assert response.body() != null;
-                            if (response.body() == null)
-                                Toast.makeText(getContext(), "网络延迟", Toast.LENGTH_SHORT).show();
-                            else {
-                                str = response.body().string();
-                                Gson gson = new Gson();
-                                Type type = new TypeToken<List<All_orders>>() {
-                                }.getType();
-                                List<All_orders> all = gson.fromJson(str, type);
-                                //获取每个用户的照片的字节流
-                                for (int i = 0; i < all.size(); i++) {
-                                    if (!task_id.contains(all.get(i).getId())
-                                    ) {
-                                        task_id.add(all.get(i).getId());
-                                        String content = all.get(i).getDetail();                       //详情
-                                        Point_address address = all.get(i).getDestination();          //地址
-                                        String money = String.valueOf(all.get(i).getReward());       //订单酬劳
-                                        String time = all.get(i).getCreate_at();                     //订单创建时间
-                                        BigInteger getfromUser = all.get(i).getFrom_user();
-                                        BigInteger phone = all.get(i).getPhone();               //发布订单的电话号码
-                                        String protected_info = all.get(i).getProtected_info();    //隐藏信息
-                                        String uuid = all.get(i).getId_photo();                   //头像的uuid
-                                        String photos = all.get(i).getPhotos();                     //订单的图片
-                                        String category = all.get(i).getCategory();                //订单分类
-                                        String name = all.get(i).getName();                       //订单名字
-                                        String nickname=all.get(i).getId_name();             //订单人的昵称
-                                        String close_state=all.get(i).getClose_state();
-                                        String receive_at=all.get(i).getReceive_at();
-                                        BigInteger executor=all.get(i).getExecutor();       //接单人的电话号码
-                                        String id_photo1=all.get(i).getId_photo1();        //接单人的头像
-                                        String id_name1=all.get(i).getId_name1();         //接单人的昵称
-                                        All_orders Mybulletin = new All_orders(getfromUser,phone, address, time,
-                                                task_id.get(i), content, Float.parseFloat(money),
-                                                close_state,receive_at,executor,protected_info,
-                                                category, photos, uuid, name,nickname,id_photo1,id_name1);
-                                        bulletinList.add(Mybulletin);
-                                        Message message = new Message();
-                                        message.what = 1;
-                                        //然后将消息发送出去
-                                        handler.sendMessage(message);
+                                if (response.body() == null)
+                                    Toast.makeText(getContext(), "网络延迟", Toast.LENGTH_SHORT).show();
+                                else {
+                                    str = response.body().string();
+                                    Gson gson = new Gson();
+                                    Type type = new TypeToken<List<All_orders>>() {
+                                    }.getType();
+                                    List<All_orders> all = gson.fromJson(str, type);
+                                    //获取每个用户的照片的字节流
+                                    for (int i = 0; i < all.size(); i++) {
+                                        if (!task_id.contains(all.get(i).getId())
+                                        ) {
+                                            task_id.add(all.get(i).getId());
+                                            String content = all.get(i).getDetail();                       //详情
+                                            Point_address address = all.get(i).getDestination();          //地址
+                                            String money = String.valueOf(all.get(i).getReward());       //订单酬劳
+                                            String time = all.get(i).getCreate_at();                     //订单创建时间
+                                            BigInteger getfromUser = all.get(i).getFrom_user();
+                                            BigInteger phone = all.get(i).getPhone();               //发布订单的电话号码
+                                            String protected_info = all.get(i).getProtected_info();    //隐藏信息
+                                            String uuid = all.get(i).getId_photo();                   //头像的uuid
+                                            String photos = all.get(i).getPhotos();                     //订单的图片
+                                            String category = all.get(i).getCategory();                //订单分类
+                                            String name = all.get(i).getName();                       //订单名字
+                                            String nickname = all.get(i).getId_name();             //订单人的昵称
+                                            String close_state = all.get(i).getClose_state();
+                                            String receive_at = all.get(i).getReceive_at();
+                                            BigInteger executor = all.get(i).getExecutor();       //接单人的电话号码
+                                            String id_photo1 = all.get(i).getId_photo1();        //接单人的头像
+                                            String id_name1 = all.get(i).getId_name1();         //接单人的昵称
+                                            All_orders Mybulletin = new All_orders(getfromUser, phone, address, time,
+                                                    task_id.get(i), content, Float.parseFloat(money),
+                                                    close_state, receive_at, executor, protected_info,
+                                                    category, photos, uuid, name, nickname, id_photo1, id_name1);
+                                            bulletinList.add(Mybulletin);
+                                            Message message = new Message();
+                                            message.what = 1;
+                                            //然后将消息发送出去
+                                            handler.sendMessage(message);
+                                        }
                                     }
+                                    response.body().close();
                                 }
-                                response.body().close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
                     }
-
                     @Override
                     public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
 

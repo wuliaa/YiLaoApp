@@ -70,9 +70,9 @@ import retrofit2.Response;
 public class MyPurchaseDetailFragment extends Fragment implements EasyPermissions.PermissionCallbacks, BGANinePhotoLayout.Delegate {
 
     private static final int PRC_PHOTO_PREVIEW = 1;
-    String uuid ;
+    String uuid;
     ArrayList<String> photosUrl;
-    String nickName ;
+    String nickName;
     String label;
 
     FragmentMyPurchaseDetailBinding binding;
@@ -84,10 +84,10 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        uuid="";
-        photosUrl=new ArrayList<>();
-        nickName="";
-        label="";
+        uuid = "";
+        photosUrl = new ArrayList<>();
+        nickName = "";
+        label = "";
     }
 
     @SuppressLint("SetTextI18n")
@@ -95,7 +95,7 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_purchase_detail,container,false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_purchase_detail, container, false);
         MineViewModel viewModel = ViewModelProviders.of(requireActivity()).get(MineViewModel.class);
         binding.setData(viewModel);
         binding.setLifecycleOwner(requireActivity());
@@ -112,10 +112,10 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
         assert wm != null;
         wm.getDefaultDisplay().getSize(p);
         int screenWidth = p.x; // 屏幕宽度
-        binding.toolbar.setTitleMarginStart(screenWidth/3);
+        binding.toolbar.setTitleMarginStart(screenWidth / 3);
 
         viewModel.getPurchase().observe(getViewLifecycleOwner(), item -> {
-            StringBuilder stringBuilder=new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("http://api.yilao.tk:15000/v1.0/users/")
                     .append(item.getFrom_user())
                     .append("/resources/")
@@ -129,19 +129,19 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
                     .into(binding.myPurchaseHead);
             //获得昵称
             binding.Mypurchasedname.setText(item.getId_name());
-            binding.MyPurchasescontent.setText("详情："+item.getDetail());
-            binding.MyPurchasesphoneNumber.setText("联系电话："+item.getPhone());
-            binding.MyPurchasesAddress.setText("联系地址："+item.getDestination().getName());
-            binding.MyPurchasesmoney.setText("劳务费："+item.getReward()+"元");
+            binding.MyPurchasescontent.setText("详情：" + item.getDetail());
+            binding.MyPurchasesphoneNumber.setText("联系电话：" + item.getPhone());
+            binding.MyPurchasesAddress.setText("联系地址：" + item.getDestination().getName());
+            binding.MyPurchasesmoney.setText("劳务费：" + item.getReward() + "元");
             binding.chip1.setText(item.getCategory());
 
             //设置完成按钮
             SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
             String mobile2 = pre2.getString("mobile", "");
-            if(mobile2.equals(String.valueOf(item.getFrom_user())))
-                label="发布的任务";
+            if (mobile2.equals(String.valueOf(item.getFrom_user())))
+                label = "发布的任务";
             else
-                label="领取的任务";
+                label = "领取的任务";
 
 
             //设置底下的button的出现还是消失
@@ -166,10 +166,9 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
                     binding.refuseButtonPurchase.setVisibility(View.VISIBLE);
                 }
             }
-            if(item.getReceive_at()==null){
+            if (item.getReceive_at() == null) {
                 binding.ChatMyPurchase.setVisibility(View.GONE);
             }
-
 
 
             //添加对图片的代码
@@ -177,7 +176,7 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
             StringTokenizer st = new StringTokenizer(item.getPhotos(), ",");
             while (st.hasMoreTokens()) {
                 uuid = st.nextToken();
-                StringBuilder stringBuilder1=new StringBuilder();
+                StringBuilder stringBuilder1 = new StringBuilder();
                 stringBuilder1.append("http://api.yilao.tk:15000/v1.0/users/")
                         .append(item.getPhone())
                         .append("/resources/")
@@ -187,9 +186,9 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
             }
             binding.ninePhotoLayout.setData(photosUrl);
 
-            HorizontalStepView setpview5 =(HorizontalStepView) binding.stepView;
+            HorizontalStepView setpview5 = (HorizontalStepView) binding.stepView;
             List<StepBean> stepsBeanList = new ArrayList<>();
-            StepBean stepBean0=new StepBean("取消",-1);
+            StepBean stepBean0 = new StepBean("取消", -1);
             StepBean stepBean1 = new StepBean("发布", 1);//1是完成，0是正在进行时，-1是还没有进行到
             StepBean stepBean2 = new StepBean("领取", -1);
             StepBean stepBean3 = new StepBean("进行中", -1);
@@ -235,12 +234,12 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
             binding.cancelButtonPurchases.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    UserService user= new RetrofitUser().get(getContext()).create(UserService.class);
-                    SharedPreferences pre=getContext().getSharedPreferences("login",Context.MODE_PRIVATE);
-                    String mobile=pre.getString("mobile","");
-                    String token=pre.getString("token","");
-                    String orderid=String.valueOf(item.getId());
-                    if(label.equals("发布的任务")){
+                    UserService user = new RetrofitUser().get(getContext()).create(UserService.class);
+                    SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                    String mobile = pre.getString("mobile", "");
+                    String token = pre.getString("token", "");
+                    String orderid = String.valueOf(item.getId());
+                    if (label.equals("发布的任务")) {
                         if (stepsBeanList.get(2).getState() == 1 || item.getExecutor() != null) {
                             //已经被领取了，就不能点击取消任务
                             Toast.makeText(requireContext(), "任务已被领取，取消接单需要与接单人进行沟通。"
@@ -261,7 +260,14 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
                             @Override
                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                                 if (response.body() != null) {
-
+                                    if (response.code() / 100 == 4) {
+                                        Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                                    } else if (response.code() / 100 == 5) {
+                                        Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                                    } else if (response.code() / 100 == 1 ||
+                                            response.code() / 100 == 3) {
+                                        Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             }
 
@@ -270,16 +276,24 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
 
                             }
                         });
-                    }else if (label.equals("领取的任务")){
-                        Call<ResponseBody> cancelTask=user.Get_Acc_Cancel_Order(mobile,orderid,token,
-                                "df3b72a07a0a4fa1854a48b543690eab","false");
+                    } else if (label.equals("领取的任务")) {
+                        Call<ResponseBody> cancelTask = user.Get_Acc_Cancel_Order(mobile, orderid, token,
+                                "df3b72a07a0a4fa1854a48b543690eab", "false");
                         cancelTask.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                stepsBeanList.get(0).setState(1);
-                                for(int i=0;i<4;i++)
-                                {
-                                    stepsBeanList.get(i+1).setState(-1);
+                                if (response.code() / 100 == 4) {
+                                    Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 5) {
+                                    Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 1 ||
+                                        response.code() / 100 == 3) {
+                                    Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    stepsBeanList.get(0).setState(1);
+                                    for (int i = 0; i < 4; i++) {
+                                        stepsBeanList.get(i + 1).setState(-1);
+                                    }
                                 }
                             }
 
@@ -296,12 +310,12 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
             binding.compeleteButtonPurchases.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(stepsBeanList.get(2).getState()==-1)
-                    {
+                    if (stepsBeanList.get(2).getState() == -1) {
                         //没被领取了，就不能点击完成任务
-                        Toast.makeText(requireContext(),"任务未被领取，不能完成任务。" +
-                                "取消任务可以按取消按钮",Toast.LENGTH_LONG).show();;
-                    }else{
+                        Toast.makeText(requireContext(), "任务未被领取，不能完成任务。" +
+                                "取消任务可以按取消按钮", Toast.LENGTH_LONG).show();
+                        ;
+                    } else {
                         stepsBeanList.get(0).setState(-1);
                         for (int i = 0; i < 4; i++) {
                             stepsBeanList.get(i + 1).setState(1);
@@ -317,7 +331,14 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
                         finish.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
+                                if (response.code() / 100 == 4) {
+                                    Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 5) {
+                                    Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 1 ||
+                                        response.code() / 100 == 3) {
+                                    Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                                }
                             }
 
                             @Override
@@ -333,22 +354,31 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
             binding.acceptButtonPurchases.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(label.equals("领取的任务")){
+                    if (label.equals("领取的任务")) {
                         UserService user = new RetrofitUser().get(getContext()).create(UserService.class);
                         SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                         String mobile = pre.getString("mobile", "");
                         String token = pre.getString("token", "");
                         String orderid = String.valueOf(item.getId());
-                        Call<ResponseBody> accept=user.Put_Fin_Cancel_Task(mobile,orderid,token
-                                ,"df3b72a07a0a4fa1854a48b543690eab","close");
+                        Call<ResponseBody> accept = user.Put_Fin_Cancel_Task(mobile, orderid, token
+                                , "df3b72a07a0a4fa1854a48b543690eab", "close");
                         accept.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                stepsBeanList.get(0).setState(1);
-                                for (int i = 0; i < 4; i++) {
-                                    stepsBeanList.get(i + 1).setState(-1);
+                                if (response.code() / 100 == 4) {
+                                    Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 5) {
+                                    Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 1 ||
+                                        response.code() / 100 == 3) {
+                                    Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    stepsBeanList.get(0).setState(1);
+                                    for (int i = 0; i < 4; i++) {
+                                        stepsBeanList.get(i + 1).setState(-1);
+                                    }
+                                    setStepStytle(setpview5, stepsBeanList);
                                 }
-                                setStepStytle(setpview5, stepsBeanList);
                             }
 
                             @Override
@@ -364,18 +394,25 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
             binding.refuseButtonPurchase.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(label.equals("领取的任务")){
+                    if (label.equals("领取的任务")) {
                         UserService user = new RetrofitUser().get(getContext()).create(UserService.class);
                         SharedPreferences pre = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
                         String mobile = pre.getString("mobile", "");
                         String token = pre.getString("token", "");
                         String orderid = String.valueOf(item.getId());
-                        Call<ResponseBody> accept=user.Put_Fin_Cancel_Task(mobile,orderid,token
-                                ,"df3b72a07a0a4fa1854a48b543690eab","reopen");
+                        Call<ResponseBody> accept = user.Put_Fin_Cancel_Task(mobile, orderid, token
+                                , "df3b72a07a0a4fa1854a48b543690eab", "reopen");
                         accept.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-
+                                if (response.code() / 100 == 4) {
+                                    Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 5) {
+                                    Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 1 ||
+                                        response.code() / 100 == 3) {
+                                    Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                                }
                             }
 
                             @Override
@@ -423,8 +460,7 @@ public class MyPurchaseDetailFragment extends Fragment implements EasyPermission
         //return inflater.inflate(R.layout.fragment_purchase_detail, container, false);
     }
 
-    public void setStepStytle(HorizontalStepView stepView5,List<StepBean> stepBeanList)
-    {
+    public void setStepStytle(HorizontalStepView stepView5, List<StepBean> stepBeanList) {
         stepView5
                 .setStepViewTexts(stepBeanList)//总步骤
                 .setTextSize(12)//set textSize

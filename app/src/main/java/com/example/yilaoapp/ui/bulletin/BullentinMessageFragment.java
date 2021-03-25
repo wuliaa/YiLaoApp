@@ -196,18 +196,26 @@ public class BullentinMessageFragment extends Fragment implements EasyPermission
                             new_order.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    TipDialog.show((AppCompatActivity) getActivity(), "发布成功", TipDialog.TYPE.SUCCESS);
-                                    new Handler(new Handler.Callback() {
-                                        @Override
-                                        public boolean handleMessage(@NonNull android.os.Message msg) {
-                                            return false;
-                                        }
-                                    }).sendEmptyMessageDelayed(0, 3000);
-                                    NavController controller = Navigation.findNavController(v);
-                                    controller.popBackStack();
-                                    response.body().close();
+                                    if (response.code() / 100 == 4) {
+                                        Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                                    } else if (response.code() / 100 == 5) {
+                                        Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                                    } else if (response.code() / 100 == 1 ||
+                                            response.code() / 100 == 3) {
+                                        Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        TipDialog.show((AppCompatActivity) getActivity(), "发布成功", TipDialog.TYPE.SUCCESS);
+                                        new Handler(new Handler.Callback() {
+                                            @Override
+                                            public boolean handleMessage(@NonNull android.os.Message msg) {
+                                                return false;
+                                            }
+                                        }).sendEmptyMessageDelayed(0, 3000);
+                                        NavController controller = Navigation.findNavController(v);
+                                        controller.popBackStack();
+                                        response.body().close();
+                                    }
                                 }
-
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                                     Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_LONG).show();

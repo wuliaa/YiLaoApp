@@ -133,49 +133,57 @@ public class MyErrandsFragment extends Fragment implements SwipeRefreshLayout.On
                 get_errand.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                        String str = "";
-                        try {
-                            if (response.body() == null)
-                                Toast.makeText(getContext(), "网络延迟", Toast.LENGTH_SHORT).show();
-                            else {
-                                str = response.body().string();
-                                Gson gson = new Gson();
-                                Type type = new TypeToken<List<All_orders>>() {
-                                }.getType();
-                                all = gson.fromJson(str, type);
-                                for (int i = 0; i < all.size(); i++) {
-                                    if (!task_id.contains(all.get(i).getId())) {
-                                        task_id.add(all.get(i).getId());
-                                        String content = all.get(i).getDetail();                    //订单详情
-                                        Point_address address = all.get(i).getDestination();        //联系地址
-                                        String money = String.valueOf(all.get(i).getReward());      //金额
-                                        String time = all.get(i).getCreate_at();                   //订单创建时间
-                                        BigInteger getfromUser=all.get(i).getFrom_user();
-                                        BigInteger phone = all.get(i).getPhone();             //订单人的电话
-                                        String protected_info = all.get(i).getProtected_info();   //保护信息
-                                        String uuid = all.get(i).getId_photo();                 //订单人的头像
-                                        String nickname=all.get(i).getId_name();              //订单人的昵称
-                                        String close_state=all.get(i).getClose_state();         //订单的状态
-                                        String receive_at=all.get(i).getReceive_at();
-                                        BigInteger executor=all.get(i).getExecutor();
-                                        String id_photo1=all.get(i).getId_photo1();
-                                        String id_name1=all.get(i).getId_name1();
-                                        All_orders errand1 = new All_orders(getfromUser,phone, address, time, task_id.get(i),
-                                                content, Float.parseFloat(money),close_state, receive_at,executor,
-                                                protected_info, uuid,nickname,id_photo1,id_name1);
-                                        errandsList.add(errand1);
-                                        Message message = new Message();
-                                        message.what = 1;
-                                        //然后将消息发送出去
-                                        handler.sendMessage(message);
+                        if (response.code() / 100 == 4) {
+                            Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                        } else if (response.code() / 100 == 5) {
+                            Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                        } else if (response.code() / 100 == 1 ||
+                                response.code() / 100 == 3) {
+                            Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                        } else {
+                            String str = "";
+                            try {
+                                if (response.body() == null)
+                                    Toast.makeText(getContext(), "网络延迟", Toast.LENGTH_SHORT).show();
+                                else {
+                                    str = response.body().string();
+                                    Gson gson = new Gson();
+                                    Type type = new TypeToken<List<All_orders>>() {
+                                    }.getType();
+                                    all = gson.fromJson(str, type);
+                                    for (int i = 0; i < all.size(); i++) {
+                                        if (!task_id.contains(all.get(i).getId())) {
+                                            task_id.add(all.get(i).getId());
+                                            String content = all.get(i).getDetail();                    //订单详情
+                                            Point_address address = all.get(i).getDestination();        //联系地址
+                                            String money = String.valueOf(all.get(i).getReward());      //金额
+                                            String time = all.get(i).getCreate_at();                   //订单创建时间
+                                            BigInteger getfromUser = all.get(i).getFrom_user();
+                                            BigInteger phone = all.get(i).getPhone();             //订单人的电话
+                                            String protected_info = all.get(i).getProtected_info();   //保护信息
+                                            String uuid = all.get(i).getId_photo();                 //订单人的头像
+                                            String nickname = all.get(i).getId_name();              //订单人的昵称
+                                            String close_state = all.get(i).getClose_state();         //订单的状态
+                                            String receive_at = all.get(i).getReceive_at();
+                                            BigInteger executor = all.get(i).getExecutor();
+                                            String id_photo1 = all.get(i).getId_photo1();
+                                            String id_name1 = all.get(i).getId_name1();
+                                            All_orders errand1 = new All_orders(getfromUser, phone, address, time, task_id.get(i),
+                                                    content, Float.parseFloat(money), close_state, receive_at, executor,
+                                                    protected_info, uuid, nickname, id_photo1, id_name1);
+                                            errandsList.add(errand1);
+                                            Message message = new Message();
+                                            message.what = 1;
+                                            //然后将消息发送出去
+                                            handler.sendMessage(message);
+                                        }
                                     }
+                                    response.body().close();
                                 }
-                                response.body().close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
-
                     }
                     @Override
                     public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {

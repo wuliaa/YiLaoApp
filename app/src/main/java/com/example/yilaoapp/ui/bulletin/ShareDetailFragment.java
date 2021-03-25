@@ -145,7 +145,7 @@ public class ShareDetailFragment extends Fragment implements EasyPermissions.Per
             @Override
             public void onClick(View v) {
                 SharedPreferences pre=getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                String mobile=pre.getString("monile","");
+                String mobile=pre.getString("mobile","");
                 if(mobile.equals(phone)){
                     Toast.makeText(getContext(),"自己不能联系自己",Toast.LENGTH_SHORT).show();
                 }

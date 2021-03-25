@@ -154,7 +154,7 @@ public class MyErrandsDetailFragment extends Fragment {
                     binding.refuseButtonErrands.setVisibility(View.VISIBLE);
                 }
             }
-            if(item.getReceive_at()==null){
+            if (item.getReceive_at() == null) {
                 binding.ChatMyErrand.setVisibility(View.GONE);
             }
 
@@ -232,8 +232,17 @@ public class MyErrandsDetailFragment extends Fragment {
                         cancelTask.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                if (response.body() != null) {
-                                    Log.d("MyErrandCancel", "onResponse: " + response.body().toString());
+                                if (response.code() / 100 == 4) {
+                                    Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 5) {
+                                    Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 1 ||
+                                        response.code() / 100 == 3) {
+                                    Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    if (response.body() != null) {
+                                        Log.d("MyErrandCancel", "onResponse: " + response.body().toString());
+                                    }
                                 }
                             }
 
@@ -293,7 +302,14 @@ public class MyErrandsDetailFragment extends Fragment {
                         finish.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
+                                if (response.code() / 100 == 4) {
+                                    Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 5) {
+                                    Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 1 ||
+                                        response.code() / 100 == 3) {
+                                    Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                                }
                             }
 
                             @Override
@@ -320,11 +336,20 @@ public class MyErrandsDetailFragment extends Fragment {
                         accept.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                stepsBeanList.get(0).setState(1);
-                                for (int i = 0; i < 4; i++) {
-                                    stepsBeanList.get(i + 1).setState(-1);
+                                if (response.code() / 100 == 4) {
+                                    Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 5) {
+                                    Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 1 ||
+                                        response.code() / 100 == 3) {
+                                    Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    stepsBeanList.get(0).setState(1);
+                                    for (int i = 0; i < 4; i++) {
+                                        stepsBeanList.get(i + 1).setState(-1);
+                                    }
+                                    setStepStytle(setpview5, stepsBeanList);
                                 }
-                                setStepStytle(setpview5, stepsBeanList);
                             }
 
                             @Override
@@ -351,11 +376,20 @@ public class MyErrandsDetailFragment extends Fragment {
                         accept.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                stepsBeanList.get(0).setState(-1);
-                                stepsBeanList.get(1).setState(1);
-                                stepsBeanList.get(2).setState(1);
-                                stepsBeanList.get(3).setState(0);
-                                setStepStytle(setpview5, stepsBeanList);
+                                if (response.code() / 100 == 4) {
+                                    Toast.makeText(getContext(), "4失败", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 5) {
+                                    Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                                } else if (response.code() / 100 == 1 ||
+                                        response.code() / 100 == 3) {
+                                    Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    stepsBeanList.get(0).setState(-1);
+                                    stepsBeanList.get(1).setState(1);
+                                    stepsBeanList.get(2).setState(1);
+                                    stepsBeanList.get(3).setState(0);
+                                    setStepStytle(setpview5, stepsBeanList);
+                                }
                             }
 
                             @Override

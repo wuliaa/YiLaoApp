@@ -143,86 +143,91 @@ public class PurchaseMessageFragment extends Fragment implements EasyPermissions
         binding.Purchasefinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byte[] m = null;
-                PhotoOperation p = new PhotoOperation();
-                Map<String, RequestBody> map = new HashMap<>();
-                for (int i = 0; i < binding.mPurchasePhotosSnpl.getData().size(); i++) {
-                    try {
-                        m = p.Path2ByteArray(binding.mPurchasePhotosSnpl.getData().get(i));
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                float moneyNum = Float.parseFloat(binding.moneyText.getText().toString());
+                if(moneyNum<0.1){
+                    Toast.makeText(getContext(),"酬金小于0.1元，发布失败",Toast.LENGTH_SHORT).show();
+                }else {
+                    byte[] m = null;
+                    PhotoOperation p = new PhotoOperation();
+                    Map<String, RequestBody> map = new HashMap<>();
+                    for (int i = 0; i < binding.mPurchasePhotosSnpl.getData().size(); i++) {
+                        try {
+                            m = p.Path2ByteArray(binding.mPurchasePhotosSnpl.getData().get(i));
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/from-data"), m);
+                        map.put("file\"; filename=\"" + Integer.toString(i) + ".jpeg", requestFile);
                     }
-                    RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/from-data"), m);
-                    map.put("file\"; filename=\"" + Integer.toString(i) + ".jpeg", requestFile);
-                }
-                SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
-                String mobile2 = pre2.getString("mobile", "");
-                String token2 = pre2.getString("token", "");
-                image_service img = new RetrofitUser().get(getContext()).create(image_service.class);
-                Call<ResponseBody> image_call = img.send_photo(mobile2, token2, "df3b72a07a0a4fa1854a48b543690eab", map);
-                image_call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse
-                            (Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.code() / 100 == 4) {
-                            Toast.makeText(getContext(), "上传失败，请重新上传", Toast.LENGTH_LONG).show();
-                        } else if (response.code() / 100 == 5) {
-                            Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
-                        } else if (response.code() / 100 == 1 ||
-                                response.code() / 100 == 3) {
-                            Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
-                        } else {
-                            String uid = "";
-                            try {
-                                uid = response.body().string();
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                    SharedPreferences pre2 = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
+                    String mobile2 = pre2.getString("mobile", "");
+                    String token2 = pre2.getString("token", "");
+                    image_service img = new RetrofitUser().get(getContext()).create(image_service.class);
+                    Call<ResponseBody> image_call = img.send_photo(mobile2, token2, "df3b72a07a0a4fa1854a48b543690eab", map);
+                    image_call.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse
+                                (Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.code() / 100 == 4) {
+                                Toast.makeText(getContext(), "上传失败，请重新上传", Toast.LENGTH_LONG).show();
+                            } else if (response.code() / 100 == 5) {
+                                Toast.makeText(getContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+                            } else if (response.code() / 100 == 1 ||
+                                    response.code() / 100 == 3) {
+                                Toast.makeText(getContext(), "13错误", Toast.LENGTH_SHORT).show();
+                            } else {
+                                String uid = "";
+                                try {
+                                    uid = response.body().string();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                response.body().close();
+                                Gson gson = new Gson();
+                                Uuid u = gson.fromJson(uid, Uuid.class);
+                                String detail = binding.editTextTextMultiLine.getText().toString();
+                                String address = binding.addressText.getText().toString();
+                                BigInteger phone = new BigInteger(binding.telephoneText.getText().toString());
+                                String name = binding.purchaseObjectName.getText().toString();
+                                float money = Float.parseFloat(binding.moneyText.getText().toString());
+                                String category = "";
+                                if (binding.radioButton4.isChecked())
+                                    category = "能够代购";
+                                else
+                                    category = "找代购";
+                                Point_address des = new Point_address(0, 0, address);
+                                pur_order order = new pur_order(phone, "代购", detail, des, category, money, u.getUuid(), name);
+                                pur_service pur = new RetrofitUser().get(getContext()).create(pur_service.class);
+                                Call<ResponseBody> new_order = pur.new_order(mobile2, token2, "df3b72a07a0a4fa1854a48b543690eab", order);
+                                new_order.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        TipDialog.show((AppCompatActivity) getActivity(), "发布成功", TipDialog.TYPE.SUCCESS);
+                                        new Handler(new Handler.Callback() {
+                                            @Override
+                                            public boolean handleMessage(@NonNull android.os.Message msg) {
+                                                return false;
+                                            }
+                                        }).sendEmptyMessageDelayed(0, 3000);
+                                        NavController controller = Navigation.findNavController(v);
+                                        controller.popBackStack();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                    }
+                                });
+
                             }
-                            response.body().close();
-                            Gson gson = new Gson();
-                            Uuid u = gson.fromJson(uid, Uuid.class);
-                            String detail = binding.editTextTextMultiLine.getText().toString();
-                            String address = binding.addressText.getText().toString();
-                            BigInteger phone = new BigInteger(binding.telephoneText.getText().toString());
-                            String name = binding.purchaseObjectName.getText().toString();
-                            float money = Float.parseFloat(binding.moneyText.getText().toString());
-                            String category = "";
-                            if (binding.radioButton4.isChecked())
-                                category = "能够代购";
-                            else
-                                category = "找代购";
-                            Point_address des = new Point_address(0, 0, address);
-                            pur_order order = new pur_order(phone, "代购", detail, des, category, money, u.getUuid(), name);
-                            pur_service pur = new RetrofitUser().get(getContext()).create(pur_service.class);
-                            Call<ResponseBody> new_order = pur.new_order(mobile2, token2, "df3b72a07a0a4fa1854a48b543690eab", order);
-                            new_order.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    TipDialog.show((AppCompatActivity) getActivity(), "发布成功", TipDialog.TYPE.SUCCESS);
-                                    new Handler(new Handler.Callback() {
-                                        @Override
-                                        public boolean handleMessage(@NonNull android.os.Message msg) {
-                                            return false;
-                                        }
-                                    }).sendEmptyMessageDelayed(0, 3000);
-                                    NavController controller = Navigation.findNavController(v);
-                                    controller.popBackStack();
-                                }
+                        }
 
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                }
-                            });
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
 
                         }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                    }
-                });
+                    });
+                }
             }
         });
         return binding.getRoot();
